@@ -1,0 +1,153 @@
+import type { MemoryCardData } from "@/types/memory";
+
+export const memoryIconCards: MemoryCardData[] = [
+  { id: "icon-1", pairId: "apple", content: "🍎", type: "icon" },
+  { id: "icon-2", pairId: "banana", content: "🍌", type: "icon" },
+  { id: "icon-3", pairId: "grapes", content: "🍇", type: "icon" },
+  { id: "icon-4", pairId: "watermelon", content: "🍉", type: "icon" },
+  { id: "icon-5", pairId: "pizza", content: "🍕", type: "icon" },
+  { id: "icon-6", pairId: "burger", content: "🍔", type: "icon" },
+  { id: "icon-7", pairId: "cake", content: "🎂", type: "icon" },
+  { id: "icon-8", pairId: "ice-cream", content: "🍦", type: "icon" },
+  { id: "icon-9", pairId: "cat", content: "🐱", type: "icon" },
+  { id: "icon-10", pairId: "dog", content: "🐶", type: "icon" },
+  { id: "icon-11", pairId: "panda", content: "🐼", type: "icon" },
+  { id: "icon-12", pairId: "rabbit", content: "🐰", type: "icon" },
+  { id: "icon-13", pairId: "sun", content: "☀️", type: "icon" },
+  { id: "icon-14", pairId: "moon", content: "🌙", type: "icon" },
+  { id: "icon-15", pairId: "star", content: "⭐", type: "icon" },
+  { id: "icon-16", pairId: "rainbow", content: "🌈", type: "icon" },
+];
+
+export const memoryVocabularyCards: MemoryCardData[] = [
+  {
+    id: "vocab-1",
+    pairId: "apple",
+    content: "Apple",
+    matchContent: "Quả táo",
+    type: "vocabulary",
+  },
+  {
+    id: "vocab-2",
+    pairId: "banana",
+    content: "Banana",
+    matchContent: "Quả chuối",
+    type: "vocabulary",
+  },
+  {
+    id: "vocab-3",
+    pairId: "grapes",
+    content: "Grapes",
+    matchContent: "Quả nho",
+    type: "vocabulary",
+  },
+  {
+    id: "vocab-4",
+    pairId: "watermelon",
+    content: "Watermelon",
+    matchContent: "Dưa hấu",
+    type: "vocabulary",
+  },
+  {
+    id: "vocab-5",
+    pairId: "pizza",
+    content: "Pizza",
+    matchContent: "Bánh pizza",
+    type: "vocabulary",
+  },
+  {
+    id: "vocab-6",
+    pairId: "burger",
+    content: "Burger",
+    matchContent: "Bánh hamburger",
+    type: "vocabulary",
+  },
+  {
+    id: "vocab-7",
+    pairId: "cake",
+    content: "Cake",
+    matchContent: "Bánh ngọt",
+    type: "vocabulary",
+  },
+  {
+    id: "vocab-8",
+    pairId: "ice-cream",
+    content: "Ice cream",
+    matchContent: "Kem",
+    type: "vocabulary",
+  },
+  {
+    id: "vocab-9",
+    pairId: "cat",
+    content: "Cat",
+    matchContent: "Con mèo",
+    type: "vocabulary",
+  },
+  {
+    id: "vocab-10",
+    pairId: "dog",
+    content: "Dog",
+    matchContent: "Con chó",
+    type: "vocabulary",
+  },
+  {
+    id: "vocab-11",
+    pairId: "panda",
+    content: "Panda",
+    matchContent: "Gấu trúc",
+    type: "vocabulary",
+  },
+  {
+    id: "vocab-12",
+    pairId: "rabbit",
+    content: "Rabbit",
+    matchContent: "Con thỏ",
+    type: "vocabulary",
+  },
+  {
+    id: "vocab-13",
+    pairId: "sun",
+    content: "Sun",
+    matchContent: "Mặt trời",
+    type: "vocabulary",
+  },
+  {
+    id: "vocab-14",
+    pairId: "moon",
+    content: "Moon",
+    matchContent: "Mặt trăng",
+    type: "vocabulary",
+  },
+  {
+    id: "vocab-15",
+    pairId: "star",
+    content: "Star",
+    matchContent: "Ngôi sao",
+    type: "vocabulary",
+  },
+  {
+    id: "vocab-16",
+    pairId: "rainbow",
+    content: "Rainbow",
+    matchContent: "Cầu vồng",
+    type: "vocabulary",
+  },
+];
+
+export const memoryDifficultyConfig = {
+  easy: {
+    label: "Dễ",
+    pairCount: 6,
+    gridColumns: 4,
+  },
+  medium: {
+    label: "Trung bình",
+    pairCount: 10,
+    gridColumns: 5,
+  },
+  hard: {
+    label: "Khó",
+    pairCount: 15,
+    gridColumns: 6,
+  },
+} as const;
