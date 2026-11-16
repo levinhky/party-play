@@ -177,19 +177,19 @@ export default function MemorySetup({ onStart }: MemorySetupProps) {
   const availablePairs = mode === "icons" ? 16 : selectedVocabulary.length;
 
   return (
-    <main className="min-h-screen bg-[#f6f5ff] px-4 py-8 sm:px-6 sm:py-12">
+    <main className="min-h-screen bg-[#f3f8ff] px-4 py-8 sm:px-6 sm:py-10">
     <div className="mx-auto max-w-4xl">
-      <Link href="/games" className="mb-6 inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-600 shadow-sm transition hover:-translate-x-1 hover:border-violet-200 hover:text-violet-700">
-        <ArrowLeft size={17} /> Quay lại trang Games
+      <Link href="/games" className="mb-6 inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-600 shadow-sm transition hover:-translate-x-1 hover:border-blue-200 hover:text-blue-700">
+        <ArrowLeft size={17} /> Quay lại trò chơi
       </Link>
       {/* Tiêu đề */}
-      <div className="mb-8 text-center">
-        <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-3xl bg-violet-100 text-3xl">
+      <div className="mb-6 text-center">
+        <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-100 text-3xl">
           🧠
         </div>
 
-        <span className="text-sm font-bold uppercase tracking-widest text-violet-600">
-          Memory Match
+        <span className="text-sm font-bold uppercase tracking-widest text-blue-600">
+          TRÒ CHƠI GHI NHỚ
         </span>
 
         <h1 className="mt-2 text-3xl font-black tracking-tight text-slate-900 sm:text-4xl">
@@ -202,7 +202,7 @@ export default function MemorySetup({ onStart }: MemorySetupProps) {
         </p>
       </div>
 
-      <div className="space-y-6 rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-8">
+      <div className="space-y-6 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
         {/* Chọn chế độ */}
         <section>
           <h2 className="text-lg font-bold text-slate-900">
@@ -229,9 +229,9 @@ export default function MemorySetup({ onStart }: MemorySetupProps) {
         </section>
 
         {mode === "vocabulary" && (
-          <section className="rounded-2xl border border-violet-100 bg-violet-50/50 p-4 sm:p-5">
+          <section className="rounded-2xl border border-blue-100 bg-blue-50/50 p-4 sm:p-5">
             <div className="flex items-start gap-3">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-violet-100 text-violet-700"><BookOpen size={19} /></div>
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-100 text-blue-700"><BookOpen size={19} /></div>
               <div>
                 <h2 className="font-bold text-slate-900">Bộ từ vựng</h2>
                 <p className="mt-1 text-sm text-slate-500">Chọn bộ có sẵn, bộ riêng hoặc trộn hai bộ.</p>
@@ -244,28 +244,28 @@ export default function MemorySetup({ onStart }: MemorySetupProps) {
                 ["custom", "Bộ của tôi", `${customVocabulary.length} cặp`],
                 ["combined", "Kết hợp", "Mặc định + từ riêng"],
               ] as const).map(([value, title, detail]) => (
-                <button key={value} type="button" onClick={() => setVocabularySource(value)} className={`rounded-xl border-2 p-3 text-left transition ${vocabularySource === value ? "border-violet-500 bg-white" : "border-white bg-white/50 hover:border-violet-200"}`}>
+                <button key={value} type="button" onClick={() => setVocabularySource(value)} className={`rounded-xl border-2 p-3 text-left transition ${vocabularySource === value ? "border-blue-500 bg-white" : "border-white bg-white/50 hover:border-blue-200"}`}>
                   <span className="block text-sm font-bold text-slate-900">{title}</span>
                   <span className="mt-1 block text-xs text-slate-500">{detail}</span>
                 </button>
               ))}
             </div>
 
-            <details className="group mt-4 rounded-xl border border-violet-100 bg-white">
-              <summary className="flex cursor-pointer list-none items-center justify-between gap-3 rounded-xl p-4 transition hover:bg-violet-50 [&::-webkit-details-marker]:hidden">
+            <details className="group mt-4 rounded-xl border border-blue-100 bg-white">
+              <summary className="flex cursor-pointer list-none items-center justify-between gap-3 rounded-xl p-4 transition hover:bg-blue-50 [&::-webkit-details-marker]:hidden">
                 <span>
                   <span className="block text-sm font-bold text-slate-800">Tạo / quản lý từ vựng riêng</span>
                   <span className="mt-1 block text-xs text-slate-500">{customVocabulary.length} cặp đã lưu</span>
                 </span>
                 <ChevronDown size={18} className="text-slate-500 transition-transform group-open:rotate-180" />
               </summary>
-              <div className="border-t border-violet-100 p-4">
+              <div className="border-t border-blue-100 p-4">
                 <div className="grid gap-3 sm:grid-cols-[1fr_1fr_auto]">
                   <label className="text-xs font-semibold text-slate-600">Từ tiếng Anh
-                    <input value={word} onChange={(event) => setWord(event.target.value)} maxLength={40} className="mt-1.5 h-11 w-full rounded-xl border border-slate-200 px-3 text-sm font-normal text-slate-900 outline-none focus:border-violet-400 focus:ring-4 focus:ring-violet-100" placeholder="Ví dụ: Butterfly" />
+                    <input value={word} onChange={(event) => setWord(event.target.value)} maxLength={40} className="mt-1.5 h-11 w-full rounded-xl border border-slate-200 px-3 text-sm font-normal text-slate-900 outline-none focus:border-blue-400 focus:ring-4 focus:ring-blue-100" placeholder="Ví dụ: Butterfly" />
                   </label>
                   <label className="text-xs font-semibold text-slate-600">Nghĩa tiếng Việt
-                    <input value={meaning} onChange={(event) => setMeaning(event.target.value)} maxLength={50} className="mt-1.5 h-11 w-full rounded-xl border border-slate-200 px-3 text-sm font-normal text-slate-900 outline-none focus:border-violet-400 focus:ring-4 focus:ring-violet-100" placeholder="Ví dụ: Con bướm" />
+                    <input value={meaning} onChange={(event) => setMeaning(event.target.value)} maxLength={50} className="mt-1.5 h-11 w-full rounded-xl border border-slate-200 px-3 text-sm font-normal text-slate-900 outline-none focus:border-blue-400 focus:ring-4 focus:ring-blue-100" placeholder="Ví dụ: Con bướm" />
                   </label>
                   <button type="button" onClick={addVocabulary} className="mt-4 inline-flex h-11 items-center justify-center gap-2 self-end rounded-xl bg-slate-900 px-4 text-sm font-bold text-white transition hover:bg-slate-700"><Plus size={17} /> Thêm cặp</button>
                 </div>
@@ -301,8 +301,8 @@ export default function MemorySetup({ onStart }: MemorySetupProps) {
                   rounded-2xl border-2 p-4 text-left transition
                   ${
                     difficulty === option.value
-                      ? "border-violet-500 bg-violet-50"
-                      : "border-slate-200 hover:border-violet-200"
+                      ? "border-blue-500 bg-blue-50"
+                      : "border-slate-200 hover:border-blue-200"
                   }
                 `}
               >
@@ -312,7 +312,7 @@ export default function MemorySetup({ onStart }: MemorySetupProps) {
                   </span>
 
                   {difficulty === option.value && (
-                    <span className="text-violet-600">✓</span>
+                    <span className="text-blue-600">✓</span>
                   )}
                 </div>
 
@@ -320,7 +320,7 @@ export default function MemorySetup({ onStart }: MemorySetupProps) {
                   {option.description}
                 </p>
 
-                <p className="mt-3 text-sm font-bold text-violet-600">
+                <p className="mt-3 text-sm font-bold text-blue-600">
                   {Math.min(option.pairs, availablePairs)} cặp · {Math.min(option.pairs, availablePairs) * 2} thẻ
                 </p>
               </button>
@@ -349,7 +349,7 @@ export default function MemorySetup({ onStart }: MemorySetupProps) {
           <div className="mt-4 space-y-3">
             {playerNames.map((name, index) => (
               <div key={index} className="flex items-center gap-3">
-                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-violet-100 font-bold text-violet-700">
+                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-blue-100 font-bold text-blue-700">
                   {index + 1}
                 </div>
 
@@ -362,7 +362,7 @@ export default function MemorySetup({ onStart }: MemorySetupProps) {
                   }
                   placeholder={`Tên người chơi ${index + 1}`}
                   aria-label={`Tên người chơi ${index + 1}`}
-                  className="h-11 min-w-0 flex-1 rounded-xl border border-slate-200 px-4 text-sm text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-violet-500 focus:ring-4 focus:ring-violet-100"
+                  className="h-11 min-w-0 flex-1 rounded-xl border border-slate-200 px-4 text-sm text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
                 />
 
                 {playerNames.length > 1 && (
@@ -383,7 +383,7 @@ export default function MemorySetup({ onStart }: MemorySetupProps) {
             <button
               type="button"
               onClick={addPlayer}
-              className="mt-3 rounded-xl px-3 py-2 text-sm font-bold text-violet-600 transition hover:bg-violet-50"
+              className="mt-3 rounded-xl px-3 py-2 text-sm font-bold text-blue-600 transition hover:bg-blue-50"
             >
               + Thêm người chơi
             </button>
@@ -403,7 +403,7 @@ export default function MemorySetup({ onStart }: MemorySetupProps) {
         <button
           type="button"
           onClick={handleStart}
-          className="flex w-full items-center justify-center gap-2 rounded-2xl bg-violet-600 px-6 py-4 font-bold text-white shadow-lg shadow-violet-200 transition hover:bg-violet-700 active:scale-[0.99]"
+          className="flex w-full items-center justify-center gap-2 rounded-2xl bg-blue-600 px-6 py-4 font-bold text-white shadow-lg shadow-blue-200 transition hover:bg-blue-700 active:scale-[0.99]"
         >
           Bắt đầu trò chơi
           <span aria-hidden="true">→</span>
@@ -439,8 +439,8 @@ function ModeCard({
         flex items-start gap-3 rounded-2xl border-2 p-4 text-left transition
         ${
           selected
-            ? "border-violet-500 bg-violet-50"
-            : "border-slate-200 hover:border-violet-200"
+            ? "border-blue-500 bg-blue-50"
+            : "border-slate-200 hover:border-blue-200"
         }
       `}
     >
@@ -452,7 +452,7 @@ function ModeCard({
         <span className="flex items-center gap-2 font-bold text-slate-900">
           {title}
           {selected && (
-            <span className="text-sm text-violet-600">✓</span>
+            <span className="text-sm text-blue-600">✓</span>
           )}
         </span>
 

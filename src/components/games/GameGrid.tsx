@@ -12,7 +12,7 @@ export default function GameGrid({ games, totalGames }: GameGridProps) {
   const isFiltered = games.length !== totalGames;
 
   return (
-    <section className="mt-8">
+    <section className="mt-6">
       <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
         <div>
           <h2 className="text-xl font-extrabold tracking-tight text-slate-900">
@@ -24,7 +24,7 @@ export default function GameGrid({ games, totalGames }: GameGridProps) {
           </p>
         </div>
 
-        <span className="inline-flex items-center gap-2 rounded-full bg-violet-50 px-3 py-2 text-xs font-bold text-violet-700">
+        <span className="inline-flex items-center gap-2 rounded-full bg-blue-50 px-3 py-2 text-xs font-bold text-blue-700">
           <Gamepad2 size={15} />
           Sẵn sàng khám phá
         </span>
@@ -37,7 +37,7 @@ export default function GameGrid({ games, totalGames }: GameGridProps) {
           ))}
         </div>
       ) : (
-        <div className="rounded-3xl border border-dashed border-slate-300 bg-white px-5 py-16 text-center">
+        <div className="rounded-2xl border border-dashed border-slate-300 bg-white px-5 py-10 text-center">
           <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-slate-100">
             <SearchX size={30} className="text-slate-400" />
           </div>
@@ -53,7 +53,7 @@ export default function GameGrid({ games, totalGames }: GameGridProps) {
 
           <Link
             href="/games"
-            className="mt-6 inline-flex items-center gap-2 rounded-xl bg-violet-600 px-5 py-3 text-sm font-bold text-white transition hover:bg-violet-700"
+            className="mt-6 inline-flex items-center gap-2 rounded-xl bg-blue-600 px-5 py-3 text-sm font-bold text-white transition hover:bg-blue-700"
           >
             Khám phá tất cả
             <ArrowRight size={17} />

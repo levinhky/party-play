@@ -13,7 +13,7 @@ interface MemoryBoardProps {
 const gridColumns: Record<MemoryDifficulty, string> = {
   easy: "grid-cols-3 sm:grid-cols-4",
   medium: "grid-cols-4 sm:grid-cols-5",
-  hard: "grid-cols-5 sm:grid-cols-6",
+  hard: "grid-cols-4 sm:grid-cols-5 lg:grid-cols-6",
 };
 
 export default function MemoryBoard({

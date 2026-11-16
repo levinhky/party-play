@@ -1,5 +1,6 @@
 "use client";
 
+import { navigateWithLoading } from "@/lib/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
@@ -182,8 +183,8 @@ export default function SpyOnlineLobby({ roomCode }: Props) {
 
   const handleShare = async () => {
     const shareData = {
-      title: "Who Is the Spy?",
-      text: `Tham gia phòng ${roomCode.toUpperCase()} để chơi Who Is the Spy cùng mình!`,
+      title: "Ai là gián điệp?",
+      text: `Tham gia phòng ${roomCode.toUpperCase()} để chơi Ai là gián điệp cùng mình!`,
       url: window.location.href,
     };
 
@@ -257,7 +258,7 @@ export default function SpyOnlineLobby({ roomCode }: Props) {
       if (message.includes("ROOM_NOT_WAITING")) {
         setError("Phòng đã bắt đầu hoặc đã kết thúc. Hãy làm mới trạng thái.");
       } else if (message.includes("NOT_ROOM_HOST")) {
-        setError("Chỉ Host của phòng mới có thể bắt đầu trò chơi.");
+        setError("Chỉ quản trò mới có thể bắt đầu trò chơi.");
       } else if (message.includes("NOT_ENOUGH_PLAYERS")) {
         setError("Cần ít nhất 4 người chơi để bắt đầu.");
       } else if (message.includes("start_spy_room") || message.includes("function")) {
@@ -291,7 +292,7 @@ export default function SpyOnlineLobby({ roomCode }: Props) {
     if (!session?.is_host || creatingRoom) return;
     const host = players.find((player) => player.id === session.player_id);
     if (!host) {
-      setError("Không tìm thấy thông tin Host để tạo phòng mới.");
+      setError("Không tìm thấy thông tin quản trò để tạo phòng mới.");
       return;
     }
     try {
@@ -299,7 +300,7 @@ export default function SpyOnlineLobby({ roomCode }: Props) {
       setError("");
       const newSession = await createSpyRoom(host.player_name);
       localStorage.setItem("party-play-spy-room-session", JSON.stringify(newSession));
-      router.push(`/games/spy/online?room=${newSession.room_code}`);
+      navigateWithLoading(() => router.push(`/games/spy/online?room=${newSession.room_code}`));
     } catch (err) {
       console.error(err);
       setError("Không thể tạo phòng mới. Hãy thử lại.");
@@ -311,7 +312,7 @@ export default function SpyOnlineLobby({ roomCode }: Props) {
     return (
       <main className="flex min-h-screen items-center justify-center bg-white">
         <div className="flex items-center gap-3 text-gray-500">
-          <Loader2 className="animate-spin text-violet-600" />
+          <Loader2 className="animate-spin text-blue-600" />
           Đang tải phòng...
         </div>
       </main>
@@ -321,7 +322,7 @@ export default function SpyOnlineLobby({ roomCode }: Props) {
   if (!session || !room) {
     return (
       <main className="flex min-h-screen items-center justify-center bg-white px-4">
-        <div className="w-full max-w-md rounded-3xl border border-gray-200 bg-white p-8 text-center shadow-xl shadow-gray-100">
+        <div className="w-full max-w-md rounded-2xl border border-gray-200 bg-white p-6 text-center shadow-xl shadow-gray-100">
           <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-red-50 text-red-500">
             <Wifi size={26} />
           </div>
@@ -335,8 +336,8 @@ export default function SpyOnlineLobby({ roomCode }: Props) {
           </p>
 
           <button
-            onClick={() => router.push("/games/spy/online")}
-            className="mt-6 rounded-xl bg-violet-600 px-6 py-3 font-semibold text-white transition hover:bg-violet-700"
+            onClick={() => navigateWithLoading(() => router.push("/games/spy/online"))}
+            className="mt-6 rounded-xl bg-blue-600 px-6 py-3 font-semibold text-white transition hover:bg-blue-700"
           >
             Quay lại
           </button>
@@ -372,21 +373,21 @@ export default function SpyOnlineLobby({ roomCode }: Props) {
   return (
     <main className="relative min-h-screen overflow-hidden bg-white px-4 py-8 text-gray-900 sm:px-6">
       {/* Background decoration */}
-      <div className="pointer-events-none absolute -left-40 -top-40 h-96 w-96 rounded-full bg-violet-100/60 blur-[120px]" />
-      <div className="pointer-events-none absolute -bottom-40 -right-40 h-96 w-96 rounded-full bg-fuchsia-100/60 blur-[120px]" />
+      <div className="pointer-events-none absolute -left-40 -top-40 h-96 w-96 rounded-full bg-blue-100/60 blur-[120px]" />
+      <div className="pointer-events-none absolute -bottom-40 -right-40 h-96 w-96 rounded-full bg-blue-100/60 blur-[120px]" />
 
       <div className="relative mx-auto max-w-2xl">
         <button
-          onClick={() => router.push("/games/spy/online")}
-          className="mb-8 flex items-center gap-2 text-sm font-medium text-gray-500 transition hover:text-violet-600"
+          onClick={() => navigateWithLoading(() => router.push("/games/spy/online"))}
+          className="mb-6 flex items-center gap-2 text-sm font-medium text-gray-500 transition hover:text-blue-600"
         >
           <ArrowLeft size={18} />
           Quay lại
         </button>
 
         {/* Header */}
-        <div className="mb-8 text-center">
-          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-violet-100 text-violet-600 shadow-sm">
+        <div className="mb-6 text-center">
+          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-100 text-blue-600 shadow-sm">
             <Users size={28} />
           </div>
 
@@ -396,34 +397,34 @@ export default function SpyOnlineLobby({ roomCode }: Props) {
           </div>
 
           <h1 className="text-3xl font-black tracking-tight text-gray-900 sm:text-4xl">
-            Waiting Room
+            Phòng chờ
           </h1>
 
           <p className="mt-2 text-sm text-gray-500">
             {room.status === "waiting"
               ? "Mời bạn bè tham gia để bắt đầu cuộc chơi."
-              : "Host đã bắt đầu ván chơi. Mọi người đã sẵn sàng!"}
+              : "Quản trò đã bắt đầu ván chơi. Mọi người đã sẵn sàng!"}
           </p>
         </div>
 
         {/* Room code */}
-        <section className="relative mb-6 overflow-hidden rounded-3xl border border-violet-100 bg-gradient-to-br from-violet-50 via-white to-fuchsia-50 p-6 text-center shadow-sm sm:p-8">
-          <div className="pointer-events-none absolute -right-10 -top-10 h-40 w-40 rounded-full bg-violet-200/40 blur-3xl" />
+        <section className="relative mb-6 overflow-hidden rounded-2xl border border-blue-100 bg-gradient-to-br from-blue-50 via-white to-blue-50 p-4 text-center shadow-sm sm:p-6">
+          <div className="pointer-events-none absolute -right-10 -top-10 h-40 w-40 rounded-full bg-blue-200/40 blur-3xl" />
 
           <div className="relative">
             <div className="flex items-center justify-center gap-2 text-sm font-semibold text-gray-500">
-              <Sparkles size={15} className="text-violet-500" />
+              <Sparkles size={15} className="text-blue-500" />
               MÃ PHÒNG CỦA BẠN
             </div>
 
             <div className="mt-4 flex items-center justify-center gap-3">
-              <span className="text-4xl font-black tracking-[0.2em] text-violet-700 sm:text-5xl">
+              <span className="text-4xl font-black tracking-[0.2em] text-blue-700 sm:text-5xl">
                 {room.room_code}
               </span>
 
               <button
                 onClick={handleCopyCode}
-                className="flex h-11 w-11 items-center justify-center rounded-xl border border-violet-200 bg-white text-violet-600 shadow-sm transition hover:bg-violet-50"
+                className="flex h-11 w-11 items-center justify-center rounded-xl border border-blue-200 bg-white text-blue-600 shadow-sm transition hover:bg-blue-50"
                 aria-label="Sao chép mã phòng"
                 title="Sao chép mã phòng"
               >
@@ -441,7 +442,7 @@ export default function SpyOnlineLobby({ roomCode }: Props) {
 
             <button
               onClick={handleShare}
-              className="mt-5 inline-flex items-center justify-center gap-2 rounded-xl bg-violet-600 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-violet-200 transition hover:bg-violet-700"
+              className="mt-5 inline-flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-200 transition hover:bg-blue-700"
             >
               <Users size={17} />
               Mời bạn bè
@@ -456,7 +457,7 @@ export default function SpyOnlineLobby({ roomCode }: Props) {
         </section>
 
         {/* Players */}
-        <section className="rounded-3xl border border-gray-200 bg-white p-5 shadow-sm sm:p-7">
+        <section className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm sm:p-7">
           <div className="mb-5 flex items-center justify-between">
             <div>
               <h2 className="text-lg font-bold text-gray-900">Người chơi</h2>
@@ -469,7 +470,7 @@ export default function SpyOnlineLobby({ roomCode }: Props) {
             <button
               onClick={handleRefresh}
               disabled={refreshing}
-              className="flex h-10 w-10 items-center justify-center rounded-xl border border-gray-200 bg-white text-gray-500 transition hover:border-violet-200 hover:bg-violet-50 hover:text-violet-600 disabled:opacity-50"
+              className="flex h-10 w-10 items-center justify-center rounded-xl border border-gray-200 bg-white text-gray-500 transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-600 disabled:opacity-50"
               aria-label="Làm mới danh sách"
               title="Làm mới"
             >
@@ -495,32 +496,32 @@ export default function SpyOnlineLobby({ roomCode }: Props) {
               />
             ) : (
               <p className="rounded-xl bg-gray-50 px-4 py-3 text-sm text-gray-500">
-                Host đang chọn số Spy, chế độ chơi và chủ đề từ khóa.
+                Quản trò đang chọn số gián điệp, chế độ chơi và chủ đề từ khóa.
               </p>
             )}
           </div>
 
           {/* Room information */}
-          <div className="mt-6 flex items-start gap-3 rounded-2xl border border-violet-100 bg-violet-50/70 p-4">
-            <div className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-violet-100 text-violet-600">
+          <div className="mt-6 flex items-start gap-3 rounded-2xl border border-blue-100 bg-blue-50/70 p-4">
+            <div className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-blue-100 text-blue-600">
               {isHost ? <Crown size={18} /> : <Clock3 size={18} />}
             </div>
 
             <div>
-              <p className="text-sm font-semibold text-violet-900">
+              <p className="text-sm font-semibold text-blue-900">
                 {room.status !== "waiting"
                   ? "Ván chơi đã bắt đầu"
                   : isHost
-                    ? "Bạn là Host của phòng này"
-                    : "Đang chờ Host"}
+                    ? "Bạn là quản trò của phòng này"
+                    : "Đang chờ quản trò"}
               </p>
 
-              <p className="mt-1 text-xs leading-5 text-violet-700">
+              <p className="mt-1 text-xs leading-5 text-blue-700">
                 {room.status !== "waiting"
                   ? "Phòng đã chuyển sang trạng thái đang chơi."
                   : isHost
                     ? "Hãy chia sẻ mã phòng và đợi ít nhất 4 người tham gia trước khi bắt đầu."
-                    : "Bạn đã vào phòng thành công. Hãy đợi Host bắt đầu trò chơi."}
+                    : "Bạn đã vào phòng thành công. Hãy đợi quản trò bắt đầu trò chơi."}
               </p>
             </div>
           </div>
@@ -529,7 +530,7 @@ export default function SpyOnlineLobby({ roomCode }: Props) {
           <button
             onClick={handleStart}
             disabled={!isHost || room.status !== "waiting" || players.length < 4 || starting}
-            className="mt-5 flex w-full items-center justify-center gap-2 rounded-xl bg-violet-600 py-4 font-semibold text-white transition hover:bg-violet-700 disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-400"
+            className="mt-5 flex w-full items-center justify-center gap-2 rounded-xl bg-blue-600 py-4 font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-400"
           >
             {starting ? <Loader2 size={19} className="animate-spin" /> : <Play size={18} />}
             {room.status !== "waiting"
@@ -540,7 +541,7 @@ export default function SpyOnlineLobby({ roomCode }: Props) {
                   ? players.length < 4
                     ? `Cần ít nhất 4 người chơi (${players.length}/4)`
                     : "Bắt đầu trò chơi"
-                  : "Đang chờ Host bắt đầu..."}
+                  : "Đang chờ quản trò bắt đầu..."}
           </button>
 
           {error && (

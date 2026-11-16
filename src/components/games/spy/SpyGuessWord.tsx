@@ -32,7 +32,7 @@ export default function SpyGuessWord({
   return (
     <div className="mx-auto max-w-xl px-4 py-10 sm:px-6 sm:py-14">
       <div className="text-center">
-        <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-3xl bg-rose-100 text-rose-600">
+        <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-2xl bg-rose-100 text-rose-600">
           <ShieldAlert size={40} />
         </div>
 
@@ -46,7 +46,7 @@ export default function SpyGuessWord({
         </p>
       </div>
 
-      <div className="mt-8 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
+      <div className="mt-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-6">
         <div className="rounded-2xl bg-rose-50 p-5 text-center">
           <p className="text-xs font-bold uppercase tracking-wider text-rose-600">
             Gián điệp cuối cùng
@@ -62,7 +62,7 @@ export default function SpyGuessWord({
             htmlFor="spy-guess"
             className="flex items-center gap-2 font-bold text-slate-900"
           >
-            <KeyRound size={18} className="text-violet-600" />
+            <KeyRound size={18} className="text-blue-600" />
             Từ khóa bí mật là gì?
           </label>
 
@@ -77,7 +77,7 @@ export default function SpyGuessWord({
             }}
             maxLength={100}
             placeholder="Nhập từ khóa bạn đoán..."
-            className="mt-3 h-14 w-full rounded-xl border border-slate-200 px-4 text-lg font-semibold outline-none transition focus:border-violet-400 focus:ring-4 focus:ring-violet-100"
+            className="mt-3 h-14 w-full rounded-xl border border-slate-200 px-4 text-lg font-semibold outline-none transition focus:border-blue-400 focus:ring-4 focus:ring-blue-100"
           />
 
           <p className="mt-2 text-xs leading-5 text-slate-400">
@@ -97,7 +97,7 @@ export default function SpyGuessWord({
 
       {showConfirm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/50 p-4">
-          <div className="w-full max-w-sm rounded-3xl bg-white p-6 shadow-2xl">
+          <div className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-2xl">
             <h2 className="text-xl font-black text-slate-900">
               Bạn chắc chắn chứ?
             </h2>
@@ -106,11 +106,11 @@ export default function SpyGuessWord({
               Câu trả lời của bạn là:
             </p>
 
-            <p className="mt-2 break-words text-xl font-black text-violet-700">
+            <p className="mt-2 break-words text-xl font-black text-blue-700">
               {guess}
             </p>
 
-            <div className="mt-6 grid grid-cols-2 gap-3">
+            <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2">
               <button
                 type="button"
                 onClick={() => setShowConfirm(false)}

@@ -1,5 +1,6 @@
 "use client";
 
+import { navigateWithLoading } from "@/lib/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -113,7 +114,7 @@ export default function TabooGame({ startRoute = false }: TabooGameProps) {
   const handleSetupStart = useCallback((settings: TabooSettings) => {
     try {
       sessionStorage.setItem(ACTIVE_GAME_KEY, JSON.stringify(settings));
-      router.push("/games/taboo/start");
+      navigateWithLoading(() => router.push("/games/taboo/start"));
     } catch {
       toast.error("Không thể lưu thiết lập trò chơi trên thiết bị này.");
     }
@@ -354,7 +355,7 @@ export default function TabooGame({ startRoute = false }: TabooGameProps) {
       } catch {
         // Route navigation should still work if browser storage is unavailable.
       }
-      router.push("/games/taboo");
+      navigateWithLoading(() => router.push("/games/taboo"));
     }
   }, [router, startRoute, stopTimer, syncTime]);
 
@@ -363,20 +364,20 @@ export default function TabooGame({ startRoute = false }: TabooGameProps) {
 
     if (!startRouteReady) {
       return (
-        <main className="flex min-h-screen items-center justify-center bg-[#f6f5ff] text-slate-600">
+        <main className="flex min-h-screen items-center justify-center bg-[#f3f8ff] text-slate-600">
           <span className="inline-flex items-center gap-3 rounded-2xl bg-white px-5 py-4 font-semibold shadow-sm">
-            <Loader2 className="animate-spin text-violet-600" /> Đang mở ván chơi...
+            <Loader2 className="animate-spin text-blue-600" /> Đang mở ván chơi...
           </span>
         </main>
       );
     }
 
     return (
-      <main className="flex min-h-screen items-center justify-center bg-[#f6f5ff] px-4 text-center">
-        <div className="rounded-3xl border border-white bg-white p-8 shadow-xl shadow-violet-100">
+      <main className="flex min-h-screen items-center justify-center bg-[#f3f8ff] px-4 text-center">
+        <div className="rounded-2xl border border-white bg-white p-6 shadow-xl shadow-blue-100">
           <h1 className="text-2xl font-black text-slate-900">Chưa có ván Taboo để mở</h1>
           <p className="mt-2 text-sm text-slate-500">Hãy quay lại thiết lập để bắt đầu một ván mới.</p>
-          <Link href="/games/taboo" className="mt-5 inline-flex items-center gap-2 rounded-xl bg-violet-600 px-5 py-3 font-bold text-white transition hover:bg-violet-700">
+          <Link href="/games/taboo" className="mt-5 inline-flex items-center gap-2 rounded-xl bg-blue-600 px-5 py-3 font-bold text-white transition hover:bg-blue-700">
             <ArrowLeft size={17} /> Về thiết lập
           </Link>
         </div>
@@ -400,20 +401,20 @@ export default function TabooGame({ startRoute = false }: TabooGameProps) {
   const currentTeam = game.teams[game.currentTeamIndex];
 
   return (
-    <main className="relative min-h-screen overflow-hidden bg-[#f6f5ff] px-4 py-6 sm:px-6 sm:py-8">
-      <div className="pointer-events-none absolute -left-24 -top-28 h-80 w-80 rounded-full bg-violet-200/50 blur-[100px]" />
-      <div className="pointer-events-none absolute -bottom-24 -right-20 h-80 w-80 rounded-full bg-orange-200/40 blur-[100px]" />
+    <main className="relative min-h-screen overflow-hidden bg-[#f3f8ff] px-4 py-6 sm:px-6 sm:py-8">
+      <div className="pointer-events-none absolute -left-24 -top-28 h-80 w-80 rounded-full bg-blue-200/50 blur-[100px]" />
+      <div className="pointer-events-none absolute -bottom-24 -right-20 h-80 w-80 rounded-full bg-blue-200/40 blur-[100px]" />
       <div className="relative mx-auto w-full max-w-6xl space-y-6">
-      <header className="flex flex-wrap items-center justify-between gap-3 rounded-3xl border border-white bg-white/80 px-5 py-4 shadow-sm backdrop-blur sm:px-6">
+      <header className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-white bg-white/80 px-5 py-4 shadow-sm backdrop-blur sm:px-6">
         <div>
-          <Link href="/games" className="mb-2 inline-flex items-center gap-1.5 text-xs font-semibold text-slate-500 transition hover:text-violet-700">
-            <ArrowLeft size={15} /> Quay lại Games
+          <Link href="/games" className="mb-2 inline-flex items-center gap-1.5 text-xs font-semibold text-slate-500 transition hover:text-blue-700">
+            <ArrowLeft size={15} /> Quay lại trò chơi
           </Link>
-          <p className="text-xs font-bold uppercase tracking-[0.22em] text-violet-500">Party Play · Taboo</p>
+          <p className="text-xs font-bold uppercase tracking-[0.22em] text-blue-500">Party Play · Taboo</p>
           <h1 className="mt-1 text-xl font-black text-slate-900 sm:text-2xl">Vòng chơi của bạn</h1>
         </div>
-        <div className="flex items-center gap-2 rounded-2xl bg-violet-50 px-4 py-2.5 text-sm font-bold text-violet-700">
-          Vòng {game.currentRound}<span className="text-violet-300">/</span>{game.settings.rounds}
+        <div className="flex items-center gap-2 rounded-2xl bg-blue-50 px-4 py-2.5 text-sm font-bold text-blue-700">
+          Vòng {game.currentRound}<span className="text-blue-300">/</span>{game.settings.rounds}
         </div>
       </header>
       <TabooScoreboard

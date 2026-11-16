@@ -41,7 +41,7 @@ export default function SpyVoting({
 
   if (eligiblePlayers.length < 2 || candidates.length < 2) {
     return (
-      <div className="rounded-3xl border border-amber-200 bg-amber-50 p-6 text-center">
+      <div className="rounded-2xl border border-amber-200 bg-amber-50 p-6 text-center">
         <Vote className="mx-auto text-amber-600" size={36} />
 
         <h2 className="mt-4 text-xl font-black text-amber-900">
@@ -101,12 +101,12 @@ export default function SpyVoting({
 
     return (
       <div className="mx-auto max-w-2xl px-4 py-10 sm:px-6 sm:py-14">
-        <div className="rounded-3xl border border-slate-200 bg-white p-7 text-center shadow-sm sm:p-10">
-          <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-3xl bg-violet-100 text-violet-600">
+        <div className="rounded-2xl border border-slate-200 bg-white p-4 text-center shadow-sm sm:p-10">
+          <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-2xl bg-blue-100 text-blue-600">
             <ShieldCheck size={40} />
           </div>
 
-          <p className="mt-6 text-xs font-bold uppercase tracking-widest text-violet-600">
+          <p className="mt-6 text-xs font-bold uppercase tracking-widest text-blue-600">
             Chuyển thiết bị
           </p>
 
@@ -114,8 +114,8 @@ export default function SpyVoting({
             Hãy chuyển điện thoại cho
           </h1>
 
-          <div className="mt-5 rounded-2xl bg-violet-50 p-5">
-            <p className="break-words text-2xl font-black text-violet-800">
+          <div className="mt-5 rounded-2xl bg-blue-50 p-5">
+            <p className="break-words text-2xl font-black text-blue-800">
               {nextPlayer.name}
             </p>
           </div>
@@ -128,7 +128,7 @@ export default function SpyVoting({
           <button
             type="button"
             onClick={continueVoting}
-            className="mt-7 flex h-14 w-full items-center justify-center gap-2 rounded-2xl bg-violet-600 font-bold text-white transition hover:bg-violet-700"
+            className="mt-7 flex h-14 w-full items-center justify-center gap-2 rounded-2xl bg-blue-600 font-bold text-white transition hover:bg-blue-700"
           >
             Tôi đã sẵn sàng
             <ChevronRight size={20} />
@@ -142,7 +142,7 @@ export default function SpyVoting({
     <div className="mx-auto max-w-2xl px-4 py-10 sm:px-6 sm:py-14">
       {/* Header */}
       <div className="text-center">
-        <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-3xl bg-violet-100 text-violet-600">
+        <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-2xl bg-blue-100 text-blue-600">
           <Vote size={40} />
         </div>
 
@@ -158,21 +158,21 @@ export default function SpyVoting({
       </div>
 
       {/* Voting card */}
-      <div className="mt-8 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
+      <div className="mt-6 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6">
         {/* Progress */}
         <div className="flex items-center justify-between">
           <span className="text-sm font-bold text-slate-500">
             LƯỢT BỎ PHIẾU
           </span>
 
-          <span className="rounded-full bg-violet-50 px-3 py-1.5 text-xs font-bold text-violet-700">
+          <span className="rounded-full bg-blue-50 px-3 py-1.5 text-xs font-bold text-blue-700">
             {currentIndex + 1}/{eligiblePlayers.length}
           </span>
         </div>
 
         <div className="mt-3 h-2 overflow-hidden rounded-full bg-slate-100">
           <div
-            className="h-full rounded-full bg-violet-500 transition-all duration-300"
+            className="h-full rounded-full bg-blue-500 transition-all duration-300"
             style={{
               width: `${((currentIndex + 1) / eligiblePlayers.length) * 100}%`,
             }}
@@ -180,18 +180,18 @@ export default function SpyVoting({
         </div>
 
         {/* Current voter */}
-        <div className="mt-6 rounded-2xl bg-violet-50 p-5 text-center">
-          <Eye className="mx-auto text-violet-600" size={25} />
+        <div className="mt-6 rounded-2xl bg-blue-50 p-5 text-center">
+          <Eye className="mx-auto text-blue-600" size={25} />
 
-          <p className="mt-3 text-xs font-bold uppercase tracking-wider text-violet-500">
+          <p className="mt-3 text-xs font-bold uppercase tracking-wider text-blue-500">
             Đến lượt bỏ phiếu
           </p>
 
-          <h2 className="mt-2 break-words text-2xl font-black text-violet-900">
+          <h2 className="mt-2 break-words text-2xl font-black text-blue-900">
             {currentPlayer.name}
           </h2>
 
-          <p className="mt-2 text-xs text-violet-600">
+          <p className="mt-2 text-xs text-blue-600">
             Đảm bảo những người khác không nhìn thấy lựa chọn của bạn.
           </p>
         </div>
@@ -206,7 +206,7 @@ export default function SpyVoting({
           </span>
         </div>
 
-        <div className="mt-4 grid grid-cols-2 gap-3">
+        <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
           {candidates
             .filter((player) => player.id !== currentPlayer.id)
             .map((player) => {
@@ -220,8 +220,8 @@ export default function SpyVoting({
                   onClick={() => setSelectedTarget(player.id)}
                   className={`rounded-2xl border p-4 text-left transition ${
                     active
-                      ? "border-violet-500 bg-violet-50 ring-2 ring-violet-100"
-                      : "border-slate-200 hover:border-violet-300 hover:bg-violet-50/50"
+                      ? "border-blue-500 bg-blue-50 ring-2 ring-blue-100"
+                      : "border-slate-200 hover:border-blue-300 hover:bg-blue-50/50"
                   }`}
                 >
                   <span className="block break-words font-bold text-slate-800">
@@ -229,7 +229,7 @@ export default function SpyVoting({
                   </span>
 
                   {active && (
-                    <span className="mt-2 inline-flex items-center gap-1 text-xs font-bold text-violet-700">
+                    <span className="mt-2 inline-flex items-center gap-1 text-xs font-bold text-blue-700">
                       <Check size={14} />
                       Đã chọn
                     </span>
@@ -244,7 +244,7 @@ export default function SpyVoting({
           type="button"
           disabled={!selectedTarget || isSubmitting}
           onClick={() => setShowConfirm(true)}
-          className="mt-7 flex h-14 w-full items-center justify-center gap-2 rounded-2xl bg-violet-600 font-bold text-white transition hover:bg-violet-700 disabled:cursor-not-allowed disabled:opacity-40"
+          className="mt-7 flex h-14 w-full items-center justify-center gap-2 rounded-2xl bg-blue-600 font-bold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-40"
         >
           Xác nhận phiếu bầu
         </button>
@@ -257,8 +257,8 @@ export default function SpyVoting({
       {/* Confirm modal */}
       {showConfirm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/50 p-4">
-          <div className="w-full max-w-sm rounded-3xl bg-white p-6 shadow-2xl">
-            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-violet-100 text-violet-600">
+          <div className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-2xl">
+            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-100 text-blue-600">
               <Vote size={28} />
             </div>
 
@@ -268,7 +268,7 @@ export default function SpyVoting({
 
             <p className="mt-3 text-center text-sm leading-6 text-slate-500">
               Bạn đang bỏ phiếu cho{" "}
-              <strong className="text-violet-700">
+              <strong className="text-blue-700">
                 {
                   candidates.find((player) => player.id === selectedTarget)
                     ?.name
@@ -281,7 +281,7 @@ export default function SpyVoting({
               Bạn sẽ không thể thay đổi phiếu sau khi xác nhận.
             </p>
 
-            <div className="mt-6 grid grid-cols-2 gap-3">
+            <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2">
               <button
                 type="button"
                 onClick={() => setShowConfirm(false)}
@@ -293,7 +293,7 @@ export default function SpyVoting({
               <button
                 type="button"
                 onClick={submitVote}
-                className="h-12 rounded-xl bg-violet-600 font-bold text-white transition hover:bg-violet-700"
+                className="h-12 rounded-xl bg-blue-600 font-bold text-white transition hover:bg-blue-700"
               >
                 Đồng ý
               </button>

@@ -30,7 +30,7 @@ export default function MemoryCard({
         group relative aspect-[4/5] w-full
         rounded-2xl outline-none
         transition-transform duration-200
-        focus-visible:ring-4 focus-visible:ring-violet-300
+        focus-visible:ring-4 focus-visible:ring-blue-300
         ${
           card.isMatched
             ? "cursor-default"
@@ -50,15 +50,15 @@ export default function MemoryCard({
       >
         {/* Mặt úp */}
         <div
-          className="absolute inset-0 flex flex-col items-center justify-center overflow-hidden rounded-2xl border border-white/70 bg-gradient-to-br from-slate-900 via-violet-900 to-fuchsia-800 shadow-lg [backface-visibility:hidden]"
+          className="absolute inset-0 flex flex-col items-center justify-center overflow-hidden rounded-2xl border border-white/70 bg-gradient-to-br from-slate-900 via-blue-900 to-blue-800 shadow-lg [backface-visibility:hidden]"
         >
           <div className="absolute inset-0 opacity-20">
-            <div className="absolute -right-5 -top-5 h-20 w-20 rounded-full border-[12px] border-fuchsia-200" />
-            <div className="absolute -bottom-7 -left-5 h-24 w-24 rounded-full border-[12px] border-violet-200" />
+            <div className="absolute -right-5 -top-5 h-20 w-20 rounded-full border-[12px] border-blue-200" />
+            <div className="absolute -bottom-7 -left-5 h-24 w-24 rounded-full border-[12px] border-blue-200" />
           </div>
 
           <span className="relative flex h-12 w-12 items-center justify-center rounded-2xl border border-white/20 bg-white/10 text-white shadow-lg backdrop-blur sm:h-14 sm:w-14"><Brain size={26} /></span>
-          <span className="relative mt-3 text-[9px] font-bold uppercase tracking-[0.2em] text-white/60 sm:text-[10px]">Memory</span>
+          <span className="relative mt-3 text-[9px] font-bold uppercase tracking-[0.2em] text-white/60 sm:text-[10px]">GHI NHỚ</span>
         </div>
 
         {/* Mặt ngửa */}
@@ -69,7 +69,7 @@ export default function MemoryCard({
             shadow-md
             [backface-visibility:hidden]
             [transform:rotateY(180deg)]
-            ${card.isMatched ? "border-emerald-300 bg-gradient-to-br from-emerald-50 to-teal-50" : "border-violet-100 bg-gradient-to-br from-white to-violet-50"}
+            ${card.isMatched ? "border-emerald-300 bg-gradient-to-br from-emerald-50 to-blue-50" : "border-blue-100 bg-gradient-to-br from-white to-blue-50"}
           `}
         >
           {card.type === "icon" ? (

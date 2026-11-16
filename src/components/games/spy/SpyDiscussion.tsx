@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Clock3, Eye, Flag, Pause, Play, RotateCcw, Users } from "lucide-react";
+import { Clock3, Flag, Pause, Play, RotateCcw, Users } from "lucide-react";
 
 interface SpyDiscussionProps {
   playerNames: string[];
@@ -31,24 +31,23 @@ export default function SpyDiscussion({
     if (!isRunning || secondsLeft <= 0) return;
 
     const timer = window.setInterval(() => {
-      setSecondsLeft((seconds) => Math.max(0, seconds - 1));
+      if (secondsLeft <= 1) {
+        setSecondsLeft(0);
+        setIsRunning(false);
+      } else {
+        setSecondsLeft((seconds) => Math.max(0, seconds - 1));
+      }
     }, 1000);
 
     return () => window.clearInterval(timer);
   }, [isRunning, secondsLeft]);
 
-  useEffect(() => {
-    if (secondsLeft === 0) {
-      setIsRunning(false);
-    }
-  }, [secondsLeft]);
-
   const progress = minutes > 0 ? (secondsLeft / (minutes * 60)) * 100 : 0;
 
   return (
-    <div className="mx-auto max-w-2xl px-4 py-10 sm:px-6 sm:py-14">
+    <div className="mx-auto max-w-2xl px-4 py-6 sm:px-6 sm:py-14">
       <div className="text-center">
-        <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-3xl bg-amber-100 text-amber-600">
+        <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-2xl bg-amber-100 text-amber-600">
           <Users size={40} />
         </div>
 
@@ -61,12 +60,12 @@ export default function SpyDiscussion({
         </p>
       </div>
 
-      <div className="mt-9 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
+      <div className="mt-6 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:mt-9 sm:p-6">
         <div className="text-center">
           <p className="text-sm font-bold text-slate-500">THỜI GIAN CÒN LẠI</p>
 
           <div
-            className={`mt-3 font-mono text-6xl font-black tracking-tight sm:text-7xl ${
+            className={`mt-3 font-mono text-5xl font-black tracking-tight sm:text-7xl ${
               secondsLeft <= 30 ? "text-rose-600" : "text-slate-900"
             }`}
             role="timer"
@@ -78,14 +77,14 @@ export default function SpyDiscussion({
           <div className="mt-6 h-2 overflow-hidden rounded-full bg-slate-100">
             <div
               className={`h-full rounded-full transition-[width] duration-1000 ${
-                secondsLeft <= 30 ? "bg-rose-500" : "bg-violet-500"
+                secondsLeft <= 30 ? "bg-rose-500" : "bg-blue-500"
               }`}
               style={{ width: `${progress}%` }}
             />
           </div>
         </div>
 
-        <div className="mt-7 grid grid-cols-2 gap-3">
+        <div className="mt-7 grid grid-cols-1 gap-3 sm:grid-cols-2">
           <button
             type="button"
             onClick={() => setIsRunning((running) => !running)}
@@ -109,13 +108,13 @@ export default function SpyDiscussion({
           </button>
         </div>
 
-        <div className="mt-7 rounded-2xl bg-violet-50 p-4">
-          <div className="flex items-center gap-2 text-sm font-bold text-violet-800">
+        <div className="mt-7 rounded-2xl bg-blue-50 p-4">
+          <div className="flex items-center gap-2 text-sm font-bold text-blue-800">
             <Clock3 size={17} />
             Gợi ý cách chơi
           </div>
 
-          <ul className="mt-3 space-y-2 text-sm leading-5 text-violet-900/80">
+          <ul className="mt-3 space-y-2 text-sm leading-5 text-blue-900/80">
             <li>• Mỗi người lần lượt mô tả từ khóa của mình.</li>
             <li>• Không được nói thẳng từ khóa bí mật.</li>
             <li>• Đặt câu hỏi để phát hiện người có mô tả đáng ngờ.</li>
@@ -126,7 +125,7 @@ export default function SpyDiscussion({
         <button
           type="button"
           onClick={() => setShowEndConfirm(true)}
-          className="mt-7 flex h-14 w-full items-center justify-center gap-2 rounded-2xl bg-violet-600 font-bold text-white transition hover:bg-violet-700"
+          className="mt-7 flex h-14 w-full items-center justify-center gap-2 rounded-2xl bg-blue-600 font-bold text-white transition hover:bg-blue-700"
         >
           <Flag size={18} />
           Kết thúc thảo luận và bỏ phiếu
@@ -151,7 +150,7 @@ export default function SpyDiscussion({
           aria-modal="true"
           aria-labelledby="end-game-title"
         >
-          <div className="w-full max-w-sm rounded-3xl bg-white p-6 shadow-2xl">
+          <div className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-2xl">
             <h2
               id="end-game-title"
               className="text-xl font-black text-slate-900"
@@ -164,7 +163,7 @@ export default function SpyDiscussion({
               này, tất cả người chơi còn lại sẽ tiến hành bỏ phiếu.
             </p>
 
-            <div className="mt-6 grid grid-cols-2 gap-3">
+            <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2">
               <button
                 type="button"
                 onClick={() => setShowEndConfirm(false)}
@@ -176,7 +175,7 @@ export default function SpyDiscussion({
               <button
                 type="button"
                 onClick={onFinish}
-                className="h-12 rounded-xl bg-violet-600 font-bold text-white hover:bg-violet-700"
+                className="h-12 rounded-xl bg-blue-600 font-bold text-white hover:bg-blue-700"
               >
                 Bắt đầu bỏ phiếu
               </button>

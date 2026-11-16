@@ -60,7 +60,7 @@ export default function ExploreGamesContent() {
     <>
       <ExploreHeader />
 
-      <div className="mx-auto max-w-7xl px-5 py-10 sm:py-12 lg:px-8">
+      <div className="mx-auto max-w-7xl px-5 py-10 sm:py-10 lg:px-8">
         <GameFilters
           search={search}
           category={category}

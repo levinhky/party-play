@@ -43,15 +43,15 @@ export default function MemoryResults({
   const isTie = winners.length > 1;
 
   return (
-    <div className="min-h-screen bg-[#f6f5ff] px-4 py-8 sm:px-6 sm:py-12">
+    <div className="min-h-screen bg-[#f3f8ff] px-4 py-8 sm:px-6 sm:py-10">
       <div className="mx-auto max-w-3xl">
-      <Link href="/games" className="mb-5 inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-600 shadow-sm transition hover:-translate-x-1 hover:border-violet-200 hover:text-violet-700"><ArrowLeft size={17} />Quay lại trang Games</Link>
+      <Link href="/games" className="mb-5 inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-600 shadow-sm transition hover:-translate-x-1 hover:border-blue-200 hover:text-blue-700"><ArrowLeft size={17} />Quay lại trò chơi</Link>
       {/* Kết quả nổi bật */}
-      <div className="overflow-hidden rounded-3xl border border-violet-100 bg-white shadow-xl shadow-violet-100/60">
-        <div className="bg-gradient-to-br from-violet-600 via-purple-600 to-indigo-600 px-6 py-10 text-center text-white sm:px-10">
+      <div className="overflow-hidden rounded-2xl border border-blue-100 bg-white shadow-xl shadow-blue-100/60">
+        <div className="bg-gradient-to-br from-blue-600 via-blue-600 to-blue-600 px-6 py-10 text-center text-white sm:px-10">
           <div className="text-5xl">🏆</div>
 
-          <p className="mt-4 text-sm font-bold uppercase tracking-[0.2em] text-violet-200">
+          <p className="mt-4 text-sm font-bold uppercase tracking-[0.2em] text-blue-200">
             Hoàn thành trò chơi
           </p>
 
@@ -59,7 +59,7 @@ export default function MemoryResults({
             {isTie ? "Một trận hòa!" : "Chúc mừng chiến thắng!"}
           </h1>
 
-          <p className="mt-3 text-violet-100">
+          <p className="mt-3 text-blue-100">
             {isTie
               ? `Những người chơi đồng hạng nhất: ${winners
                   .map((player) => player.name)
@@ -98,7 +98,7 @@ export default function MemoryResults({
         </div>
 
         {/* Bảng xếp hạng */}
-        <div className="p-5 sm:p-8">
+        <div className="p-5 sm:p-6">
           <h2 className="text-lg font-bold text-slate-900">
             Bảng xếp hạng
           </h2>
@@ -114,7 +114,7 @@ export default function MemoryResults({
                     flex items-center gap-3 rounded-2xl border p-4
                     ${
                       isWinner
-                        ? "border-violet-200 bg-violet-50"
+                        ? "border-blue-200 bg-blue-50"
                         : "border-slate-100 bg-slate-50"
                     }
                   `}
@@ -125,7 +125,7 @@ export default function MemoryResults({
                       rounded-xl text-lg font-black
                       ${
                         index === 0
-                          ? "bg-amber-100 text-amber-700"
+                          ? "bg-blue-100 text-blue-700"
                           : "bg-white text-slate-500"
                       }
                     `}
@@ -150,7 +150,7 @@ export default function MemoryResults({
                   </div>
 
                   <div className="text-right">
-                    <p className="text-xl font-black text-violet-600">
+                    <p className="text-xl font-black text-blue-600">
                       {player.score}
                     </p>
 
@@ -161,11 +161,11 @@ export default function MemoryResults({
             })}
           </div>
 
-          <div className="mt-8 grid grid-cols-1 gap-3 sm:grid-cols-2">
+          <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2">
             <button
               type="button"
               onClick={onPlayAgain}
-              className="rounded-2xl bg-violet-600 px-5 py-3.5 font-bold text-white transition hover:bg-violet-700"
+              className="rounded-2xl bg-blue-600 px-5 py-3.5 font-bold text-white transition hover:bg-blue-700"
             >
               Chơi lại
             </button>

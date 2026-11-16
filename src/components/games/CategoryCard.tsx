@@ -23,11 +23,11 @@ export default function CategoryCard({
   return (
     <Link
       href={href}
-      className="group relative overflow-hidden rounded-3xl p-6 transition duration-300 hover:-translate-y-1 hover:shadow-xl sm:p-8"
+      className="group relative overflow-hidden rounded-2xl p-6 transition duration-300 hover:-translate-y-1 hover:shadow-xl sm:p-6"
       style={{ backgroundColor: background }}
     >
       <div
-        className="pointer-events-none absolute -right-8 -top-8 h-40 w-40 rounded-full opacity-40 transition duration-500 group-hover:scale-125"
+        className="pointer-events-none absolute -right-8 -top-6 h-40 w-40 rounded-full opacity-40 transition duration-500 group-hover:scale-125"
         style={{ backgroundColor: accent }}
       />
 

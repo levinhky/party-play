@@ -5,8 +5,8 @@ export default function Page() {
   return (
     <Suspense
       fallback={
-        <div className="flex min-h-screen items-center justify-center bg-[#09090f] text-white">
-          Đang tải...
+        <div className="flex min-h-screen items-center justify-center bg-[#f3f8ff] text-sm font-semibold text-blue-700">
+          Đang tải phòng...
         </div>
       }
     >

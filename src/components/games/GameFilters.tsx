@@ -1,6 +1,6 @@
 "use client";
 
-import { Search, SlidersHorizontal, X } from "lucide-react";
+import { Search, SlidersHorizontal, X, ChevronDown } from "lucide-react";
 
 export type CategoryFilter = "all" | "party" | "english";
 export type PlayerFilter = "all" | "solo" | "group";
@@ -43,7 +43,7 @@ export default function GameFilters({
   }
 
   return (
-    <section className="rounded-3xl border border-slate-100 bg-white p-4 shadow-sm sm:p-5">
+    <section className="rounded-2xl border border-slate-100 bg-white p-4 shadow-sm sm:p-5">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-center">
         <div className="relative flex-1">
           <Search
@@ -57,7 +57,7 @@ export default function GameFilters({
             onChange={(event) => onSearchChange(event.target.value)}
             placeholder="Tìm trò chơi..."
             aria-label="Tìm trò chơi"
-            className="h-12 w-full rounded-xl border border-slate-200 bg-slate-50 pl-11 pr-10 text-base text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-violet-400 focus:bg-white focus:ring-4 focus:ring-violet-100 sm:text-sm"
+            className="h-12 w-full rounded-xl border border-slate-200 bg-slate-50 pl-11 pr-10 text-base text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-blue-400 focus:bg-white focus:ring-4 focus:ring-blue-100 sm:text-sm"
           />
 
           {search && (
@@ -79,15 +79,18 @@ export default function GameFilters({
             Sắp xếp trò chơi
           </label>
 
-          <select
-            id="game-sort"
-            value={sort}
-            onChange={(event) => onSortChange(event.target.value as SortOption)}
-            className="h-12 min-w-0 flex-1 rounded-xl border border-slate-200 bg-white px-3 text-sm font-semibold text-slate-700 outline-none focus:border-violet-400 focus:ring-4 focus:ring-violet-100 sm:flex-none"
-          >
-            <option value="featured">Nổi bật trước</option>
-            <option value="name">Tên: A–Z</option>
-          </select>
+          <span className="relative min-w-0 flex-1 sm:flex-none">
+            <select
+              id="game-sort"
+              value={sort}
+              onChange={(event) => onSortChange(event.target.value as SortOption)}
+              className="h-12 w-full min-w-0 appearance-none rounded-xl border border-slate-200 bg-white px-3 pr-12 text-sm font-semibold text-slate-700 outline-none focus:border-blue-400 focus:ring-4 focus:ring-blue-100"
+            >
+              <option value="featured">Nổi bật trước</option>
+              <option value="name">Tên: A–Z</option>
+            </select>
+            <ChevronDown aria-hidden="true" size={16} className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-slate-500" />
+          </span>
         </div>
       </div>
 
@@ -109,8 +112,8 @@ export default function GameFilters({
                   aria-pressed={active}
                   className={`rounded-xl px-4 py-2.5 text-sm font-semibold transition ${
                     active
-                      ? "bg-violet-600 text-white shadow-md shadow-violet-200"
-                      : "bg-slate-100 text-slate-600 hover:bg-violet-50 hover:text-violet-700"
+                      ? "bg-blue-600 text-white shadow-md shadow-blue-200"
+                      : "bg-slate-100 text-slate-600 hover:bg-blue-50 hover:text-blue-700"
                   }`}
                 >
                   {item.label}
@@ -129,25 +132,28 @@ export default function GameFilters({
               Số lượng người chơi
             </label>
 
-            <select
-              id="player-filter"
-              value={players}
-              onChange={(event) =>
-                onPlayersChange(event.target.value as PlayerFilter)
-              }
-              className="h-11 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm font-semibold text-slate-700 outline-none focus:border-violet-400 focus:ring-4 focus:ring-violet-100 sm:w-auto sm:min-w-48"
-            >
-              <option value="all">Tất cả số lượng</option>
-              <option value="solo">Có thể chơi một mình</option>
-              <option value="group">Chơi theo nhóm</option>
-            </select>
+            <span className="relative block w-full sm:w-auto sm:min-w-48">
+              <select
+                id="player-filter"
+                value={players}
+                onChange={(event) =>
+                  onPlayersChange(event.target.value as PlayerFilter)
+                }
+                className="h-11 w-full appearance-none rounded-xl border border-slate-200 bg-white px-3 pr-12 text-sm font-semibold text-slate-700 outline-none focus:border-blue-400 focus:ring-4 focus:ring-blue-100"
+              >
+                <option value="all">Tất cả số lượng</option>
+                <option value="solo">Có thể chơi một mình</option>
+                <option value="group">Chơi theo nhóm</option>
+              </select>
+              <ChevronDown aria-hidden="true" size={16} className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-slate-500" />
+            </span>
           </div>
 
           {hasFilters && (
             <button
               type="button"
               onClick={resetFilters}
-              className="inline-flex min-h-11 items-center justify-center gap-2 self-start rounded-xl px-3 text-sm font-semibold text-slate-500 transition hover:bg-slate-100 hover:text-violet-700 sm:self-end"
+              className="inline-flex min-h-11 items-center justify-center gap-2 self-start rounded-xl px-3 text-sm font-semibold text-slate-500 transition hover:bg-slate-100 hover:text-blue-700 sm:self-end"
             >
               <X size={15} />
               Xóa bộ lọc

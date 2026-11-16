@@ -64,7 +64,7 @@ export default function MemoryScoreboard({
             Tiến độ hoàn thành
           </span>
 
-          <span className="font-bold text-violet-600">
+          <span className="font-bold text-blue-600">
             {totalPairs > 0
               ? Math.round((matchedPairs / totalPairs) * 100)
               : 0}
@@ -74,7 +74,7 @@ export default function MemoryScoreboard({
 
         <div className="h-2.5 overflow-hidden rounded-full bg-slate-100">
           <div
-            className="h-full rounded-full bg-gradient-to-r from-violet-500 to-indigo-500 transition-all duration-500"
+            className="h-full rounded-full bg-gradient-to-r from-blue-500 to-blue-500 transition-all duration-500"
             style={{
               width: `${
                 totalPairs > 0 ? (matchedPairs / totalPairs) * 100 : 0
@@ -97,7 +97,7 @@ export default function MemoryScoreboard({
                 transition-colors
                 ${
                   isCurrentPlayer
-                    ? "border-violet-300 bg-white ring-2 ring-violet-100"
+                    ? "border-blue-300 bg-white ring-2 ring-blue-100"
                     : "border-white bg-white/75"
                 }
               `}
@@ -108,7 +108,7 @@ export default function MemoryScoreboard({
                   rounded-xl text-lg
                   ${
                     isCurrentPlayer
-                      ? "bg-gradient-to-br from-violet-500 to-fuchsia-500 text-white"
+                      ? "bg-gradient-to-br from-blue-500 to-blue-500 text-white"
                       : "bg-slate-100 text-slate-600"
                   }
                 `}
@@ -127,7 +127,7 @@ export default function MemoryScoreboard({
               </div>
 
               <div className="text-right">
-                <p className="text-xl font-black text-violet-600">
+                <p className="text-xl font-black text-blue-600">
                   {player.score}
                 </p>
                 <p className="text-[10px] text-slate-400">điểm</p>
@@ -156,7 +156,7 @@ function StatCard({
           {label}
         </span>
 
-        <span aria-hidden="true" className="text-violet-500">{icon}</span>
+        <span aria-hidden="true" className="text-blue-500">{icon}</span>
       </div>
 
       <p className="break-words text-lg font-extrabold text-slate-900 sm:text-xl">

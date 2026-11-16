@@ -24,12 +24,12 @@ export default function SpyPlayerStatus({ players }: SpyPlayerStatusProps) {
   const eliminatedPlayers = players.filter((player) => player.isEliminated);
 
   return (
-    <section className="mb-6 rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+    <section className="mb-6 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
       {/* Header */}
       <div className="flex items-center justify-between gap-3">
         <div>
           <div className="flex items-center gap-2">
-            <Users size={19} className="text-violet-600" />
+            <Users size={19} className="text-blue-600" />
 
             <h2 className="text-lg font-black text-slate-900">
               Tình hình người chơi
@@ -41,7 +41,7 @@ export default function SpyPlayerStatus({ players }: SpyPlayerStatusProps) {
           </p>
         </div>
 
-        <span className="rounded-xl bg-violet-50 px-3 py-2 text-sm font-bold text-violet-700">
+        <span className="rounded-xl bg-blue-50 px-3 py-2 text-sm font-bold text-blue-700">
           {activePlayers.length}/{players.length}
         </span>
       </div>

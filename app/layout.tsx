@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Toaster } from "sonner";
 import { Geist, Geist_Mono } from "next/font/google";
 import AppAccountBar from "@/components/auth/AppAccountBar";
+import NavigationLoading from "@/components/layout/NavigationLoading";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -27,6 +28,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     >
       <body className="min-h-full flex flex-col bg-white!">
         <AppAccountBar />
+        <NavigationLoading />
         {children}
         <Toaster position="top-center" richColors closeButton />
       </body>

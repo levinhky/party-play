@@ -17,7 +17,7 @@ export default function SpyElimination({
 }: SpyEliminationProps) {
   return (
     <div className="mx-auto flex min-h-[70vh] max-w-xl flex-col items-center justify-center px-4 py-10">
-      <div className="flex h-24 w-24 items-center justify-center rounded-3xl bg-rose-100 text-rose-600">
+      <div className="flex h-24 w-24 items-center justify-center rounded-2xl bg-rose-100 text-rose-600">
         <Skull size={46} />
       </div>
 
@@ -34,8 +34,8 @@ export default function SpyElimination({
         chơi.
       </p>
 
-      <div className="mt-8 flex w-full max-w-sm items-center gap-3 rounded-2xl border border-slate-200 bg-white p-4">
-        <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-violet-50 text-violet-600">
+      <div className="mt-6 flex w-full max-w-sm items-center gap-3 rounded-2xl border border-slate-200 bg-white p-4">
+        <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
           <Users size={22} />
         </div>
 
@@ -49,11 +49,11 @@ export default function SpyElimination({
         </div>
       </div>
 
-      <div className="mt-8 w-full max-w-sm">
+      <div className="mt-6 w-full max-w-sm">
         <button
           type="button"
           onClick={onContinue}
-          className="flex h-14 w-full items-center justify-center gap-2 rounded-2xl bg-violet-600 font-bold text-white transition hover:bg-violet-700"
+          className="flex h-14 w-full items-center justify-center gap-2 rounded-2xl bg-blue-600 font-bold text-white transition hover:bg-blue-700"
         >
           Tiếp tục thảo luận
           <ArrowRight size={19} />

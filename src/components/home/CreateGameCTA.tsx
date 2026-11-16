@@ -9,12 +9,12 @@ const benefits = [
 
 export default function CreateGameCTA() {
   return (
-    <section className="mx-auto max-w-7xl px-5 py-16 sm:py-20 lg:px-8">
-      <div className="relative overflow-hidden rounded-[32px] bg-gradient-to-br from-violet-700 via-violet-600 to-indigo-700 px-6 py-10 text-white sm:px-10 sm:py-14 lg:px-16 lg:py-16">
+    <section className="mx-auto max-w-7xl px-5 py-10 sm:py-10 lg:px-8">
+      <div className="relative overflow-hidden rounded-[32px] bg-gradient-to-br from-blue-700 via-blue-600 to-blue-700 px-6 py-10 text-white sm:px-10 sm:py-14 lg:px-16 lg:py-10">
         <div className="pointer-events-none absolute -right-20 -top-20 h-72 w-72 rounded-full border-[40px] border-white/10" />
         <div className="pointer-events-none absolute -bottom-24 right-1/4 h-64 w-64 rounded-full bg-blue-400/20 blur-3xl" />
 
-        <div className="relative z-10 grid items-center gap-10 lg:grid-cols-2">
+        <div className="relative z-10 grid items-center gap-8 lg:grid-cols-2">
           <div>
             <div className="inline-flex items-center gap-2 rounded-full bg-white/15 px-4 py-2">
               <Sparkles size={15} />
@@ -31,7 +31,7 @@ export default function CreateGameCTA() {
               Luật chơi của bạn.
             </h2>
 
-            <p className="mt-5 max-w-lg text-sm leading-7 text-violet-100 sm:text-base">
+            <p className="mt-5 max-w-lg text-sm leading-7 text-blue-100 sm:text-base">
               Tự tạo thẻ ghi nhớ, câu hỏi và bộ sưu tập từ vựng của riêng bạn.
               Biến ý tưởng thành những trò chơi thú vị để mọi người cùng tham
               gia.
@@ -39,17 +39,17 @@ export default function CreateGameCTA() {
 
             <Link
               href="/create"
-              className="mt-8 inline-flex items-center gap-2 rounded-2xl bg-white px-6 py-4 text-sm font-extrabold text-violet-700 transition hover:-translate-y-0.5 hover:bg-violet-50"
+              className="mt-6 inline-flex items-center gap-2 rounded-2xl bg-white px-6 py-4 text-sm font-extrabold text-blue-700 transition hover:-translate-y-0.5 hover:bg-blue-50"
             >
               Bắt đầu sáng tạo
               <ArrowRight size={18} />
             </Link>
           </div>
 
-          <div className="rounded-3xl border border-white/15 bg-white/10 p-5 backdrop-blur sm:p-7">
+          <div className="rounded-2xl border border-white/15 bg-white/10 p-5 backdrop-blur sm:p-7">
             <div className="flex items-center justify-between border-b border-white/15 pb-4">
               <div>
-                <p className="text-xs font-semibold text-violet-200">
+                <p className="text-xs font-semibold text-blue-200">
                   BỘ SƯU TẬP CỦA BẠN
                 </p>
                 <h3 className="mt-1 text-xl font-extrabold">

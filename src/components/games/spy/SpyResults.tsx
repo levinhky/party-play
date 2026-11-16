@@ -72,21 +72,21 @@ export default function SpyResults({
   return (
     <div className="mx-auto w-full max-w-3xl space-y-6 px-4 py-8">
       {/* Header */}
-      <div className="rounded-3xl bg-gradient-to-br from-violet-600 to-indigo-700 p-8 text-center text-white shadow-xl">
+      <div className="rounded-2xl bg-gradient-to-br from-blue-600 to-blue-700 p-6 text-center text-white shadow-xl">
         <div className="mb-4 flex justify-center">
           <Trophy size={52} className="text-yellow-300" />
         </div>
 
         <h1 className="text-3xl font-black">Hoàn thành trò chơi!</h1>
 
-        <p className="mt-2 text-violet-100">Ván chơi đã kết thúc.</p>
+        <p className="mt-2 text-blue-100">Ván chơi đã kết thúc.</p>
 
         {winner && (
           <div className="mt-5 inline-flex items-center gap-2 rounded-full bg-white/15 px-4 py-2">
             <Medal size={18} className="text-yellow-300" />
             <span className="text-sm font-bold">
               {winner === "spy"
-                ? "Điệp viên chiến thắng"
+                ? "Gián điệp chiến thắng"
                 : "Dân thường chiến thắng"}
             </span>
           </div>
@@ -94,7 +94,7 @@ export default function SpyResults({
 
         {winners.length > 0 && (
           <div className="mt-6">
-            <p className="text-sm text-violet-200">Người có điểm cao nhất</p>
+            <p className="text-sm text-blue-200">Người có điểm cao nhất</p>
 
             <p className="mt-1 text-2xl font-bold">
               {winners.map((player) => player.name).join(", ")}
@@ -125,7 +125,7 @@ export default function SpyResults({
                     : index === 1
                       ? "bg-gray-200 text-gray-700"
                       : index === 2
-                        ? "bg-orange-100 text-orange-700"
+                        ? "bg-blue-100 text-blue-700"
                         : "bg-gray-100 text-gray-500"
                 }`}
               >
@@ -143,7 +143,7 @@ export default function SpyResults({
               </div>
 
               <div className="text-right">
-                <p className="text-xl font-bold text-violet-700">
+                <p className="text-xl font-bold text-blue-700">
                   {player.score}
                 </p>
                 <p className="text-xs text-gray-400">điểm</p>
@@ -161,7 +161,7 @@ export default function SpyResults({
           className="flex w-full items-center justify-between gap-3 p-5 text-left transition hover:bg-gray-50"
         >
           <div className="flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-violet-100 text-violet-700">
+            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-100 text-blue-700">
               <History size={22} />
             </div>
 
@@ -267,14 +267,14 @@ export default function SpyResults({
                                   <span className="font-semibold text-gray-700">
                                     {player.name}
                                   </span>
-                                  <span className="font-bold text-violet-700">
+                                  <span className="font-bold text-blue-700">
                                     {count} phiếu
                                   </span>
                                 </div>
 
                                 <div className="h-2 overflow-hidden rounded-full bg-gray-100">
                                   <div
-                                    className="h-full rounded-full bg-violet-500 transition-all"
+                                    className="h-full rounded-full bg-blue-500 transition-all"
                                     style={{ width: `${percentage}%` }}
                                   />
                                 </div>
@@ -318,7 +318,7 @@ export default function SpyResults({
                                   bình chọn
                                 </span>
 
-                                <span className="min-w-0 flex-1 truncate text-right font-semibold text-violet-700">
+                                <span className="min-w-0 flex-1 truncate text-right font-semibold text-blue-700">
                                   {target?.name ?? "Không xác định"}
                                 </span>
                               </div>
@@ -454,7 +454,7 @@ export default function SpyResults({
         <button
           type="button"
           onClick={onPlayAgain}
-          className="flex-1 rounded-xl bg-violet-600 px-5 py-3 font-semibold text-white transition hover:bg-violet-700"
+          className="flex-1 rounded-xl bg-blue-600 px-5 py-3 font-semibold text-white transition hover:bg-blue-700"
         >
           Chia ván mới
         </button>

@@ -155,18 +155,18 @@ export default function SentencePlay({
     }
 
     return selected
-      ? "border-violet-300 bg-violet-50 text-violet-800"
-      : "border-gray-200 bg-white text-gray-700 hover:border-violet-300 hover:bg-violet-50";
+      ? "border-blue-300 bg-blue-50 text-blue-800"
+      : "border-gray-200 bg-white text-gray-700 hover:border-blue-300 hover:bg-blue-50";
   };
 
   return (
     <main className="mx-auto w-full max-w-5xl space-y-6 px-4 py-6">
       <header className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <button type="button" onClick={onBack} className="mb-2 inline-flex items-center gap-1.5 text-sm font-semibold text-gray-500 transition hover:text-violet-700">
+          <button type="button" onClick={onBack} className="mb-2 inline-flex items-center gap-1.5 text-sm font-semibold text-gray-500 transition hover:text-blue-700">
             <ArrowLeft size={16} /> Về thiết lập
           </button>
-          <p className="text-sm font-medium text-violet-600">
+          <p className="text-sm font-medium text-blue-600">
             {question.category}
           </p>
 
@@ -179,9 +179,9 @@ export default function SentencePlay({
           </p>
         </div>
 
-        <div className="rounded-2xl bg-violet-50 px-5 py-3 text-right">
-          <p className="text-xs font-medium text-violet-600">Điểm hiện tại</p>
-          <p className="text-2xl font-extrabold text-violet-700">
+        <div className="rounded-2xl bg-blue-50 px-5 py-3 text-right">
+          <p className="text-xs font-medium text-blue-600">Điểm hiện tại</p>
+          <p className="text-2xl font-extrabold text-blue-700">
             {currentScore}
           </p>
         </div>
@@ -194,7 +194,7 @@ export default function SentencePlay({
               key={team.id}
               className={`rounded-2xl border p-4 ${
                 team.name === currentPlayerName
-                  ? "border-violet-300 bg-violet-50"
+                  ? "border-blue-300 bg-blue-50"
                   : "border-gray-200 bg-white"
               }`}
             >
@@ -209,7 +209,7 @@ export default function SentencePlay({
         </div>
       )}
 
-      <section className="rounded-3xl border border-gray-200 bg-white p-5 shadow-sm sm:p-8">
+      <section className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm sm:p-6">
         <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
           <span className="rounded-full bg-gray-100 px-3 py-1.5 text-sm font-medium text-gray-600">
             {question.difficulty === "easy"
@@ -234,7 +234,7 @@ export default function SentencePlay({
             <button
               type="button"
               onClick={() => setShowTranslation((value) => !value)}
-              className="text-sm font-semibold text-violet-600 hover:text-violet-800"
+              className="text-sm font-semibold text-blue-600 hover:text-blue-800"
             >
               {showTranslation ? "Ẩn nghĩa" : "Hiện nghĩa"}
             </button>
@@ -254,7 +254,7 @@ export default function SentencePlay({
             Câu trả lời của bạn
           </h2>
 
-          <div className="flex min-h-28 flex-wrap content-start gap-2 rounded-2xl border-2 border-dashed border-violet-200 bg-violet-50/40 p-4">
+          <div className="flex min-h-28 flex-wrap content-start gap-2 rounded-2xl border-2 border-dashed border-blue-200 bg-blue-50/40 p-4">
             {selectedWords.map((word) => (
               <button
                 key={word.id}
@@ -374,7 +374,7 @@ export default function SentencePlay({
               <button
                 type="button"
                 onClick={handleCheck}
-                className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-violet-600 px-5 py-3.5 font-bold text-white transition hover:bg-violet-700"
+                className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-blue-600 px-5 py-3.5 font-bold text-white transition hover:bg-blue-700"
               >
                 <CheckCircle2 size={19} />
                 Kiểm tra đáp án
@@ -402,7 +402,7 @@ export default function SentencePlay({
             <button
               type="button"
               onClick={onNext}
-              className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-violet-600 px-5 py-3.5 font-bold text-white transition hover:bg-violet-700"
+              className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-blue-600 px-5 py-3.5 font-bold text-white transition hover:bg-blue-700"
             >
               Câu tiếp theo
               <ArrowRight size={19} />

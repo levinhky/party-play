@@ -25,10 +25,10 @@ const categories = [
 
 export default function CategorySection() {
   return (
-    <section className="mx-auto max-w-7xl px-5 py-16 sm:py-20 lg:px-8">
-      <div className="mb-8 flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
+    <section className="mx-auto max-w-7xl px-5 py-10 sm:py-10 lg:px-8">
+      <div className="mb-6 flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
         <div>
-          <p className="text-sm font-bold uppercase tracking-widest text-violet-600">
+          <p className="text-sm font-bold uppercase tracking-widest text-blue-600">
             Chọn phong cách của bạn
           </p>
 

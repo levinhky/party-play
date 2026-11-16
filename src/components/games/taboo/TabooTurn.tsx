@@ -34,9 +34,9 @@ export default function TabooTurn({
 
   return (
     <section className="mx-auto max-w-3xl">
-      <div className="mb-5 flex flex-wrap items-center justify-between gap-4 rounded-3xl border border-white bg-white/85 p-4 shadow-sm backdrop-blur sm:px-6">
+      <div className="mb-5 flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-white bg-white/85 p-4 shadow-sm backdrop-blur sm:px-6">
         <div className="flex items-center gap-3">
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-violet-500 to-fuchsia-500 text-white shadow-lg shadow-violet-200">
+          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-500 to-blue-500 text-white shadow-lg shadow-blue-200">
             <span className="text-lg font-black">{team.name.slice(0, 1).toUpperCase()}</span>
           </div>
           <div>
@@ -44,12 +44,12 @@ export default function TabooTurn({
             <p className="mt-0.5 max-w-[55vw] truncate text-lg font-black text-slate-900">{team.name}</p>
           </div>
         </div>
-        <div className={`flex items-center gap-2 rounded-2xl px-4 py-2.5 ${urgent ? "bg-rose-50 text-rose-600" : "bg-violet-50 text-violet-700"}`}>
+        <div className={`flex items-center gap-2 rounded-2xl px-4 py-2.5 ${urgent ? "bg-rose-50 text-rose-600" : "bg-blue-50 text-blue-700"}`}>
           <Timer size={18} />
           <span className="font-mono text-2xl font-black tabular-nums">{formattedTime}</span>
         </div>
         <div className="h-2 w-full overflow-hidden rounded-full bg-slate-100">
-          <div className={`h-full rounded-full transition-[width] duration-1000 ${urgent ? "bg-rose-500" : "bg-gradient-to-r from-violet-500 to-fuchsia-500"}`} style={{ width: `${percentage}%` }} />
+          <div className={`h-full rounded-full transition-[width] duration-1000 ${urgent ? "bg-rose-500" : "bg-gradient-to-r from-blue-500 to-blue-500"}`} style={{ width: `${percentage}%` }} />
         </div>
       </div>
 

@@ -369,13 +369,13 @@ export default function SpySetup({ onStart }: SpySetupProps) {
   }
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6 sm:py-12">
+    <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6 sm:py-10">
       <div className="text-center">
-        <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-3xl bg-violet-100 text-4xl">
+        <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-2xl bg-blue-100 text-4xl">
           🕵️
         </div>
 
-        <div className="mt-5 inline-flex items-center gap-2 rounded-full bg-violet-50 px-3 py-1.5 text-xs font-bold text-violet-700">
+        <div className="mt-5 inline-flex items-center gap-2 rounded-full bg-blue-50 px-3 py-1.5 text-xs font-bold text-blue-700">
           <Sparkles size={14} />
           TRÒ CHƠI TẬP THỂ
         </div>
@@ -392,11 +392,11 @@ export default function SpySetup({ onStart }: SpySetupProps) {
 
       <div className="mt-10 space-y-6">
         {/* Người chơi */}
-        <section className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
+        <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
           <div className="flex items-center justify-between gap-3">
             <div>
               <div className="flex items-center gap-2">
-                <Users size={19} className="text-violet-600" />
+                <Users size={19} className="text-blue-600" />
 
                 <h2 className="text-lg font-extrabold text-slate-900">
                   Người chơi
@@ -406,7 +406,7 @@ export default function SpySetup({ onStart }: SpySetupProps) {
               <p className="mt-1 text-sm text-slate-500">Từ 4 đến 20 người</p>
             </div>
 
-            <span className="rounded-xl bg-violet-50 px-3 py-2 text-sm font-bold text-violet-700">
+            <span className="rounded-xl bg-blue-50 px-3 py-2 text-sm font-bold text-blue-700">
               {playerNames.length} người
             </span>
           </div>
@@ -426,7 +426,7 @@ export default function SpySetup({ onStart }: SpySetupProps) {
                   maxLength={30}
                   placeholder={`Tên người chơi ${index + 1}`}
                   aria-label={`Tên người chơi ${index + 1}`}
-                  className="h-11 min-w-0 flex-1 rounded-xl border border-slate-200 px-3 text-sm text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-violet-400 focus:ring-4 focus:ring-violet-100"
+                  className="h-11 min-w-0 flex-1 rounded-xl border border-slate-200 px-3 text-sm text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-blue-400 focus:ring-4 focus:ring-blue-100"
                 />
 
                 <button
@@ -446,7 +446,7 @@ export default function SpySetup({ onStart }: SpySetupProps) {
             type="button"
             onClick={addPlayer}
             disabled={playerNames.length >= 20}
-            className="mt-4 inline-flex h-11 w-full items-center justify-center gap-2 rounded-xl border border-dashed border-violet-300 text-sm font-bold text-violet-700 transition hover:bg-violet-50 disabled:opacity-40"
+            className="mt-4 inline-flex h-11 w-full items-center justify-center gap-2 rounded-xl border border-dashed border-blue-300 text-sm font-bold text-blue-700 transition hover:bg-blue-50 disabled:opacity-40"
           >
             <Plus size={17} />
             Thêm người chơi
@@ -454,7 +454,7 @@ export default function SpySetup({ onStart }: SpySetupProps) {
         </section>
 
         {/* Số lượng gián điệp */}
-        <section className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
+        <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
           <div className="flex items-center gap-2">
             <span className="text-xl">🕶️</span>
 
@@ -480,8 +480,8 @@ export default function SpySetup({ onStart }: SpySetupProps) {
                   onClick={() => setSpyCount(count)}
                   className={`rounded-2xl border p-4 text-center transition ${
                     active
-                      ? "border-violet-500 bg-violet-50 text-violet-700 ring-2 ring-violet-100"
-                      : "border-slate-200 text-slate-600 hover:border-violet-200"
+                      ? "border-blue-500 bg-blue-50 text-blue-700 ring-2 ring-blue-100"
+                      : "border-slate-200 text-slate-600 hover:border-blue-200"
                   } disabled:cursor-not-allowed disabled:opacity-30`}
                 >
                   <span className="block text-2xl font-black">{count}</span>
@@ -501,7 +501,7 @@ export default function SpySetup({ onStart }: SpySetupProps) {
         </section>
 
         {/* Chủ đề */}
-        <section className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
+        <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
           <div className="flex items-center gap-2">
             <span className="text-xl">🎯</span>
 
@@ -525,8 +525,8 @@ export default function SpySetup({ onStart }: SpySetupProps) {
                   onClick={() => handleCategoryChange(item)}
                   className={`rounded-xl px-4 py-2.5 text-sm font-semibold transition ${
                     active
-                      ? "bg-violet-600 text-white"
-                      : "bg-slate-100 text-slate-600 hover:bg-violet-50 hover:text-violet-700"
+                      ? "bg-blue-600 text-white"
+                      : "bg-slate-100 text-slate-600 hover:bg-blue-50 hover:text-blue-700"
                   }`}
                 >
                   {item}
@@ -537,9 +537,9 @@ export default function SpySetup({ onStart }: SpySetupProps) {
         </section>
 
         {/* Nguồn từ khóa */}
-        <section className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
+        <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
           <div className="flex items-center gap-2">
-            <Library size={19} className="text-violet-600" />
+            <Library size={19} className="text-blue-600" />
 
             <h2 className="text-lg font-extrabold text-slate-900">
               Nguồn từ khóa
@@ -579,14 +579,14 @@ export default function SpySetup({ onStart }: SpySetupProps) {
                   }
                   className={`flex w-full items-start gap-3 rounded-2xl border p-4 text-left transition ${
                     active
-                      ? "border-violet-500 bg-violet-50 ring-2 ring-violet-100"
-                      : "border-slate-200 hover:border-violet-200"
+                      ? "border-blue-500 bg-blue-50 ring-2 ring-blue-100"
+                      : "border-slate-200 hover:border-blue-200"
                   }`}
                 >
                   <div
                     className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border ${
                       active
-                        ? "border-violet-600 bg-violet-600 text-white"
+                        ? "border-blue-600 bg-blue-600 text-white"
                         : "border-slate-300"
                     }`}
                   >
@@ -621,7 +621,7 @@ export default function SpySetup({ onStart }: SpySetupProps) {
         </section>
 
         {/* Quản lý từ khóa - mặc định thu gọn */}
-        <section className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
+        <section className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
           <button
             type="button"
             onClick={toggleCustomWords}
@@ -630,7 +630,7 @@ export default function SpySetup({ onStart }: SpySetupProps) {
             className="flex w-full items-center justify-between gap-3 p-5 text-left transition hover:bg-slate-50 sm:p-7"
           >
             <div className="flex min-w-0 items-center gap-3">
-              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-violet-50 text-violet-600">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-blue-50 text-blue-600">
                 <BookOpen size={20} />
               </div>
 
@@ -646,7 +646,7 @@ export default function SpySetup({ onStart }: SpySetupProps) {
             </div>
 
             <div className="flex shrink-0 items-center gap-2">
-              <span className="rounded-xl bg-violet-50 px-3 py-2 text-xs font-bold text-violet-700 sm:text-sm">
+              <span className="rounded-xl bg-blue-50 px-3 py-2 text-xs font-bold text-blue-700 sm:text-sm">
                 {customWordPairs.length} cặp từ
               </span>
 
@@ -672,14 +672,14 @@ export default function SpySetup({ onStart }: SpySetupProps) {
               <button
                 type="button"
                 onClick={openAddWordEditor}
-                className="mt-5 flex h-12 w-full items-center justify-center gap-2 rounded-xl border border-dashed border-violet-300 text-sm font-bold text-violet-700 transition hover:bg-violet-50"
+                className="mt-5 flex h-12 w-full items-center justify-center gap-2 rounded-xl border border-dashed border-blue-300 text-sm font-bold text-blue-700 transition hover:bg-blue-50"
               >
                 <Plus size={18} />
                 Thêm cặp từ mới
               </button>
 
               {isWordEditorOpen && (
-                <div className="mt-5 rounded-2xl border border-violet-200 bg-violet-50/60 p-4 sm:p-5">
+                <div className="mt-5 rounded-2xl border border-blue-200 bg-blue-50/60 p-4 sm:p-5">
                   <div className="flex items-center justify-between gap-3">
                     <h3 className="font-extrabold text-slate-900">
                       {editingWordId ? "Chỉnh sửa cặp từ" : "Thêm cặp từ"}
@@ -715,7 +715,7 @@ export default function SpySetup({ onStart }: SpySetupProps) {
                         }
                         maxLength={40}
                         placeholder="Ví dụ: Du lịch"
-                        className="h-11 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm outline-none focus:border-violet-400 focus:ring-4 focus:ring-violet-100"
+                        className="h-11 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm outline-none focus:border-blue-400 focus:ring-4 focus:ring-blue-100"
                       />
                     </div>
 
@@ -734,7 +734,7 @@ export default function SpySetup({ onStart }: SpySetupProps) {
                         }
                         maxLength={60}
                         placeholder="Ví dụ: Đà Lạt"
-                        className="h-11 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm outline-none focus:border-violet-400 focus:ring-4 focus:ring-violet-100"
+                        className="h-11 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm outline-none focus:border-blue-400 focus:ring-4 focus:ring-blue-100"
                       />
                     </div>
 
@@ -753,7 +753,7 @@ export default function SpySetup({ onStart }: SpySetupProps) {
                         }
                         maxLength={60}
                         placeholder="Ví dụ: Sa Pa"
-                        className="h-11 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm outline-none focus:border-violet-400 focus:ring-4 focus:ring-violet-100"
+                        className="h-11 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm outline-none focus:border-blue-400 focus:ring-4 focus:ring-blue-100"
                       />
                     </div>
 
@@ -769,7 +769,7 @@ export default function SpySetup({ onStart }: SpySetupProps) {
                     <button
                       type="button"
                       onClick={saveWordPair}
-                      className="flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-violet-600 font-bold text-white transition hover:bg-violet-700"
+                      className="flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-blue-600 font-bold text-white transition hover:bg-blue-700"
                     >
                       <Save size={17} />
                       {editingWordId ? "Lưu thay đổi" : "Thêm vào danh sách"}
@@ -799,11 +799,11 @@ export default function SpySetup({ onStart }: SpySetupProps) {
                     >
                       <div className="flex items-start justify-between gap-3">
                         <div className="min-w-0 flex-1">
-                          <span className="inline-flex rounded-lg bg-violet-50 px-2.5 py-1 text-xs font-bold text-violet-700">
+                          <span className="inline-flex rounded-lg bg-blue-50 px-2.5 py-1 text-xs font-bold text-blue-700">
                             {pair.category}
                           </span>
 
-                          <div className="mt-3 grid grid-cols-[1fr_auto_1fr] items-center gap-2">
+                          <div className="mt-3 grid grid-cols-1 items-start gap-2 sm:grid-cols-[1fr_auto_1fr] sm:items-center">
                             <div className="min-w-0">
                               <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
                                 Dân thường
@@ -814,8 +814,8 @@ export default function SpySetup({ onStart }: SpySetupProps) {
                               </p>
                             </div>
 
-                            <span className="text-xs font-bold text-slate-300">
-                              VS
+                            <span className="hidden text-xs font-bold text-slate-300 sm:inline">
+                              ĐỐI ĐẦU
                             </span>
 
                             <div className="min-w-0">
@@ -835,7 +835,7 @@ export default function SpySetup({ onStart }: SpySetupProps) {
                             type="button"
                             onClick={() => openEditWordEditor(pair)}
                             aria-label={`Sửa cặp từ ${pair.word}`}
-                            className="flex h-9 w-9 items-center justify-center rounded-xl text-slate-400 transition hover:bg-violet-50 hover:text-violet-600"
+                            className="flex h-9 w-9 items-center justify-center rounded-xl text-slate-400 transition hover:bg-blue-50 hover:text-blue-600"
                           >
                             <Pencil size={16} />
                           </button>
@@ -859,9 +859,9 @@ export default function SpySetup({ onStart }: SpySetupProps) {
         </section>
 
         {/* Chế độ chơi */}
-        <section className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
+        <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
           <div className="flex items-center gap-2">
-            <Settings2 size={19} className="text-violet-600" />
+            <Settings2 size={19} className="text-blue-600" />
 
             <h2 className="text-lg font-extrabold text-slate-900">
               Chế độ gián điệp
@@ -874,8 +874,8 @@ export default function SpySetup({ onStart }: SpySetupProps) {
               onClick={() => setMode("different-word")}
               className={`w-full rounded-2xl border p-4 text-left transition ${
                 mode === "different-word"
-                  ? "border-violet-500 bg-violet-50 ring-2 ring-violet-100"
-                  : "border-slate-200 hover:border-violet-200"
+                  ? "border-blue-500 bg-blue-50 ring-2 ring-blue-100"
+                  : "border-slate-200 hover:border-blue-200"
               }`}
             >
               <div className="flex items-start gap-3">
@@ -896,8 +896,8 @@ export default function SpySetup({ onStart }: SpySetupProps) {
               onClick={() => setMode("no-word")}
               className={`w-full rounded-2xl border p-4 text-left transition ${
                 mode === "no-word"
-                  ? "border-violet-500 bg-violet-50 ring-2 ring-violet-100"
-                  : "border-slate-200 hover:border-violet-200"
+                  ? "border-blue-500 bg-blue-50 ring-2 ring-blue-100"
+                  : "border-slate-200 hover:border-blue-200"
               }`}
             >
               <div className="flex items-start gap-3">
@@ -919,31 +919,31 @@ export default function SpySetup({ onStart }: SpySetupProps) {
         </section>
 
         {/* Thời gian */}
-        <section className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
+        <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
           <h2 className="text-lg font-extrabold text-slate-900">
             ⏱ Thời gian thảo luận
           </h2>
 
           <p className="mt-1 text-sm text-slate-500">
-            Chọn thời gian cho mỗi ván.
+            Nhập thời gian cho mỗi ván (từ 1 đến 120 phút).
           </p>
 
-          <div className="mt-4 grid grid-cols-3 gap-3">
-            {[3, 5, 10].map((minutes) => (
-              <button
-                key={minutes}
-                type="button"
-                onClick={() => setDiscussionMinutes(minutes)}
-                className={`rounded-xl border px-3 py-3 text-sm font-bold transition ${
-                  discussionMinutes === minutes
-                    ? "border-violet-500 bg-violet-50 text-violet-700"
-                    : "border-slate-200 text-slate-600 hover:border-violet-200"
-                }`}
-              >
-                {minutes} phút
-              </button>
-            ))}
-          </div>
+          <label className="mt-4 flex max-w-xs items-center gap-3 text-sm font-semibold text-slate-700">
+            <input
+              type="number"
+              min={1}
+              max={120}
+              step={1}
+              value={discussionMinutes}
+              onChange={(event) => {
+                const value = Number(event.target.value);
+                if (Number.isInteger(value) && value >= 1 && value <= 120) setDiscussionMinutes(value);
+              }}
+              className="h-12 w-32 rounded-xl border border-slate-200 bg-white px-4 text-base font-bold text-slate-900 outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
+              aria-label="Thời gian thảo luận tính bằng phút"
+            />
+            phút
+          </label>
         </section>
 
         {nameError && (
@@ -958,7 +958,7 @@ export default function SpySetup({ onStart }: SpySetupProps) {
         <button
           type="button"
           onClick={handleStart}
-          className="flex h-14 w-full items-center justify-center gap-2 rounded-2xl bg-violet-600 px-6 text-base font-extrabold text-white shadow-lg shadow-violet-200 transition hover:bg-violet-700 active:scale-[0.99]"
+          className="flex h-14 w-full items-center justify-center gap-2 rounded-2xl bg-blue-600 px-6 text-base font-extrabold text-white shadow-lg shadow-blue-200 transition hover:bg-blue-700 active:scale-[0.99]"
         >
           <Shuffle size={19} />
           Chia vai bí mật

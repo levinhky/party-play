@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, BookOpen, Plus, Trash2, Sparkles, ChevronDown } from "lucide-react";
+import { ArrowLeft, BookOpen, Plus, Trash2, Sparkles, ChevronDown, Pencil, X, Minus, ChevronDown as SelectChevronDown } from "lucide-react";
 import { tabooCards } from "@/data/tabooCards";
 import type { TabooCardData, TabooSettings, TabooTeam } from "@/types/taboo";
 
@@ -11,8 +11,8 @@ interface TabooSetupProps {
 }
 
 const teamColors = [
-  "bg-violet-100 text-violet-700",
-  "bg-orange-100 text-orange-700",
+  "bg-blue-100 text-blue-700",
+  "bg-blue-100 text-blue-700",
   "bg-emerald-100 text-emerald-700",
   "bg-sky-100 text-sky-700",
 ];
@@ -35,7 +35,7 @@ export default function TabooSetup({ onStart }: TabooSetupProps) {
   const [playMode, setPlayMode] = useState<TabooSettings["mode"]>("individual");
   const [teamNames, setTeamNames] = useState(["Người chơi 1", "Người chơi 2"]);
   const [turnDuration, setTurnDuration] = useState<30 | 60 | 90>(60);
-  const [rounds, setRounds] = useState(3);
+  const [rounds, setRounds] = useState(1);
   const [customCards, setCustomCards] = useState<TabooCardData[]>([]);
   const [cardsLoaded, setCardsLoaded] = useState(false);
   const [deckSource, setDeckSource] = useState<DeckSource>("default");
@@ -43,6 +43,7 @@ export default function TabooSetup({ onStart }: TabooSetupProps) {
   const [forbiddenWords, setForbiddenWords] = useState("");
   const [category, setCategory] = useState("Tự tạo");
   const [difficulty, setDifficulty] = useState<TabooCardData["difficulty"]>("medium");
+  const [editingCardId, setEditingCardId] = useState<string | null>(null);
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -122,25 +123,50 @@ export default function TabooSetup({ onStart }: TabooSetupProps) {
       setError("Từ khóa chính không thể đồng thời là từ cấm.");
       return;
     }
-    if (customCards.some((card) => card.word.toLocaleLowerCase("vi") === cleanWord.toLocaleLowerCase("vi"))) {
+    if (customCards.some((card) => card.id !== editingCardId && card.word.toLocaleLowerCase("vi") === cleanWord.toLocaleLowerCase("vi"))) {
       setError("Từ khóa này đã có trong bộ thẻ tự tạo.");
       return;
     }
-    setCustomCards((current) => [...current, {
-      id: `custom-${Date.now()}`,
+    const updatedCard: TabooCardData = {
+      id: editingCardId ?? `custom-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
       word: cleanWord,
       forbiddenWords: cleanForbiddenWords.slice(0, 6),
       category: category.trim() || "Tự tạo",
       difficulty,
-    }]);
-    setDeckSource((current) => current === "default" ? "custom" : current);
+    };
+    setCustomCards((current) => editingCardId
+      ? current.map((card) => card.id === editingCardId ? updatedCard : card)
+      : [...current, updatedCard]);
+    if (!editingCardId) setDeckSource((current) => current === "default" ? "custom" : current);
+    setEditingCardId(null);
     setWord("");
     setForbiddenWords("");
+    setCategory("Tự tạo");
+    setDifficulty("medium");
+    setError("");
+  }
+
+  function editCustomCard(card: TabooCardData) {
+    setEditingCardId(card.id);
+    setWord(card.word);
+    setForbiddenWords(card.forbiddenWords.join(", "));
+    setCategory(card.category);
+    setDifficulty(card.difficulty);
+    setError("");
+  }
+
+  function cancelEdit() {
+    setEditingCardId(null);
+    setWord("");
+    setForbiddenWords("");
+    setCategory("Tự tạo");
+    setDifficulty("medium");
     setError("");
   }
 
   function removeCustomCard(id: string) {
     setCustomCards((current) => current.filter((card) => card.id !== id));
+    if (editingCardId === id) cancelEdit();
   }
 
   function handleStart() {
@@ -189,15 +215,15 @@ export default function TabooSetup({ onStart }: TabooSetupProps) {
   return (
     <main className="min-h-screen bg-slate-50 px-4 py-10 sm:px-6">
       <div className="mx-auto max-w-4xl">
-        <Link href="/games" className="mb-6 inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-600 shadow-sm transition hover:-translate-x-1 hover:border-violet-200 hover:text-violet-700">
+        <Link href="/games" className="mb-6 inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-600 shadow-sm transition hover:-translate-x-1 hover:border-blue-200 hover:text-blue-700">
           <ArrowLeft size={17} /> Quay lại
         </Link>
-        <header className="mb-8 text-center">
-          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-3xl bg-orange-100 text-3xl">
+        <header className="mb-6 text-center">
+          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-100 text-3xl">
             🗣️
           </div>
 
-          <p className="text-sm font-bold uppercase tracking-[0.2em] text-violet-600">
+          <p className="text-sm font-bold uppercase tracking-[0.2em] text-blue-600">
             PARTY PLAY
           </p>
 
@@ -211,7 +237,7 @@ export default function TabooSetup({ onStart }: TabooSetupProps) {
           </p>
         </header>
 
-        <div className="space-y-8 rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-8">
+        <div className="space-y-6 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
           <section>
             <div className="flex items-center justify-between gap-3">
               <div>
@@ -231,7 +257,7 @@ export default function TabooSetup({ onStart }: TabooSetupProps) {
               <button
                 type="button"
                 onClick={() => changePlayMode("individual")}
-                className={`rounded-2xl border-2 p-4 text-left transition ${playMode === "individual" ? "border-violet-500 bg-violet-50" : "border-slate-200 hover:border-violet-200"}`}
+                className={`rounded-2xl border-2 p-4 text-left transition ${playMode === "individual" ? "border-blue-500 bg-blue-50" : "border-slate-200 hover:border-blue-200"}`}
               >
                 <span className="block font-bold text-slate-900">Từng người</span>
                 <span className="mt-1 block text-xs text-slate-500">Mỗi người tự ghi điểm</span>
@@ -239,7 +265,7 @@ export default function TabooSetup({ onStart }: TabooSetupProps) {
               <button
                 type="button"
                 onClick={() => changePlayMode("teams")}
-                className={`rounded-2xl border-2 p-4 text-left transition ${playMode === "teams" ? "border-violet-500 bg-violet-50" : "border-slate-200 hover:border-violet-200"}`}
+                className={`rounded-2xl border-2 p-4 text-left transition ${playMode === "teams" ? "border-blue-500 bg-blue-50" : "border-slate-200 hover:border-blue-200"}`}
               >
                 <span className="block font-bold text-slate-900">Theo đội</span>
                 <span className="mt-1 block text-xs text-slate-500">Có thể chơi với 1 đến 4 đội</span>
@@ -264,7 +290,7 @@ export default function TabooSetup({ onStart }: TabooSetupProps) {
                     }
                     maxLength={30}
                     aria-label={playMode === "individual" ? `Tên người chơi ${index + 1}` : `Tên đội ${index + 1}`}
-                    className="h-11 min-w-0 flex-1 rounded-xl border border-slate-200 px-4 text-sm outline-none transition focus:border-violet-500 focus:ring-4 focus:ring-violet-100"
+                    className="h-11 min-w-0 flex-1 rounded-xl border border-slate-200 px-4 text-sm outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
                     placeholder={playMode === "individual" ? `Tên người chơi ${index + 1}` : `Tên đội ${index + 1}`}
                   />
 
@@ -286,7 +312,7 @@ export default function TabooSetup({ onStart }: TabooSetupProps) {
               <button
                 type="button"
                 onClick={addTeam}
-                className="mt-3 rounded-xl px-3 py-2 text-sm font-bold text-violet-600 transition hover:bg-violet-50"
+                className="mt-3 rounded-xl px-3 py-2 text-sm font-bold text-blue-600 transition hover:bg-blue-50"
               >
                 + Thêm {playMode === "individual" ? "người chơi" : "đội"}
               </button>
@@ -295,7 +321,7 @@ export default function TabooSetup({ onStart }: TabooSetupProps) {
 
           <section className="border-t border-slate-100 pt-7">
             <div className="flex items-start gap-3">
-              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-orange-100 text-orange-600">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-blue-100 text-blue-600">
                 <BookOpen size={21} />
               </div>
               <div>
@@ -314,7 +340,7 @@ export default function TabooSetup({ onStart }: TabooSetupProps) {
                   key={value}
                   type="button"
                   onClick={() => setDeckSource(value)}
-                  className={`rounded-2xl border-2 p-4 text-left transition ${deckSource === value ? "border-orange-400 bg-orange-50" : "border-slate-200 hover:border-orange-200"}`}
+                  className={`rounded-2xl border-2 p-4 text-left transition ${deckSource === value ? "border-blue-400 bg-blue-50" : "border-slate-200 hover:border-blue-200"}`}
                 >
                   <span className="block font-bold text-slate-900">{title}</span>
                   <span className="mt-1 block text-xs text-slate-500">{description}</span>
@@ -331,31 +357,37 @@ export default function TabooSetup({ onStart }: TabooSetupProps) {
                 <ChevronDown size={19} className="shrink-0 text-slate-500 transition-transform group-open:rotate-180" />
               </summary>
               <div className="border-t border-slate-200 p-4 sm:p-5">
-              <h3 className="font-bold text-slate-800">Tạo thẻ mới</h3>
+              <h3 className="font-bold text-slate-800">{editingCardId ? "Chỉnh sửa thẻ" : "Tạo thẻ mới"}</h3>
               <div className="mt-3 grid gap-3 sm:grid-cols-2">
                 <label className="text-xs font-semibold text-slate-600">
                   Từ khóa cần diễn tả
-                  <input value={word} onChange={(event) => setWord(event.target.value)} maxLength={50} className="mt-1.5 h-11 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm font-normal text-slate-900 outline-none focus:border-orange-400 focus:ring-4 focus:ring-orange-100" placeholder="Ví dụ: COFFEE" />
+                  <input value={word} onChange={(event) => setWord(event.target.value)} maxLength={50} className="mt-1.5 h-11 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm font-normal text-slate-900 outline-none focus:border-blue-400 focus:ring-4 focus:ring-blue-100" placeholder="Ví dụ: COFFEE" />
                 </label>
                 <label className="text-xs font-semibold text-slate-600">
                   Chủ đề
-                  <input value={category} onChange={(event) => setCategory(event.target.value)} maxLength={24} className="mt-1.5 h-11 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm font-normal text-slate-900 outline-none focus:border-orange-400 focus:ring-4 focus:ring-orange-100" placeholder="Ví dụ: Food" />
+                  <input value={category} onChange={(event) => setCategory(event.target.value)} maxLength={24} className="mt-1.5 h-11 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm font-normal text-slate-900 outline-none focus:border-blue-400 focus:ring-4 focus:ring-blue-100" placeholder="Ví dụ: Food" />
                 </label>
                 <label className="text-xs font-semibold text-slate-600 sm:col-span-2">
                   Từ cấm (3–6 từ, cách nhau bằng dấu phẩy)
-                  <input value={forbiddenWords} onChange={(event) => setForbiddenWords(event.target.value)} maxLength={180} className="mt-1.5 h-11 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm font-normal text-slate-900 outline-none focus:border-orange-400 focus:ring-4 focus:ring-orange-100" placeholder="Ví dụ: drink, hot, bean, cup, morning" />
+                  <input value={forbiddenWords} onChange={(event) => setForbiddenWords(event.target.value)} maxLength={180} className="mt-1.5 h-11 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm font-normal text-slate-900 outline-none focus:border-blue-400 focus:ring-4 focus:ring-blue-100" placeholder="Ví dụ: drink, hot, bean, cup, morning" />
                 </label>
                 <label className="text-xs font-semibold text-slate-600">
                   Độ khó
-                  <select value={difficulty} onChange={(event) => setDifficulty(event.target.value as TabooCardData["difficulty"])} className="mt-1.5 h-11 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm font-normal text-slate-900 outline-none focus:border-orange-400 focus:ring-4 focus:ring-orange-100">
-                    <option value="easy">Dễ</option>
-                    <option value="medium">Trung bình</option>
-                    <option value="hard">Khó</option>
-                  </select>
+                  <span className="relative mt-1.5 block">
+                    <select value={difficulty} onChange={(event) => setDifficulty(event.target.value as TabooCardData["difficulty"])} className="h-11 w-full appearance-none rounded-xl border border-slate-200 bg-white px-3 pr-12 text-sm font-normal text-slate-900 outline-none focus:border-blue-400 focus:ring-4 focus:ring-blue-100">
+                      <option value="easy">Dễ</option>
+                      <option value="medium">Trung bình</option>
+                      <option value="hard">Khó</option>
+                    </select>
+                    <SelectChevronDown aria-hidden="true" size={16} className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-slate-500" />
+                  </span>
                 </label>
-                <button type="button" onClick={addCustomCard} className="mt-4 inline-flex h-11 items-center justify-center gap-2 self-end rounded-xl bg-slate-900 px-4 text-sm font-bold text-white transition hover:bg-slate-700">
-                  <Plus size={17} /> Thêm thẻ
-                </button>
+                <div className="mt-4 flex items-center gap-2 self-end">
+                  {editingCardId && <button type="button" onClick={cancelEdit} className="inline-flex h-11 items-center justify-center gap-2 rounded-xl border border-slate-200 px-3 text-sm font-bold text-slate-600 transition hover:bg-slate-50"><X size={16} /> Hủy</button>}
+                  <button type="button" onClick={addCustomCard} className="inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-blue-600 px-4 text-sm font-bold text-white transition hover:bg-blue-700">
+                    {editingCardId ? <><Pencil size={16} /> Lưu thay đổi</> : <><Plus size={17} /> Thêm thẻ</>}
+                  </button>
+                </div>
               </div>
 
               {customCards.length > 0 && (
@@ -367,15 +399,20 @@ export default function TabooSetup({ onStart }: TabooSetupProps) {
                         <p className="truncate text-sm font-bold text-slate-800">{card.word}</p>
                         <p className="truncate text-xs text-slate-500">{card.forbiddenWords.join(" · ")}</p>
                       </div>
-                      <button type="button" onClick={() => removeCustomCard(card.id)} aria-label={`Xóa thẻ ${card.word}`} className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-slate-400 transition hover:bg-red-50 hover:text-red-600">
-                        <Trash2 size={16} />
-                      </button>
+                      <div className="flex shrink-0 items-center gap-1">
+                        <button type="button" onClick={() => editCustomCard(card)} aria-label={`Sửa thẻ ${card.word}`} className="flex h-9 w-9 items-center justify-center rounded-lg text-slate-400 transition hover:bg-blue-50 hover:text-blue-600">
+                          <Pencil size={16} />
+                        </button>
+                        <button type="button" onClick={() => removeCustomCard(card.id)} aria-label={`Xóa thẻ ${card.word}`} className="flex h-9 w-9 items-center justify-center rounded-lg text-slate-400 transition hover:bg-red-50 hover:text-red-600">
+                          <Trash2 size={16} />
+                        </button>
+                      </div>
                     </div>
                   ))}
                 </div>
               )}
               {cardsLoaded && customCards.length === 0 && (
-                <p className="mt-3 flex items-center gap-2 text-xs text-slate-500"><Sparkles size={14} className="text-orange-500" />Thẻ tự tạo được lưu trên thiết bị này cho lần chơi sau.</p>
+                <p className="mt-3 flex items-center gap-2 text-xs text-slate-500"><Sparkles size={14} className="text-blue-500" />Thẻ tự tạo được lưu trên thiết bị này cho lần chơi sau.</p>
               )}
               </div>
             </details>
@@ -394,8 +431,8 @@ export default function TabooSetup({ onStart }: TabooSetupProps) {
                   onClick={() => setTurnDuration(seconds)}
                   className={`rounded-2xl border-2 p-4 text-center transition ${
                     turnDuration === seconds
-                      ? "border-violet-500 bg-violet-50"
-                      : "border-slate-200 hover:border-violet-200"
+                      ? "border-blue-500 bg-blue-50"
+                      : "border-slate-200 hover:border-blue-200"
                   }`}
                 >
                   <span className="block text-2xl font-black text-slate-900">
@@ -419,21 +456,14 @@ export default function TabooSetup({ onStart }: TabooSetupProps) {
               Mỗi vòng, mỗi {playMode === "individual" ? "người chơi" : "đội"} có một lượt diễn tả.
             </p>
 
-            <div className="mt-4 flex flex-wrap gap-3">
-              {[1, 2, 3, 5].map((count) => (
-                <button
-                  key={count}
-                  type="button"
-                  onClick={() => setRounds(count)}
-                  className={`min-w-16 rounded-xl border-2 px-5 py-3 font-bold transition ${
-                    rounds === count
-                      ? "border-violet-500 bg-violet-50 text-violet-700"
-                      : "border-slate-200 text-slate-600 hover:border-violet-200"
-                  }`}
-                >
-                  {count} vòng
-                </button>
-              ))}
+            <div className="mt-4 inline-flex items-center gap-4 rounded-2xl border border-slate-200 bg-slate-50 p-2">
+              <button type="button" onClick={() => setRounds((current) => Math.max(1, current - 1))} disabled={rounds <= 1} aria-label="Giảm số vòng" className="flex h-11 w-11 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 transition hover:border-blue-300 hover:text-blue-700 disabled:cursor-not-allowed disabled:opacity-40">
+                <Minus size={18} />
+              </button>
+              <span className="min-w-24 text-center"><strong className="block text-2xl font-black text-slate-900">{rounds}</strong><span className="text-xs font-semibold text-slate-500">vòng</span></span>
+              <button type="button" onClick={() => setRounds((current) => Math.min(20, current + 1))} disabled={rounds >= 20} aria-label="Tăng số vòng" className="flex h-11 w-11 items-center justify-center rounded-xl border border-blue-200 bg-blue-600 text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-40">
+                <Plus size={18} />
+              </button>
             </div>
           </section>
 
@@ -449,7 +479,7 @@ export default function TabooSetup({ onStart }: TabooSetupProps) {
           <button
             type="button"
             onClick={handleStart}
-            className="w-full rounded-2xl bg-violet-600 px-6 py-4 font-bold text-white shadow-lg shadow-violet-200 transition hover:bg-violet-700 active:scale-[0.99]"
+            className="w-full rounded-2xl bg-blue-600 px-6 py-4 font-bold text-white shadow-lg shadow-blue-200 transition hover:bg-blue-700 active:scale-[0.99]"
           >
             Bắt đầu trò chơi →
           </button>

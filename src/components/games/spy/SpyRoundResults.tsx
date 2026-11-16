@@ -28,7 +28,7 @@ export default function SpyRoundResults({
           <Trophy size={48} />
         </div>
 
-        <p className="mt-5 text-xs font-bold uppercase tracking-wider text-violet-600">
+        <p className="mt-5 text-xs font-bold uppercase tracking-wider text-blue-600">
           Kết quả vòng {round}
         </p>
 
@@ -39,7 +39,7 @@ export default function SpyRoundResults({
         </h1>
 
         <div
-          className={`mt-6 rounded-3xl border p-6 ${
+          className={`mt-6 rounded-2xl border p-6 ${
             winner === "civilian"
               ? "border-emerald-200 bg-emerald-50"
               : "border-rose-200 bg-rose-50"
@@ -86,7 +86,7 @@ export default function SpyRoundResults({
         </div>
       )}
 
-      <section className="mt-6 rounded-3xl border border-slate-200 bg-white p-6">
+      <section className="mt-6 rounded-2xl border border-slate-200 bg-white p-6">
         <h2 className="font-extrabold text-slate-900">Danh sách gián điệp</h2>
 
         <div className="mt-4 space-y-3">
@@ -106,7 +106,7 @@ export default function SpyRoundResults({
       <button
         type="button"
         onClick={onNext}
-        className="mt-7 h-14 w-full rounded-2xl bg-violet-600 font-bold text-white transition hover:bg-violet-700"
+        className="mt-7 h-14 w-full rounded-2xl bg-blue-600 font-bold text-white transition hover:bg-blue-700"
       >
         Quay về màn hình chính
       </button>

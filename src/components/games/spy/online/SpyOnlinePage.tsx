@@ -1,5 +1,6 @@
 "use client";
 
+import { navigateWithLoading } from "@/lib/navigation";
 import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
@@ -124,7 +125,7 @@ function SpyOnlineForm() {
         JSON.stringify(session),
       );
 
-      router.push(`/games/spy/online?room=${session.room_code}`);
+      navigateWithLoading(() => router.push(`/games/spy/online?room=${session.room_code}`));
     } catch (err) {
       console.error(err);
       setError("Không thể tạo phòng. Vui lòng thử lại.");
@@ -155,7 +156,7 @@ function SpyOnlineForm() {
         JSON.stringify(session),
       );
 
-      router.push(`/games/spy/online?room=${session.room_code}`);
+      navigateWithLoading(() => router.push(`/games/spy/online?room=${session.room_code}`));
     } catch (err) {
       console.error(err);
 
@@ -174,36 +175,33 @@ function SpyOnlineForm() {
   };
 
   return (
-    <main className="relative min-h-screen overflow-hidden bg-white px-4 py-8 text-gray-900 sm:px-6">
+    <main className="relative min-h-screen overflow-hidden bg-white px-4 py-6 text-gray-900 sm:px-6 sm:py-8">
       {/* Background decoration */}
-      <div className="pointer-events-none absolute -left-40 -top-40 h-96 w-96 rounded-full bg-violet-100/70 blur-[120px]" />
-      <div className="pointer-events-none absolute -bottom-40 -right-40 h-96 w-96 rounded-full bg-fuchsia-100/70 blur-[120px]" />
+      <div className="pointer-events-none absolute -left-40 -top-40 h-96 w-96 rounded-full bg-blue-100/70 blur-[120px]" />
+      <div className="pointer-events-none absolute -bottom-40 -right-40 h-96 w-96 rounded-full bg-blue-100/70 blur-[120px]" />
 
       <div className="relative mx-auto max-w-xl">
         <button
-          onClick={() => router.push("/games/spy")}
-          className="mb-10 flex items-center gap-2 text-sm font-medium text-gray-500 transition hover:text-violet-600"
+          onClick={() => navigateWithLoading(() => router.push("/games/spy"))}
+          className="mb-10 flex items-center gap-2 text-sm font-medium text-gray-500 transition hover:text-blue-600"
         >
           <ArrowLeft size={18} />
           Quay lại
         </button>
 
         {/* Header */}
-        <div className="mb-8 text-center">
-          <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-violet-100 text-violet-600 shadow-sm">
+        <div className="mb-6 text-center">
+          <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-100 text-blue-600 shadow-sm">
             <Wifi size={30} />
           </div>
 
-          <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-violet-200 bg-violet-50 px-3 py-1.5 text-xs font-semibold text-violet-700">
+        <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-blue-200 bg-blue-50 px-3 py-1.5 text-xs font-semibold text-blue-700">
             <Sparkles size={14} />
-            ONLINE MULTIPLAYER
+            CHƠI TRỰC TUYẾN
           </div>
 
-          <h1 className="text-3xl font-black tracking-tight text-gray-900 sm:text-4xl">
-            Who Is the{" "}
-            <span className="bg-gradient-to-r from-violet-600 to-fuchsia-500 bg-clip-text text-transparent">
-              Spy?
-            </span>
+          <h1 className="text-3xl font-black leading-tight tracking-tight text-gray-900 sm:text-4xl">
+            Ai là <span className="bg-gradient-to-r from-blue-600 to-blue-500 bg-clip-text text-transparent">gián điệp?</span>
           </h1>
 
           <p className="mt-3 text-sm leading-6 text-gray-500 sm:text-base">
@@ -212,7 +210,7 @@ function SpyOnlineForm() {
         </div>
 
         {/* Form */}
-        <div className="rounded-3xl border border-gray-200 bg-white p-6 shadow-xl shadow-gray-100/80 sm:p-8">
+        <div className="rounded-2xl border border-gray-200 bg-white p-4 shadow-xl shadow-gray-100/80 sm:p-6">
           {/* Tabs */}
           <div className="mb-7 grid grid-cols-2 gap-2 rounded-xl bg-gray-100 p-1">
             <button
@@ -222,7 +220,7 @@ function SpyOnlineForm() {
               }}
               className={`flex items-center justify-center gap-2 rounded-lg py-3 text-sm font-semibold transition ${
                 mode === "create"
-                  ? "bg-white text-violet-700 shadow-sm"
+                  ? "bg-white text-blue-700 shadow-sm"
                   : "text-gray-500 hover:text-gray-900"
               }`}
             >
@@ -237,7 +235,7 @@ function SpyOnlineForm() {
               }}
               className={`flex items-center justify-center gap-2 rounded-lg py-3 text-sm font-semibold transition ${
                 mode === "join"
-                  ? "bg-white text-violet-700 shadow-sm"
+                  ? "bg-white text-blue-700 shadow-sm"
                   : "text-gray-500 hover:text-gray-900"
               }`}
             >
@@ -258,12 +256,12 @@ function SpyOnlineForm() {
                 onChange={(event) => setPlayerName(event.target.value)}
                 maxLength={30}
                 placeholder="Nhập tên của bạn"
-                className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3.5 text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-violet-400 focus:ring-4 focus:ring-violet-100"
+                className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3.5 text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-blue-400 focus:ring-4 focus:ring-blue-100"
               />
             </div>
 
             {mode === "create" && (
-              <section className="rounded-2xl border border-violet-100 bg-violet-50/50 p-4 sm:p-5">
+              <section className="rounded-2xl border border-blue-100 bg-blue-50/50 p-4 sm:p-5">
                 <div className="mb-4">
                   <h2 className="text-base font-bold text-gray-900">Cấu hình ván chơi</h2>
                   <p className="mt-1 text-sm text-gray-500">Chọn luật và từ khóa trước khi tạo phòng.</p>
@@ -295,11 +293,11 @@ function SpyOnlineForm() {
                   }
                   maxLength={6}
                   placeholder="VD: A8K2PQ"
-                  className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-4 text-center text-2xl font-black tracking-[0.35em] text-violet-700 outline-none transition placeholder:text-gray-300 focus:border-violet-400 focus:ring-4 focus:ring-violet-100"
+                  className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-4 text-center text-2xl font-black tracking-[0.35em] text-blue-700 outline-none transition placeholder:text-gray-300 focus:border-blue-400 focus:ring-4 focus:ring-blue-100"
                 />
 
                 <p className="mt-2 text-xs text-gray-400">
-                  Nhập mã gồm 6 ký tự do Host chia sẻ.
+                  Nhập mã gồm 6 ký tự do quản trò chia sẻ.
                 </p>
               </div>
             )}
@@ -315,7 +313,7 @@ function SpyOnlineForm() {
             <button
               onClick={mode === "create" ? handleCreateRoom : handleJoinRoom}
               disabled={loading || !settingsLoaded}
-              className="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-violet-500 py-4 font-semibold text-white shadow-lg shadow-violet-200 transition hover:from-violet-700 hover:to-violet-600 disabled:cursor-not-allowed disabled:opacity-60"
+              className="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-blue-500 py-4 font-semibold text-white shadow-lg shadow-blue-200 transition hover:from-blue-700 hover:to-blue-600 disabled:cursor-not-allowed disabled:opacity-60"
             >
               {loading ? (
                 <>

@@ -287,19 +287,19 @@ export default function SpyOnlineGame({
 
   const isSpy = role?.role === "spy";
   const showSpyRole = room.settings.spyCanSeeRole !== false;
-  const roleTone = isSpy ? (showSpyRole ? "rose" : "violet") : "emerald";
+  const roleTone = isSpy ? (showSpyRole ? "rose" : "blue") : "emerald";
 
   return (
-    <main className="relative min-h-screen overflow-hidden bg-slate-950 px-4 py-10 text-white sm:px-6">
-      <div className="pointer-events-none absolute -left-36 -top-36 h-96 w-96 rounded-full bg-violet-700/30 blur-[120px]" />
-      <div className="pointer-events-none absolute -bottom-36 -right-36 h-96 w-96 rounded-full bg-fuchsia-700/20 blur-[120px]" />
+    <main className="relative min-h-screen overflow-hidden bg-[#f3f8ff] px-4 py-8 text-slate-900 sm:px-6">
+      <div className="pointer-events-none absolute -left-36 -top-36 h-96 w-96 rounded-full bg-blue-200/40 blur-[120px]" />
+      <div className="pointer-events-none absolute -bottom-36 -right-36 h-96 w-96 rounded-full bg-blue-100/70 blur-[120px]" />
 
       <div className="relative mx-auto max-w-2xl">
         <header className="mb-7 text-center">
-          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-violet-400/15 text-violet-200">
+          <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-blue-100 text-blue-700">
             <Wifi size={25} />
           </div>
-          <p className="text-xs font-bold uppercase tracking-[0.2em] text-violet-200/80">
+          <p className="text-xs font-bold uppercase tracking-[0.2em] text-blue-700">
             Phòng {room.room_code} · Ván {room.current_round || 1}
           </p>
           <h1 className="mt-2 text-3xl font-black tracking-tight sm:text-4xl">
@@ -314,65 +314,65 @@ export default function SpyOnlineGame({
         </header>
 
         {loadingRole ? (
-          <div className="mb-5 flex items-center justify-center gap-3 rounded-2xl border border-white/10 bg-white/[0.06] px-5 py-8 text-slate-300">
-            <Loader2 className="animate-spin text-violet-300" /> Đang tải vai trò...
+          <div className="mb-4 flex items-center justify-center gap-3 rounded-2xl border border-blue-100 bg-white px-5 py-6 text-slate-600 shadow-sm">
+            <Loader2 className="animate-spin text-blue-600" /> Đang tải vai trò...
           </div>
         ) : role ? (
-          <section className={`mb-5 rounded-3xl border p-6 text-center sm:p-7 ${roleTone === "rose" ? "border-rose-300/25 bg-rose-400/10" : roleTone === "violet" ? "border-violet-300/25 bg-violet-400/10" : "border-emerald-300/25 bg-emerald-400/10"}`}>
-            <div className={`mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl ${roleTone === "rose" ? "bg-rose-300/15 text-rose-200" : roleTone === "violet" ? "bg-violet-300/15 text-violet-200" : "bg-emerald-300/15 text-emerald-200"}`}>
+          <section className={`mb-4 rounded-2xl border p-5 text-center ${roleTone === "rose" ? "border-rose-200 bg-rose-50" : roleTone === "blue" ? "border-blue-200 bg-blue-50" : "border-emerald-200 bg-emerald-50"}`}>
+            <div className={`mx-auto mb-3 flex h-11 w-11 items-center justify-center rounded-xl ${roleTone === "rose" ? "bg-rose-100 text-rose-700" : roleTone === "blue" ? "bg-blue-100 text-blue-700" : "bg-emerald-100 text-emerald-700"}`}>
               {isSpy && !showSpyRole ? <EyeOff size={23} /> : isSpy ? <Eye size={23} /> : <Shield size={23} />}
             </div>
-            <p className={`text-xs font-bold uppercase tracking-[0.2em] ${roleTone === "rose" ? "text-rose-200" : roleTone === "violet" ? "text-violet-200" : "text-emerald-200"}`}>
+            <p className={`text-xs font-bold uppercase tracking-[0.2em] ${roleTone === "rose" ? "text-rose-700" : roleTone === "blue" ? "text-blue-700" : "text-emerald-700"}`}>
               {isSpy
-                ? showSpyRole ? "Bạn là Spy" : "Nhãn vai trò đang được ẩn"
+                ? showSpyRole ? "Bạn là gián điệp" : "Nhãn vai trò đang được ẩn"
                 : "Bạn là Dân thường"}
             </p>
-            <div className="mt-4 rounded-2xl border border-white/10 bg-slate-950/50 p-4">
+            <div className="mt-4 rounded-xl border border-blue-100 bg-white p-3.5">
               <p className="mb-1 flex items-center justify-center gap-2 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
                 <Sparkles size={13} /> Từ khóa bí mật
               </p>
-              <p className="text-2xl font-black text-white">
+              <p className="text-2xl font-black text-slate-900">
                 {role.secret_word || "Bạn không có từ khóa"}
               </p>
             </div>
           </section>
         ) : (
-          <section className="mb-5 rounded-2xl border border-amber-200/20 bg-amber-300/10 p-5 text-center">
-            <p className="font-semibold text-amber-100">
+          <section className="mb-4 rounded-2xl border border-blue-100 bg-blue-50 p-4 text-center">
+            <p className="font-semibold text-blue-900">
               {roleError || "Ván này chưa có dữ liệu vai trò."}
             </p>
             {roleError ? (
-              <button onClick={() => void loadRole()} className="mt-4 inline-flex items-center gap-2 rounded-xl bg-white/10 px-4 py-2.5 text-sm font-semibold hover:bg-white/15">
+              <button onClick={() => void loadRole()} className="mt-3 inline-flex items-center gap-2 rounded-xl border border-blue-200 bg-white px-4 py-2.5 text-sm font-semibold text-blue-800 hover:bg-blue-50">
                 <RefreshCw size={16} /> Tải lại vai trò
               </button>
             ) : session.is_host ? (
-              <button onClick={onRepairRoles} disabled={repairing} className="mt-4 inline-flex items-center gap-2 rounded-xl bg-violet-500 px-5 py-3 text-sm font-bold hover:bg-violet-400 disabled:opacity-60">
+              <button onClick={onRepairRoles} disabled={repairing} className="mt-3 inline-flex items-center gap-2 rounded-xl bg-blue-600 px-5 py-3 text-sm font-bold text-white hover:bg-blue-700 disabled:opacity-60">
                 {repairing ? <Loader2 size={16} className="animate-spin" /> : <Sparkles size={16} />}
                 {repairing ? "Đang chia vai..." : "Chia vai cho ván này"}
               </button>
             ) : (
-              <p className="mt-2 text-sm text-amber-100/75">Đang chờ Host chia vai...</p>
+              <p className="mt-2 text-sm text-blue-800">Đang chờ quản trò chia vai...</p>
             )}
           </section>
         )}
 
         {role && room.current_phase === "reveal" && (
-          <section className="rounded-3xl border border-white/10 bg-white/[0.06] p-5 sm:p-6">
+          <section className="rounded-2xl border border-blue-100 bg-white p-4 shadow-sm sm:p-5">
             <div className="mb-4 flex items-center justify-between gap-3">
               <div>
                 <h2 className="font-bold">Người chơi sẵn sàng</h2>
-                <p className="mt-1 text-sm text-slate-400">{readyCount}/{players.length} đã sẵn sàng</p>
+                <p className="mt-1 text-sm text-slate-500">{readyCount}/{players.length} đã sẵn sàng</p>
               </div>
-              <Users className="text-violet-200" size={21} />
+              <Users className="text-blue-200" size={21} />
             </div>
 
             <div className="space-y-2">
               {players.map((player) => (
-                <div key={player.id} className="flex items-center justify-between rounded-xl bg-slate-950/40 px-4 py-3">
-                  <span className="truncate pr-3 text-sm font-medium text-slate-200">
+                <div key={player.id} className="flex items-center justify-between rounded-xl border border-slate-100 bg-slate-50 px-4 py-3">
+                  <span className="truncate pr-3 text-sm font-medium text-slate-700">
                     {player.player_name}{player.id === session.player_id ? " (Bạn)" : ""}
                   </span>
-                  <span className={`inline-flex shrink-0 items-center gap-1.5 text-xs font-semibold ${player.is_ready ? "text-emerald-300" : "text-slate-500"}`}>
+                  <span className={`inline-flex shrink-0 items-center gap-1.5 text-xs font-semibold ${player.is_ready ? "text-emerald-700" : "text-slate-500"}`}>
                     {player.is_ready ? <Check size={14} /> : <Clock3 size={14} />}
                     {player.is_ready ? "Sẵn sàng" : "Đang xem vai"}
                   </span>
@@ -380,13 +380,13 @@ export default function SpyOnlineGame({
               ))}
             </div>
 
-            <button onClick={handleReady} disabled={readySaving} className="mt-5 flex w-full items-center justify-center gap-2 rounded-xl bg-violet-500 py-3.5 font-bold transition hover:bg-violet-400 disabled:opacity-60">
+            <button onClick={handleReady} disabled={readySaving} className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-blue-600 py-3 font-bold text-white transition hover:bg-blue-700 disabled:opacity-60">
               {readySaving ? <Loader2 size={18} className="animate-spin" /> : <Check size={18} />}
               {readySaving ? "Đang cập nhật..." : isReady ? "Hủy sẵn sàng" : "Tôi đã xem vai trò"}
             </button>
 
             {session.is_host && (
-              <button onClick={handleStartDiscussion} disabled={!everyoneReady || discussionStarting} className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/10 py-3.5 font-semibold transition hover:bg-white/15 disabled:cursor-not-allowed disabled:opacity-40">
+              <button onClick={handleStartDiscussion} disabled={!everyoneReady || discussionStarting} className="mt-2 flex w-full items-center justify-center gap-2 rounded-xl border border-blue-200 bg-blue-50 py-3 font-semibold text-blue-800 transition hover:bg-blue-100 disabled:cursor-not-allowed disabled:opacity-40">
                 {discussionStarting ? <Loader2 size={18} className="animate-spin" /> : <Users size={18} />}
                 {discussionStarting ? "Đang bắt đầu..." : everyoneReady ? "Bắt đầu thảo luận" : "Chờ mọi người sẵn sàng"}
               </button>
@@ -395,50 +395,50 @@ export default function SpyOnlineGame({
         )}
 
         {room.current_phase === "discussion" && (
-          <section className="rounded-3xl border border-violet-200/20 bg-violet-400/10 p-6 text-center sm:p-8">
-            <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-violet-300/15 text-violet-200">
+          <section className="rounded-2xl border border-blue-100 bg-white p-5 text-center shadow-sm">
+            <div className="mx-auto mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-blue-100 text-blue-700">
               <Clock3 size={24} />
             </div>
-            <p className="text-sm font-semibold text-violet-100">Thời gian thảo luận còn</p>
-            <p className="my-3 font-mono text-6xl font-black tabular-nums tracking-tight text-white sm:text-7xl">
+            <p className="text-sm font-semibold text-blue-700">Thời gian thảo luận còn</p>
+            <p className="my-2 font-mono text-5xl font-black tabular-nums tracking-tight text-slate-900 sm:text-6xl">
               {formatTime(remainingMs)}
             </p>
-            <p className="text-sm text-slate-300">Hãy trao đổi để tìm ra Spy. Đồng hồ đồng bộ cho tất cả người chơi.</p>
-            {advancing && <p className="mt-4 inline-flex items-center gap-2 text-sm text-violet-200"><Loader2 size={16} className="animate-spin" /> Đang mở phần bỏ phiếu...</p>}
+            <p className="text-sm text-slate-600">Hãy trao đổi để tìm ra gián điệp. Đồng hồ được đồng bộ cho tất cả người chơi.</p>
+            {advancing && <p className="mt-3 inline-flex items-center gap-2 text-sm text-blue-700"><Loader2 size={16} className="animate-spin" /> Đang mở phần bỏ phiếu...</p>}
           </section>
         )}
 
         {room.current_phase === "voting" && (
-          <section className="rounded-3xl border border-white/10 bg-white/[0.06] p-5 sm:p-6">
+          <section className="rounded-2xl border border-blue-100 bg-white p-4 shadow-sm sm:p-5">
             <div className="mb-5">
-              <h2 className="text-xl font-black">Ai là Spy?</h2>
-              <p className="mt-1 text-sm text-slate-400">Chọn một người chơi. Lá phiếu của bạn được giữ bí mật.</p>
+              <h2 className="text-xl font-black">Ai là gián điệp?</h2>
+              <p className="mt-1 text-sm text-slate-500">Chọn một người chơi. Lá phiếu của bạn được giữ bí mật.</p>
             </div>
 
             <div className="space-y-2">
               {candidates.map((player) => {
                 const selected = voteTargetId === player.id;
                 return (
-                  <button key={player.id} onClick={() => setVoteTargetId(player.id)} className={`flex w-full items-center justify-between rounded-xl border px-4 py-3.5 text-left transition ${selected ? "border-violet-300/60 bg-violet-400/15 text-white" : "border-white/10 bg-slate-950/30 text-slate-200 hover:border-white/20"}`}>
+                  <button key={player.id} onClick={() => setVoteTargetId(player.id)} className={`flex w-full items-center justify-between rounded-xl border px-4 py-3 text-left transition ${selected ? "border-blue-500 bg-blue-50 text-blue-900" : "border-slate-200 bg-white text-slate-700 hover:border-blue-300"}`}>
                     <span className="font-semibold">{player.player_name}</span>
-                    {selected && <Check size={18} className="text-violet-200" />}
+                    {selected && <Check size={18} className="text-blue-700" />}
                   </button>
                 );
               })}
             </div>
 
-            <button onClick={handleVote} disabled={!voteTargetId || voteSaving} className="mt-5 flex w-full items-center justify-center gap-2 rounded-xl bg-violet-500 py-3.5 font-bold transition hover:bg-violet-400 disabled:cursor-not-allowed disabled:opacity-50">
+            <button onClick={handleVote} disabled={!voteTargetId || voteSaving} className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-blue-600 py-3 font-bold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50">
               {voteSaving ? <Loader2 size={18} className="animate-spin" /> : <Check size={18} />}
               {voteSaving ? "Đang ghi phiếu..." : activeVote ? "Cập nhật lá phiếu" : "Gửi lá phiếu"}
             </button>
-            {activeVote && <p className="mt-3 text-center text-sm font-medium text-emerald-300">Đã ghi nhận phiếu của bạn. Bạn có thể đổi lựa chọn trước khi kết thúc.</p>}
+            {activeVote && <p className="mt-3 text-center text-sm font-medium text-emerald-700">Đã ghi nhận phiếu của bạn. Bạn có thể đổi lựa chọn trước khi kết thúc.</p>}
           </section>
         )}
 
         {room.current_phase === "vote-results" && (
           loadedResultsKey !== `${room.id}:${room.current_round}` ? (
-            <div className="flex items-center justify-center gap-3 rounded-2xl border border-white/10 bg-white/[0.06] px-5 py-10 text-slate-300">
-              <Loader2 className="animate-spin text-violet-300" /> Đang tổng hợp phiếu...
+            <div className="flex items-center justify-center gap-3 rounded-2xl border border-blue-100 bg-white px-5 py-8 text-slate-600 shadow-sm">
+              <Loader2 className="animate-spin text-blue-600" /> Đang tổng hợp phiếu...
             </div>
           ) : (
             <SpyOnlineVoteResults
@@ -453,7 +453,7 @@ export default function SpyOnlineGame({
           )
         )}
 
-        {gameError && <p role="alert" className="mt-4 rounded-xl border border-rose-300/20 bg-rose-400/10 px-4 py-3 text-center text-sm text-rose-100">{gameError}</p>}
+        {gameError && <p role="alert" className="mt-4 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-center text-sm text-rose-800">{gameError}</p>}
       </div>
     </main>
   );

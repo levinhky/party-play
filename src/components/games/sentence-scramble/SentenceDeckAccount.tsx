@@ -104,9 +104,9 @@ export default function SentenceDeckAccount({ sentences, onLoadDeck }: SentenceD
   };
 
   return (
-    <section className="rounded-2xl border border-violet-200 bg-violet-50/60 p-4 sm:p-5">
+    <section className="rounded-2xl border border-blue-200 bg-blue-50/60 p-4 sm:p-5">
       <div className="flex items-start gap-3">
-        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white text-violet-700 shadow-sm"><Cloud size={19} /></span>
+        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white text-blue-700 shadow-sm"><Cloud size={19} /></span>
         <div className="min-w-0 flex-1">
           <h2 className="font-bold text-gray-900">Bộ câu đã lưu</h2>
           <p className="mt-1 text-sm text-gray-600">Quản lý bộ câu trên tài khoản Party Play của bạn.</p>
@@ -117,21 +117,21 @@ export default function SentenceDeckAccount({ sentences, onLoadDeck }: SentenceD
         <p className="mt-4 rounded-xl bg-white px-3 py-3 text-sm text-gray-600">Hãy chọn <strong>Tài khoản</strong> ở thanh trên cùng để đăng nhập hoặc tạo tài khoản. Sau đó bạn có thể lưu bộ câu tại đây.</p>
       ) : (
         <div className="mt-4 space-y-4">
-          <p className="truncate text-sm font-medium text-violet-900">Đang đăng nhập: {user?.email}</p>
+          <p className="truncate text-sm font-medium text-blue-900">Đang đăng nhập: {user?.email}</p>
           <div className="grid gap-2 sm:grid-cols-[1fr_auto]">
-            <input value={deckName} onChange={(event) => setDeckName(event.target.value)} maxLength={80} placeholder="Tên bộ câu mới, ví dụ: Du lịch" className="min-w-0 rounded-xl border border-gray-200 bg-white px-3.5 py-3 text-sm outline-none focus:border-violet-500 focus:ring-2 focus:ring-violet-100" />
-            <button type="button" disabled={busy} onClick={() => void saveDeck()} className="inline-flex items-center justify-center gap-2 rounded-xl bg-violet-600 px-4 py-3 text-sm font-bold text-white transition hover:bg-violet-700 disabled:opacity-50"><BookmarkPlus size={17} />Lưu bộ hiện tại</button>
+            <input value={deckName} onChange={(event) => setDeckName(event.target.value)} maxLength={80} placeholder="Tên bộ câu mới, ví dụ: Du lịch" className="min-w-0 rounded-xl border border-gray-200 bg-white px-3.5 py-3 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100" />
+            <button type="button" disabled={busy} onClick={() => void saveDeck()} className="inline-flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-4 py-3 text-sm font-bold text-white transition hover:bg-blue-700 disabled:opacity-50"><BookmarkPlus size={17} />Lưu bộ hiện tại</button>
           </div>
           {decks.length > 0 ? (
             <div className="space-y-2">
-              <p className="text-xs font-bold uppercase tracking-wide text-violet-900">Bộ câu đã lưu</p>
+              <p className="text-xs font-bold uppercase tracking-wide text-blue-900">Bộ câu đã lưu</p>
               {decks.map((deck) => (
-                <div key={deck.id} className="flex items-center gap-2 rounded-xl border border-violet-100 bg-white p-2.5">
-                  <button type="button" onClick={() => { onLoadDeck(deck.sentences); setMessage(`Đã mở ${deck.name} vào bộ câu hiện tại.`); setError(""); }} className="min-w-0 flex-1 rounded-lg px-2 py-1 text-left hover:bg-violet-50">
+                <div key={deck.id} className="flex items-center gap-2 rounded-xl border border-blue-100 bg-white p-2.5">
+                  <button type="button" onClick={() => { onLoadDeck(deck.sentences); setMessage(`Đã mở ${deck.name} vào bộ câu hiện tại.`); setError(""); }} className="min-w-0 flex-1 rounded-lg px-2 py-1 text-left hover:bg-blue-50">
                     <span className="block truncate text-sm font-semibold text-gray-900">{deck.name}</span>
                     <span className="text-xs text-gray-500">{deck.sentences.length} câu</span>
                   </button>
-                  <button type="button" title="Cập nhật bằng bộ câu hiện tại" disabled={busy} onClick={() => void saveDeck(deck)} className="inline-flex h-9 items-center gap-1 rounded-lg px-2 text-xs font-semibold text-violet-700 hover:bg-violet-50 disabled:opacity-50"><Save size={14} />Cập nhật</button>
+                  <button type="button" title="Cập nhật bằng bộ câu hiện tại" disabled={busy} onClick={() => void saveDeck(deck)} className="inline-flex h-9 items-center gap-1 rounded-lg px-2 text-xs font-semibold text-blue-700 hover:bg-blue-50 disabled:opacity-50"><Save size={14} />Cập nhật</button>
                   <button type="button" title={`Xóa ${deck.name}`} disabled={busy} onClick={() => void deleteDeck(deck)} className="flex h-9 w-9 items-center justify-center rounded-lg text-gray-400 hover:bg-red-50 hover:text-red-600 disabled:opacity-50"><Trash2 size={15} /></button>
                 </div>
               ))}

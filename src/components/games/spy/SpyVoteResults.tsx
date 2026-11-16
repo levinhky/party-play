@@ -105,10 +105,10 @@ export default function SpyVoteResults({
       {/* Header */}
       <div className="text-center">
         <div
-          className={`mx-auto flex h-20 w-20 items-center justify-center rounded-3xl ${
+          className={`mx-auto flex h-20 w-20 items-center justify-center rounded-2xl ${
             isTie
               ? "bg-amber-100 text-amber-600"
-              : "bg-violet-100 text-violet-600"
+              : "bg-blue-100 text-blue-600"
           }`}
         >
           {isTie ? <AlertTriangle size={40} /> : <Vote size={40} />}
@@ -123,9 +123,9 @@ export default function SpyVoteResults({
         </p>
       </div>
 
-      <div className="mt-8 space-y-5">
+      <div className="mt-6 space-y-5">
         {/* Voting result */}
-        <section className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+        <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
           {isTie ? (
             <div className="rounded-2xl bg-amber-50 p-5 text-center">
               <AlertTriangle className="mx-auto text-amber-600" size={28} />
@@ -214,7 +214,7 @@ export default function SpyVoteResults({
                   <div className="mt-2 h-2 overflow-hidden rounded-full bg-slate-100">
                     <div
                       className={`h-full rounded-full transition-all ${
-                        isHighest ? "bg-rose-500" : "bg-violet-500"
+                        isHighest ? "bg-rose-500" : "bg-blue-500"
                       }`}
                       style={{ width: `${percentage}%` }}
                     />
@@ -237,14 +237,14 @@ export default function SpyVoteResults({
         </section>
 
         {/* Voting history */}
-        <section className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
+        <section className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
           <button
             type="button"
             onClick={() => setShowHistory((value) => !value)}
             className="flex w-full items-center justify-between gap-3 p-5 text-left transition hover:bg-slate-50 sm:p-6"
           >
             <div className="flex items-center gap-3">
-              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-violet-50 text-violet-600">
+              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
                 <History size={21} />
               </div>
 
@@ -279,7 +279,7 @@ export default function SpyVoteResults({
                         key={`${vote.voterId}-${vote.targetId}-${index}`}
                         className="flex items-center gap-3 rounded-2xl border border-slate-100 bg-slate-50 p-3"
                       >
-                        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-violet-100 text-violet-700">
+                        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-blue-100 text-blue-700">
                           <UserRound size={17} />
                         </div>
 
@@ -324,7 +324,7 @@ export default function SpyVoteResults({
         onClick={() =>
           onContinue(isTie ? tiedPlayers.map((player) => player.id) : [])
         }
-        className="mt-6 flex h-14 w-full items-center justify-center gap-2 rounded-2xl bg-violet-600 font-bold text-white shadow-lg shadow-violet-100 transition hover:bg-violet-700 active:scale-[0.99]"
+        className="mt-6 flex h-14 w-full items-center justify-center gap-2 rounded-2xl bg-blue-600 font-bold text-white shadow-lg shadow-blue-100 transition hover:bg-blue-700 active:scale-[0.99]"
       >
         {isTie ? "Bỏ phiếu lại" : "Tiếp tục"}
       </button>

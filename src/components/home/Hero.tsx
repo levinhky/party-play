@@ -3,15 +3,15 @@ import { ArrowRight, Play, Sparkles, Users, Zap } from "lucide-react";
 
 export default function Hero() {
   return (
-    <section className="relative overflow-hidden bg-[#FAF9FF]">
-      <div className="pointer-events-none absolute -left-32 top-10 h-80 w-80 rounded-full bg-violet-200/40 blur-3xl" />
+    <section className="relative overflow-hidden bg-[#f3f8ff]">
+      <div className="pointer-events-none absolute -left-32 top-10 h-80 w-80 rounded-full bg-blue-200/40 blur-3xl" />
       <div className="pointer-events-none absolute -right-20 top-20 h-96 w-96 rounded-full bg-blue-200/40 blur-3xl" />
 
-      <div className="relative mx-auto grid max-w-7xl items-center gap-12 px-5 py-16 sm:py-20 lg:grid-cols-2 lg:gap-16 lg:px-8 lg:py-24">
+      <div className="relative mx-auto grid max-w-7xl items-center gap-8 px-5 py-10 sm:py-10 lg:grid-cols-2 lg:gap-12 lg:px-8 lg:py-10">
         <div>
-          <div className="inline-flex items-center gap-2 rounded-full border border-violet-100 bg-white px-4 py-2 shadow-sm">
-            <Sparkles size={15} className="text-violet-600" />
-            <span className="text-xs font-bold text-violet-700 sm:text-sm">
+          <div className="inline-flex items-center gap-2 rounded-full border border-blue-100 bg-white px-4 py-2 shadow-sm">
+            <Sparkles size={15} className="text-blue-600" />
+            <span className="text-xs font-bold text-blue-700 sm:text-sm">
               Cùng chơi vui – Cùng học giỏi
             </span>
           </div>
@@ -21,7 +21,7 @@ export default function Hero() {
             <br />
             Trò chơi thú vị.
             <br />
-            <span className="bg-gradient-to-r from-violet-600 via-purple-600 to-blue-600 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-blue-600 via-blue-600 to-blue-600 bg-clip-text text-transparent">
               Tiếng Anh tiến bộ.
             </span>
           </h1>
@@ -32,10 +32,10 @@ export default function Hero() {
             của bạn bắt đầu từ đây!
           </p>
 
-          <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+          <div className="mt-6 flex flex-col gap-3 sm:flex-row">
             <Link
               href="/games"
-              className="inline-flex items-center justify-center gap-2 rounded-2xl bg-violet-600 px-6 py-4 text-sm font-bold text-white shadow-xl shadow-violet-200 transition hover:-translate-y-0.5 hover:bg-violet-700"
+              className="inline-flex items-center justify-center gap-2 rounded-2xl bg-blue-600 px-6 py-4 text-sm font-bold text-white shadow-xl shadow-blue-200 transition hover:-translate-y-0.5 hover:bg-blue-700"
             >
               Khám phá trò chơi
               <ArrowRight size={18} />
@@ -43,7 +43,7 @@ export default function Hero() {
 
             <Link
               href="/create"
-              className="inline-flex items-center justify-center gap-2 rounded-2xl border border-slate-200 bg-white px-6 py-4 text-sm font-bold text-slate-700 transition hover:border-violet-200 hover:bg-violet-50"
+              className="inline-flex items-center justify-center gap-2 rounded-2xl border border-slate-200 bg-white px-6 py-4 text-sm font-bold text-slate-700 transition hover:border-blue-200 hover:bg-blue-50"
             >
               <Play size={17} className="fill-current" />
               Tạo trò chơi
@@ -52,21 +52,21 @@ export default function Hero() {
 
           <div className="mt-9 flex flex-wrap items-center gap-x-6 gap-y-3 text-sm text-slate-500">
             <div className="flex items-center gap-2">
-              <Users size={17} className="text-violet-600" />
+              <Users size={17} className="text-blue-600" />
               <span>Dành cho nhóm bạn</span>
             </div>
 
             <div className="flex items-center gap-2">
-              <Zap size={17} className="text-orange-500" />
+              <Zap size={17} className="text-blue-500" />
               <span>Dễ dàng bắt đầu</span>
             </div>
           </div>
         </div>
 
         <div className="relative mx-auto w-full max-w-lg">
-          <div className="absolute inset-8 rounded-[40px] bg-gradient-to-br from-violet-300/50 to-blue-300/50 blur-2xl" />
+          <div className="absolute inset-8 rounded-[40px] bg-gradient-to-br from-blue-300/50 to-blue-300/50 blur-2xl" />
 
-          <div className="relative rounded-[32px] border border-white bg-white/80 p-4 shadow-2xl shadow-violet-200/40 backdrop-blur sm:p-6">
+          <div className="relative rounded-[32px] border border-white bg-white/80 p-4 shadow-2xl shadow-blue-200/40 backdrop-blur sm:p-6">
             <div className="flex items-center justify-between border-b border-slate-100 pb-4">
               <div>
                 <p className="text-xs font-semibold uppercase tracking-widest text-slate-400">
@@ -83,7 +83,7 @@ export default function Hero() {
             </div>
 
             <div className="mt-5 grid grid-cols-2 gap-3">
-              <div className="rounded-2xl bg-violet-100 p-4">
+              <div className="rounded-2xl bg-blue-100 p-4">
                 <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white text-3xl">
                   🕵️
                 </div>
@@ -93,7 +93,7 @@ export default function Hero() {
                 <p className="mt-1 text-xs text-slate-500">Tìm ra kẻ giả mạo</p>
               </div>
 
-              <div className="mt-6 rounded-2xl bg-orange-100 p-4">
+              <div className="mt-6 rounded-2xl bg-blue-100 p-4">
                 <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white text-3xl">
                   🧠
                 </div>
@@ -115,7 +115,7 @@ export default function Hero() {
                 <p className="mt-1 text-xs text-slate-500">Học thêm từ mới</p>
               </div>
 
-              <div className="mt-6 rounded-2xl bg-pink-100 p-4">
+              <div className="mt-6 rounded-2xl bg-blue-100 p-4">
                 <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white text-3xl">
                   💬
                 </div>
@@ -140,7 +140,7 @@ export default function Hero() {
                 </p>
               </div>
 
-              <ArrowRight size={19} className="shrink-0 text-violet-300" />
+              <ArrowRight size={19} className="shrink-0 text-blue-300" />
             </div>
           </div>
 

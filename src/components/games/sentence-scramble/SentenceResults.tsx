@@ -38,8 +38,8 @@ export default function SentenceResults({
 
   return (
     <main className="mx-auto w-full max-w-3xl px-4 py-10">
-      <section className="overflow-hidden rounded-3xl border border-gray-200 bg-white shadow-sm">
-        <div className="bg-violet-600 px-6 py-10 text-center text-white sm:px-10">
+      <section className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
+        <div className="bg-blue-600 px-6 py-10 text-center text-white sm:px-10">
           <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-white/15">
             <Trophy size={34} />
           </div>
@@ -48,17 +48,17 @@ export default function SentenceResults({
             Hoàn thành thử thách!
           </h1>
 
-          <p className="mt-3 text-violet-100">
+          <p className="mt-3 text-blue-100">
             Cùng xem lại kết quả của bạn nhé.
           </p>
         </div>
 
         <div className="p-6 sm:p-10">
           {isTeamMode && rankedTeams.length > 0 && (
-            <div className="mb-8 rounded-2xl bg-violet-50 p-5 text-center">
-              <Award className="mx-auto mb-3 text-violet-600" size={32} />
+            <div className="mb-6 rounded-2xl bg-blue-50 p-5 text-center">
+              <Award className="mx-auto mb-3 text-blue-600" size={32} />
 
-              <p className="text-sm font-medium text-violet-600">
+              <p className="text-sm font-medium text-blue-600">
                 {isDraw ? "Kết quả chung cuộc" : "Đội chiến thắng"}
               </p>
 
@@ -70,12 +70,12 @@ export default function SentenceResults({
                 {rankedTeams.map((team) => (
                   <div
                     key={team.id}
-                    className="rounded-xl border border-violet-100 bg-white p-4"
+                    className="rounded-xl border border-blue-100 bg-white p-4"
                   >
                     <p className="truncate text-sm text-gray-500">
                       {team.name}
                     </p>
-                    <p className="mt-1 text-2xl font-extrabold text-violet-700">
+                    <p className="mt-1 text-2xl font-extrabold text-blue-700">
                       {team.score}
                     </p>
                     <p className="text-xs text-gray-500">điểm</p>
@@ -85,11 +85,11 @@ export default function SentenceResults({
             </div>
           )}
 
-          <div className="mb-8 text-center">
+          <div className="mb-6 text-center">
             <p className="text-sm font-medium text-gray-500">
               {isTeamMode ? "Tổng điểm của hai đội" : "Tổng điểm của bạn"}
             </p>
-            <p className="mt-2 text-5xl font-extrabold text-violet-700">
+            <p className="mt-2 text-5xl font-extrabold text-blue-700">
               {score}
             </p>
             <p className="mt-2 text-sm text-gray-500">điểm</p>
@@ -103,11 +103,11 @@ export default function SentenceResults({
               <p className="mt-1 text-xs text-emerald-700">Câu đúng</p>
             </div>
 
-            <div className="rounded-2xl bg-violet-50 p-4 text-center">
-              <p className="text-2xl font-extrabold text-violet-700">
+            <div className="rounded-2xl bg-blue-50 p-4 text-center">
+              <p className="text-2xl font-extrabold text-blue-700">
                 {percentage}%
               </p>
-              <p className="mt-1 text-xs text-violet-700">Độ chính xác</p>
+              <p className="mt-1 text-xs text-blue-700">Độ chính xác</p>
             </div>
 
             <div className="rounded-2xl bg-amber-50 p-4 text-center">
@@ -125,11 +125,11 @@ export default function SentenceResults({
             </div>
           </div>
 
-          <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+          <div className="mt-6 flex flex-col gap-3 sm:flex-row">
             <button
               type="button"
               onClick={onRestart}
-              className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-violet-600 px-5 py-3.5 font-bold text-white transition hover:bg-violet-700"
+              className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-blue-600 px-5 py-3.5 font-bold text-white transition hover:bg-blue-700"
             >
               <RotateCcw size={18} />
               Chơi lại

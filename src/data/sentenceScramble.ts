@@ -10,7 +10,7 @@ export const sentenceQuestions: SentenceQuestion[] = [
     sentence: "I like playing football.",
     translation: "Tôi thích chơi bóng đá.",
     difficulty: "easy",
-    category: "Hobbies",
+    category: "Sở thích",
     hint: "Bắt đầu bằng chủ ngữ I.",
   },
   {
@@ -18,7 +18,7 @@ export const sentenceQuestions: SentenceQuestion[] = [
     sentence: "She is my best friend.",
     translation: "Cô ấy là bạn thân nhất của tôi.",
     difficulty: "easy",
-    category: "Friends",
+    category: "Bạn bè",
     hint: "Cấu trúc: She + is + ...",
   },
   {
@@ -26,7 +26,7 @@ export const sentenceQuestions: SentenceQuestion[] = [
     sentence: "We go to school every day.",
     translation: "Chúng tôi đi học mỗi ngày.",
     difficulty: "easy",
-    category: "Education",
+    category: "Giáo dục",
     hint: "Trạng từ every day thường đứng cuối câu.",
   },
   {
@@ -34,7 +34,7 @@ export const sentenceQuestions: SentenceQuestion[] = [
     sentence: "My mother cooks delicious food.",
     translation: "Mẹ tôi nấu những món ăn ngon.",
     difficulty: "easy",
-    category: "Family",
+    category: "Gia đình",
     hint: "My mother là chủ ngữ số ít.",
   },
   {
@@ -42,7 +42,7 @@ export const sentenceQuestions: SentenceQuestion[] = [
     sentence: "They are watching a movie.",
     translation: "Họ đang xem một bộ phim.",
     difficulty: "easy",
-    category: "Entertainment",
+    category: "Giải trí",
     hint: "Dùng thì hiện tại tiếp diễn.",
   },
   {
@@ -50,7 +50,7 @@ export const sentenceQuestions: SentenceQuestion[] = [
     sentence: "I usually wake up early.",
     translation: "Tôi thường thức dậy sớm.",
     difficulty: "easy",
-    category: "Daily Life",
+    category: "Đời sống hằng ngày",
     hint: "Usually đứng trước động từ chính.",
   },
   {
@@ -58,7 +58,7 @@ export const sentenceQuestions: SentenceQuestion[] = [
     sentence: "The weather is beautiful today.",
     translation: "Thời tiết hôm nay rất đẹp.",
     difficulty: "easy",
-    category: "Weather",
+    category: "Thời tiết",
     hint: "The weather + is + tính từ.",
   },
   {
@@ -66,7 +66,7 @@ export const sentenceQuestions: SentenceQuestion[] = [
     sentence: "He has two younger brothers.",
     translation: "Anh ấy có hai em trai.",
     difficulty: "easy",
-    category: "Family",
+    category: "Gia đình",
     hint: "Two đứng trước cụm danh từ số nhiều.",
   },
   {
@@ -74,7 +74,7 @@ export const sentenceQuestions: SentenceQuestion[] = [
     sentence: "I want to learn English.",
     translation: "Tôi muốn học tiếng Anh.",
     difficulty: "easy",
-    category: "Education",
+    category: "Giáo dục",
     hint: "Want + to + động từ nguyên mẫu.",
   },
   {
@@ -82,7 +82,7 @@ export const sentenceQuestions: SentenceQuestion[] = [
     sentence: "We had a great time together.",
     translation: "Chúng tôi đã có khoảng thời gian tuyệt vời bên nhau.",
     difficulty: "easy",
-    category: "Friends",
+    category: "Bạn bè",
     hint: "Cụm từ quen thuộc: have a great time.",
   },
 
@@ -92,7 +92,7 @@ export const sentenceQuestions: SentenceQuestion[] = [
     sentence: "I have been learning English for three years.",
     translation: "Tôi đã học tiếng Anh được ba năm.",
     difficulty: "medium",
-    category: "Education",
+    category: "Giáo dục",
     hint: "Thì hiện tại hoàn thành tiếp diễn.",
   },
   {
@@ -100,7 +100,7 @@ export const sentenceQuestions: SentenceQuestion[] = [
     sentence: "She goes jogging every morning before work.",
     translation: "Cô ấy chạy bộ mỗi sáng trước khi đi làm.",
     difficulty: "medium",
-    category: "Daily Life",
+    category: "Đời sống hằng ngày",
     hint: "Every morning là dấu hiệu của thói quen.",
   },
   {
@@ -108,7 +108,7 @@ export const sentenceQuestions: SentenceQuestion[] = [
     sentence: "If I have enough time, I will visit you.",
     translation: "Nếu có đủ thời gian, tôi sẽ đến thăm bạn.",
     difficulty: "medium",
-    category: "Daily Life",
+    category: "Đời sống hằng ngày",
     hint: "Câu điều kiện loại một.",
   },
   {
@@ -116,7 +116,7 @@ export const sentenceQuestions: SentenceQuestion[] = [
     sentence: "The book that you gave me is very interesting.",
     translation: "Cuốn sách bạn tặng tôi rất thú vị.",
     difficulty: "medium",
-    category: "Education",
+    category: "Giáo dục",
     hint: "That you gave me bổ nghĩa cho the book.",
   },
   {
@@ -124,7 +124,7 @@ export const sentenceQuestions: SentenceQuestion[] = [
     sentence: "Although it was raining, we decided to go out.",
     translation: "Mặc dù trời đang mưa, chúng tôi vẫn quyết định ra ngoài.",
     difficulty: "medium",
-    category: "Weather",
+    category: "Thời tiết",
     hint: "Although mở đầu mệnh đề nhượng bộ.",
   },
   {
@@ -132,7 +132,7 @@ export const sentenceQuestions: SentenceQuestion[] = [
     sentence: "She is interested in learning new languages.",
     translation: "Cô ấy hứng thú với việc học những ngôn ngữ mới.",
     difficulty: "medium",
-    category: "Education",
+    category: "Giáo dục",
     hint: "Interested in + danh từ hoặc V-ing.",
   },
   {
@@ -140,7 +140,7 @@ export const sentenceQuestions: SentenceQuestion[] = [
     sentence: "We should spend more time with our family.",
     translation: "Chúng ta nên dành nhiều thời gian hơn cho gia đình.",
     difficulty: "medium",
-    category: "Family",
+    category: "Gia đình",
     hint: "Should + động từ nguyên mẫu.",
   },
   {
@@ -148,7 +148,7 @@ export const sentenceQuestions: SentenceQuestion[] = [
     sentence: "He was cooking dinner when I arrived home.",
     translation: "Anh ấy đang nấu bữa tối khi tôi về đến nhà.",
     difficulty: "medium",
-    category: "Daily Life",
+    category: "Đời sống hằng ngày",
     hint: "Một hành động đang diễn ra thì hành động khác xảy ra.",
   },
   {
@@ -156,7 +156,7 @@ export const sentenceQuestions: SentenceQuestion[] = [
     sentence: "I would rather stay home than go shopping.",
     translation: "Tôi thích ở nhà hơn là đi mua sắm.",
     difficulty: "medium",
-    category: "Shopping",
+    category: "Mua sắm",
     hint: "Would rather ... than ...",
   },
   {
@@ -164,7 +164,7 @@ export const sentenceQuestions: SentenceQuestion[] = [
     sentence: "The restaurant was more crowded than I expected.",
     translation: "Nhà hàng đông đúc hơn tôi tưởng.",
     difficulty: "medium",
-    category: "Food",
+    category: "Ẩm thực",
     hint: "Cấu trúc so sánh hơn với tính từ dài.",
   },
 
@@ -174,7 +174,7 @@ export const sentenceQuestions: SentenceQuestion[] = [
     sentence: "Had I known about the meeting, I would have attended it.",
     translation: "Nếu biết về cuộc họp, tôi đã tham dự rồi.",
     difficulty: "hard",
-    category: "Work",
+    category: "Công việc",
     hint: "Câu điều kiện loại ba với đảo ngữ.",
   },
   {
@@ -183,7 +183,7 @@ export const sentenceQuestions: SentenceQuestion[] = [
       "Not only did she finish the project, but she also helped her colleagues.",
     translation: "Cô ấy không chỉ hoàn thành dự án mà còn giúp đỡ đồng nghiệp.",
     difficulty: "hard",
-    category: "Work",
+    category: "Công việc",
     hint: "Not only đứng đầu câu nên cần đảo ngữ.",
   },
   {
@@ -191,7 +191,7 @@ export const sentenceQuestions: SentenceQuestion[] = [
     sentence: "Despite being exhausted, he continued working until midnight.",
     translation: "Mặc dù kiệt sức, anh ấy vẫn tiếp tục làm việc đến nửa đêm.",
     difficulty: "hard",
-    category: "Work",
+    category: "Công việc",
     hint: "Despite + danh từ hoặc V-ing.",
   },
   {
@@ -199,7 +199,7 @@ export const sentenceQuestions: SentenceQuestion[] = [
     sentence: "The more you practice, the more confident you become.",
     translation: "Bạn càng luyện tập nhiều thì càng trở nên tự tin.",
     difficulty: "hard",
-    category: "Personal Growth",
+    category: "Phát triển bản thân",
     hint: "Cấu trúc The more ..., the more ...",
   },
   {
@@ -207,7 +207,7 @@ export const sentenceQuestions: SentenceQuestion[] = [
     sentence: "I wish I had spent more time with my grandparents.",
     translation: "Tôi ước mình đã dành nhiều thời gian hơn cho ông bà.",
     difficulty: "hard",
-    category: "Family",
+    category: "Gia đình",
     hint: "Wish + quá khứ hoàn thành diễn tả sự tiếc nuối.",
   },
   {
@@ -215,7 +215,7 @@ export const sentenceQuestions: SentenceQuestion[] = [
     sentence: "By the time we arrived, the movie had already started.",
     translation: "Khi chúng tôi đến nơi, bộ phim đã bắt đầu rồi.",
     difficulty: "hard",
-    category: "Entertainment",
+    category: "Giải trí",
     hint: "Một hành động xảy ra trước một hành động khác trong quá khứ.",
   },
   {
@@ -223,7 +223,7 @@ export const sentenceQuestions: SentenceQuestion[] = [
     sentence: "What matters most is how you respond to challenges.",
     translation: "Điều quan trọng nhất là cách bạn đối mặt với thử thách.",
     difficulty: "hard",
-    category: "Personal Growth",
+    category: "Phát triển bản thân",
     hint: "What matters most là chủ ngữ của câu.",
   },
   {
@@ -231,7 +231,7 @@ export const sentenceQuestions: SentenceQuestion[] = [
     sentence: "She suggested that we take a different approach to the problem.",
     translation: "Cô ấy đề xuất chúng tôi tiếp cận vấn đề theo cách khác.",
     difficulty: "hard",
-    category: "Work",
+    category: "Công việc",
     hint: "Suggest that + chủ ngữ + động từ nguyên mẫu.",
   },
   {
@@ -239,7 +239,7 @@ export const sentenceQuestions: SentenceQuestion[] = [
     sentence: "No sooner had I sat down than the phone started ringing.",
     translation: "Tôi vừa ngồi xuống thì điện thoại bắt đầu reo.",
     difficulty: "hard",
-    category: "Daily Life",
+    category: "Đời sống hằng ngày",
     hint: "No sooner ... than ... với đảo ngữ.",
   },
   {
@@ -248,7 +248,7 @@ export const sentenceQuestions: SentenceQuestion[] = [
       "The project would have succeeded if we had planned more carefully.",
     translation: "Dự án đã thành công nếu chúng tôi lập kế hoạch cẩn thận hơn.",
     difficulty: "hard",
-    category: "Work",
+    category: "Công việc",
     hint: "Câu điều kiện loại ba.",
   },
 ];

@@ -1,5 +1,6 @@
 "use client";
 
+import { navigateWithLoading } from "@/lib/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -214,7 +215,7 @@ export default function MemoryGame({ startRoute = false }: MemoryGameProps) {
   const handleSetupStart = useCallback((settings: MemorySettings) => {
     try {
       sessionStorage.setItem(ACTIVE_GAME_KEY, JSON.stringify(settings));
-      router.push("/games/memory/start");
+      navigateWithLoading(() => router.push("/games/memory/start"));
     } catch {
       window.alert("Không thể lưu thiết lập trò chơi trên thiết bị này.");
     }
@@ -249,7 +250,7 @@ export default function MemoryGame({ startRoute = false }: MemoryGameProps) {
       } catch {
         // Continue to the setup route if browser storage is unavailable.
       }
-      router.push("/games/memory");
+      navigateWithLoading(() => router.push("/games/memory"));
     }
   }, [clearResolveTimeout, router, startRoute]);
 
@@ -403,9 +404,9 @@ export default function MemoryGame({ startRoute = false }: MemoryGameProps) {
   if (game.phase === "setup") {
     if (!startRoute) return <MemorySetup onStart={handleSetupStart} />;
     if (!startRouteReady) {
-      return <main className="flex min-h-screen items-center justify-center bg-[#f6f5ff] text-slate-600"><span className="inline-flex items-center gap-3 rounded-2xl bg-white px-5 py-4 font-semibold shadow-sm"><Loader2 className="animate-spin text-violet-600" />Đang mở ván chơi...</span></main>;
+      return <main className="flex min-h-screen items-center justify-center bg-[#f3f8ff] text-slate-600"><span className="inline-flex items-center gap-3 rounded-2xl bg-white px-5 py-4 font-semibold shadow-sm"><Loader2 className="animate-spin text-blue-600" />Đang mở ván chơi...</span></main>;
     }
-    return <main className="flex min-h-screen items-center justify-center bg-[#f6f5ff] px-4 text-center"><div className="rounded-3xl border border-white bg-white p-8 shadow-xl shadow-violet-100"><h1 className="text-2xl font-black text-slate-900">Chưa có ván Memory để mở</h1><p className="mt-2 text-sm text-slate-500">Hãy quay lại thiết lập để bắt đầu một ván mới.</p><Link href="/games/memory" className="mt-5 inline-flex items-center gap-2 rounded-xl bg-violet-600 px-5 py-3 font-bold text-white transition hover:bg-violet-700"><ArrowLeft size={17} />Về thiết lập</Link></div></main>;
+    return <main className="flex min-h-screen items-center justify-center bg-[#f3f8ff] px-4 text-center"><div className="rounded-2xl border border-white bg-white p-6 shadow-xl shadow-blue-100"><h1 className="text-2xl font-black text-slate-900">Chưa có ván Lật thẻ ghi nhớ để mở</h1><p className="mt-2 text-sm text-slate-500">Hãy quay lại thiết lập để bắt đầu một ván mới.</p><Link href="/games/memory" className="mt-5 inline-flex items-center gap-2 rounded-xl bg-blue-600 px-5 py-3 font-bold text-white transition hover:bg-blue-700"><ArrowLeft size={17} />Về thiết lập</Link></div></main>;
   }
 
   if (game.phase === "results") {
@@ -424,16 +425,16 @@ export default function MemoryGame({ startRoute = false }: MemoryGameProps) {
   const totalPairs = game.cards.length / 2;
 
   return (
-    <main className="relative min-h-screen overflow-hidden bg-[#f6f5ff] px-4 py-6 sm:px-6 sm:py-8">
-      <div className="pointer-events-none absolute -left-24 -top-28 h-80 w-80 rounded-full bg-violet-200/50 blur-[100px]" />
-      <div className="pointer-events-none absolute -bottom-24 -right-20 h-80 w-80 rounded-full bg-fuchsia-200/40 blur-[100px]" />
+    <main className="relative min-h-screen overflow-hidden bg-[#f3f8ff] px-4 py-6 sm:px-6 sm:py-8">
+      <div className="pointer-events-none absolute -left-24 -top-28 h-80 w-80 rounded-full bg-blue-200/50 blur-[100px]" />
+      <div className="pointer-events-none absolute -bottom-24 -right-20 h-80 w-80 rounded-full bg-blue-200/40 blur-[100px]" />
       <div className="relative mx-auto max-w-7xl">
         {/* Header */}
-        <div className="mb-6 flex flex-wrap items-center justify-between gap-4 rounded-3xl border border-white bg-white/85 p-5 shadow-sm backdrop-blur sm:p-6">
+        <div className="mb-6 flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-white bg-white/85 p-5 shadow-sm backdrop-blur sm:p-6">
           <div>
-            <Link href="/games" className="mb-2 inline-flex items-center gap-1.5 text-xs font-semibold text-slate-500 transition hover:text-violet-700"><ArrowLeft size={15} />Quay lại Games</Link>
-            <p className="text-sm font-bold text-violet-600">
-              PARTY PLAY / MEMORY MATCH
+            <Link href="/games" className="mb-2 inline-flex items-center gap-1.5 text-xs font-semibold text-slate-500 transition hover:text-blue-700"><ArrowLeft size={15} />Quay lại trò chơi</Link>
+            <p className="text-sm font-bold text-blue-600">
+              PARTY PLAY · LẬT THẺ GHI NHỚ
             </p>
 
             <h1 className="mt-1 text-2xl font-black text-slate-900 sm:text-3xl">
@@ -463,7 +464,7 @@ export default function MemoryGame({ startRoute = false }: MemoryGameProps) {
         </div>
 
         {/* Bảng điểm */}
-        <div className="mb-8">
+        <div className="mb-6">
           <MemoryScoreboard
             players={game.players}
             currentPlayerIndex={game.currentPlayerIndex}
@@ -475,14 +476,14 @@ export default function MemoryGame({ startRoute = false }: MemoryGameProps) {
         </div>
 
         {/* Thông báo lượt chơi */}
-        <div className="mb-5 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-violet-100 bg-violet-50 px-4 py-3 sm:px-5">
+        <div className="mb-5 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-blue-100 bg-blue-50 px-4 py-3 sm:px-5">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-violet-600 text-lg text-white">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-600 text-lg text-white">
               🎮
             </div>
 
             <div>
-              <p className="text-xs font-medium text-violet-600">
+              <p className="text-xs font-medium text-blue-600">
                 Lượt của
               </p>
 
@@ -492,7 +493,7 @@ export default function MemoryGame({ startRoute = false }: MemoryGameProps) {
             </div>
           </div>
 
-          <p className="text-sm text-violet-700">
+          <p className="text-sm text-blue-700">
             {isResolving
               ? "Hai thẻ chưa khớp. Chuẩn bị chuyển lượt..."
               : selectedCardIds.length === 1
@@ -502,7 +503,7 @@ export default function MemoryGame({ startRoute = false }: MemoryGameProps) {
         </div>
 
         {/* Bàn chơi */}
-        <div className="rounded-3xl border border-white bg-white/80 p-3 shadow-xl shadow-violet-100/60 backdrop-blur sm:p-6 md:p-8">
+        <div className="rounded-2xl border border-white bg-white/80 p-3 shadow-xl shadow-blue-100/60 backdrop-blur sm:p-6 md:p-6">
           <MemoryBoard
             cards={game.cards}
             difficulty={game.settings.difficulty}

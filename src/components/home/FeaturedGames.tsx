@@ -8,10 +8,10 @@ export default function FeaturedGames() {
 
   return (
     <section className="bg-slate-50/80">
-      <div className="mx-auto max-w-7xl px-5 py-16 sm:py-20 lg:px-8">
+      <div className="mx-auto max-w-7xl px-5 py-10 sm:py-10 lg:px-8">
         <div className="mb-9 flex items-end justify-between gap-4">
           <div>
-            <p className="text-sm font-bold uppercase tracking-widest text-violet-600">
+            <p className="text-sm font-bold uppercase tracking-widest text-blue-600">
               Được chọn cho bạn
             </p>
 
@@ -26,7 +26,7 @@ export default function FeaturedGames() {
 
           <Link
             href="/games"
-            className="hidden shrink-0 items-center gap-2 text-sm font-bold text-violet-700 transition hover:text-violet-900 sm:flex"
+            className="hidden shrink-0 items-center gap-2 text-sm font-bold text-blue-700 transition hover:text-blue-900 sm:flex"
           >
             Xem tất cả
             <ArrowRight size={17} />
@@ -41,7 +41,7 @@ export default function FeaturedGames() {
 
         <Link
           href="/games"
-          className="mt-7 flex w-full items-center justify-center gap-2 rounded-2xl border border-slate-200 bg-white px-5 py-4 text-sm font-bold text-slate-700 transition hover:border-violet-200 hover:text-violet-700 sm:hidden"
+          className="mt-7 flex w-full items-center justify-center gap-2 rounded-2xl border border-slate-200 bg-white px-5 py-4 text-sm font-bold text-slate-700 transition hover:border-blue-200 hover:text-blue-700 sm:hidden"
         >
           Xem tất cả trò chơi
           <ArrowRight size={17} />

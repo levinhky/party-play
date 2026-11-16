@@ -10,7 +10,7 @@ export default function GameCard({ game }: GameCardProps) {
   return (
     <Link
       href={game.href}
-      className="group relative flex h-full flex-col overflow-hidden rounded-3xl border border-slate-100 bg-white p-5 transition duration-300 hover:-translate-y-1.5 hover:border-violet-200 hover:shadow-xl hover:shadow-slate-200/60"
+      className="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-slate-100 bg-white p-5 transition duration-300 hover:-translate-y-1.5 hover:border-blue-200 hover:shadow-xl hover:shadow-slate-200/60"
     >
       <div className="flex items-start justify-between">
         <div
@@ -35,13 +35,13 @@ export default function GameCard({ game }: GameCardProps) {
 
           <ArrowUpRight
             size={19}
-            className="text-slate-300 transition group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-violet-600"
+            className="text-slate-300 transition group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-blue-600"
           />
         </div>
       </div>
 
       <div className="mt-5 flex-1">
-        <h3 className="text-lg font-bold tracking-tight text-slate-900 transition group-hover:text-violet-700">
+        <h3 className="text-lg font-bold tracking-tight text-slate-900 transition group-hover:text-blue-700">
           {game.title}
         </h3>
 

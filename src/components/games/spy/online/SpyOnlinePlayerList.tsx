@@ -8,8 +8,8 @@ interface Props {
 }
 
 const AVATAR_STYLES = [
-  "bg-violet-100 text-violet-600",
-  "bg-fuchsia-100 text-fuchsia-600",
+  "bg-blue-100 text-blue-600",
+  "bg-blue-100 text-blue-600",
   "bg-blue-100 text-blue-600",
   "bg-emerald-100 text-emerald-600",
   "bg-amber-100 text-amber-600",
@@ -43,7 +43,7 @@ export default function SpyOnlinePlayerList({
             key={player.id}
             className={`flex items-center gap-3 rounded-2xl border p-3 transition ${
               isMe
-                ? "border-violet-200 bg-violet-50/70"
+                ? "border-blue-200 bg-blue-50/70"
                 : "border-gray-100 bg-gray-50/70 hover:border-gray-200"
             }`}
           >
@@ -62,7 +62,7 @@ export default function SpyOnlinePlayerList({
                 </span>
 
                 {isMe && (
-                  <span className="rounded-md bg-violet-100 px-2 py-0.5 text-[10px] font-bold text-violet-700">
+                  <span className="rounded-md bg-blue-100 px-2 py-0.5 text-[10px] font-bold text-blue-700">
                     BẠN
                   </span>
                 )}
@@ -77,7 +77,7 @@ export default function SpyOnlinePlayerList({
             {player.is_host && (
               <div className="flex shrink-0 items-center gap-1.5 rounded-lg border border-amber-200 bg-amber-50 px-2.5 py-1.5 text-xs font-semibold text-amber-700">
                 <Crown size={14} />
-                Host
+                Quản trò
               </div>
             )}
 

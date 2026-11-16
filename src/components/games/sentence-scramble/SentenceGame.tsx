@@ -1,5 +1,6 @@
 "use client";
 
+import { navigateWithLoading } from "@/lib/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -125,7 +126,7 @@ export default function SentenceGame({ startRoute = false }: SentenceGameProps) 
   const handleSetupStart = useCallback((settings: SentenceSettings) => {
     try {
       sessionStorage.setItem(ACTIVE_GAME_KEY, JSON.stringify(settings));
-      router.push("/games/sentence-scramble/start");
+      navigateWithLoading(() => router.push("/games/sentence-scramble/start"));
     } catch {
       window.alert("Không thể lưu thiết lập trò chơi trên thiết bị này.");
     }
@@ -262,7 +263,7 @@ export default function SentenceGame({ startRoute = false }: SentenceGameProps) 
       } catch {
         // Continue route navigation if browser storage is unavailable.
       }
-      router.push("/games/sentence-scramble");
+      navigateWithLoading(() => router.push("/games/sentence-scramble"));
     }
   }, [router, startRoute]);
 
@@ -303,9 +304,9 @@ export default function SentenceGame({ startRoute = false }: SentenceGameProps) 
   if (!game) {
     if (!startRoute) return <SentenceSetup onStart={handleSetupStart} />;
     if (!startRouteReady) {
-      return <main className="flex min-h-screen items-center justify-center bg-[#f6f5ff] text-slate-600"><span className="inline-flex items-center gap-3 rounded-2xl bg-white px-5 py-4 font-semibold shadow-sm"><Loader2 className="animate-spin text-violet-600" />Đang mở ván chơi...</span></main>;
+      return <main className="flex min-h-screen items-center justify-center bg-[#f3f8ff] text-slate-600"><span className="inline-flex items-center gap-3 rounded-2xl bg-white px-5 py-4 font-semibold shadow-sm"><Loader2 className="animate-spin text-blue-600" />Đang mở ván chơi...</span></main>;
     }
-    return <main className="flex min-h-screen items-center justify-center bg-[#f6f5ff] px-4 text-center"><div className="rounded-3xl border border-white bg-white p-8 shadow-xl shadow-violet-100"><h1 className="text-2xl font-black text-slate-900">Chưa có ván Sắp xếp câu để mở</h1><p className="mt-2 text-sm text-slate-500">Hãy quay lại thiết lập để bắt đầu một ván mới.</p><Link href="/games/sentence-scramble" className="mt-5 inline-flex items-center gap-2 rounded-xl bg-violet-600 px-5 py-3 font-bold text-white transition hover:bg-violet-700"><ArrowLeft size={17} />Về thiết lập</Link></div></main>;
+    return <main className="flex min-h-screen items-center justify-center bg-[#f3f8ff] px-4 text-center"><div className="rounded-2xl border border-white bg-white p-6 shadow-xl shadow-blue-100"><h1 className="text-2xl font-black text-slate-900">Chưa có ván Sắp xếp câu để mở</h1><p className="mt-2 text-sm text-slate-500">Hãy quay lại thiết lập để bắt đầu một ván mới.</p><Link href="/games/sentence-scramble" className="mt-5 inline-flex items-center gap-2 rounded-xl bg-blue-600 px-5 py-3 font-bold text-white transition hover:bg-blue-700"><ArrowLeft size={17} />Về thiết lập</Link></div></main>;
   }
 
   if (game.phase === "paper") {

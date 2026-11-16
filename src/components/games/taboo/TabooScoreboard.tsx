@@ -12,8 +12,8 @@ interface TabooScoreboardProps {
 }
 
 const teamStyles = [
-  "border-violet-200 bg-violet-50 text-violet-700",
-  "border-orange-200 bg-orange-50 text-orange-700",
+  "border-blue-200 bg-blue-50 text-blue-700",
+  "border-blue-200 bg-blue-50 text-blue-700",
   "border-emerald-200 bg-emerald-50 text-emerald-700",
   "border-sky-200 bg-sky-50 text-sky-700",
 ];
@@ -26,7 +26,7 @@ export default function TabooScoreboard({
   totalRounds,
 }: TabooScoreboardProps) {
   return (
-    <section className="rounded-3xl border border-white bg-white/85 p-4 shadow-sm backdrop-blur sm:p-5">
+    <section className="rounded-2xl border border-white bg-white/85 p-4 shadow-sm backdrop-blur sm:p-5">
       <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
         <h2 className="inline-flex items-center gap-2 font-black text-slate-900"><Trophy size={18} className="text-amber-500" />{mode === "individual" ? "Điểm cá nhân" : "Bảng điểm đội"}</h2>
 
@@ -43,11 +43,11 @@ export default function TabooScoreboard({
               teamStyles[index % teamStyles.length]
             } ${
               index === currentTeamIndex
-                ? "ring-2 ring-violet-400 ring-offset-2 shadow-lg shadow-violet-100"
+                ? "ring-2 ring-blue-400 ring-offset-2 shadow-lg shadow-blue-100"
                 : ""
             }`}
           >
-            {index === currentTeamIndex && <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-violet-500 to-fuchsia-500" />}
+            {index === currentTeamIndex && <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-blue-500 to-blue-500" />}
             <div className="flex items-center justify-between gap-2">
               <p className="truncate text-sm font-bold">{team.name}</p>
 

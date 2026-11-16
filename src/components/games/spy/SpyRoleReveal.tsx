@@ -45,14 +45,14 @@ export default function SpyRoleReveal({
 
   return (
     <div className="mx-auto flex min-h-[75vh] max-w-xl flex-col justify-center px-4 py-10">
-      <div className="overflow-hidden rounded-[32px] border border-slate-200 bg-white p-6 text-center shadow-xl shadow-slate-200/50 sm:p-10">
+      <div className="overflow-hidden rounded-[32px] border border-slate-200 bg-white p-4 text-center shadow-xl shadow-slate-200/50 sm:p-10">
         <div className="text-xs font-bold tracking-[0.2em] text-slate-400">
           NGƯỜI CHƠI {playerNumber}/{totalPlayers}
         </div>
 
         {!ready ? (
           <>
-            <div className="mx-auto mt-7 flex h-20 w-20 items-center justify-center rounded-3xl bg-violet-100 text-violet-600">
+            <div className="mx-auto mt-7 flex h-20 w-20 items-center justify-center rounded-2xl bg-blue-100 text-blue-600">
               <LockKeyhole size={36} />
             </div>
 
@@ -82,7 +82,7 @@ export default function SpyRoleReveal({
             <button
               type="button"
               onClick={() => setReady(true)}
-              className="mt-7 flex h-14 w-full items-center justify-center gap-2 rounded-2xl bg-violet-600 font-bold text-white transition hover:bg-violet-700 active:scale-[0.99]"
+              className="mt-7 flex h-14 w-full items-center justify-center gap-2 rounded-2xl bg-blue-600 font-bold text-white transition hover:bg-blue-700 active:scale-[0.99]"
             >
               <LockKeyhole size={19} />
               Tôi đang ở một mình
@@ -90,7 +90,7 @@ export default function SpyRoleReveal({
           </>
         ) : confirmed ? (
           <>
-            <div className="mx-auto mt-6 flex h-20 w-20 items-center justify-center rounded-3xl bg-emerald-100 text-emerald-600">
+            <div className="mx-auto mt-6 flex h-20 w-20 items-center justify-center rounded-2xl bg-emerald-100 text-emerald-600">
               <ShieldCheck size={42} />
             </div>
 
@@ -117,7 +117,7 @@ export default function SpyRoleReveal({
             <button
               type="button"
               onClick={onConfirm}
-              className="mt-7 flex h-14 w-full items-center justify-center gap-2 rounded-2xl bg-violet-600 font-bold text-white transition hover:bg-violet-700"
+              className="mt-7 flex h-14 w-full items-center justify-center gap-2 rounded-2xl bg-blue-600 font-bold text-white transition hover:bg-blue-700"
             >
               Tiếp tục
               <ArrowRight size={19} />
@@ -133,45 +133,45 @@ export default function SpyRoleReveal({
               Chạm vào thẻ để xem thông tin bí mật.
             </p>
 
-            <div className="mt-8 [perspective:1200px]">
+            <div className="mt-6 [perspective:1200px]">
               <button
                 type="button"
                 onClick={revealRole}
                 aria-label={revealed ? "Thẻ vai trò đã mở" : "Mở thẻ vai trò"}
-                className="group relative h-[340px] w-full rounded-3xl text-left outline-none focus-visible:ring-4 focus-visible:ring-violet-300"
+                className="group relative h-[340px] w-full rounded-2xl text-left outline-none focus-visible:ring-4 focus-visible:ring-blue-300"
                 style={{
                   transformStyle: "preserve-3d",
                 }}
               >
                 <div
-                  className="absolute inset-0 flex flex-col items-center justify-center overflow-hidden rounded-3xl border border-violet-200 bg-gradient-to-br from-violet-600 via-violet-700 to-indigo-900 p-6 text-white shadow-xl transition-transform duration-700 [backface-visibility:hidden]"
+                  className="absolute inset-0 flex flex-col items-center justify-center overflow-hidden rounded-2xl border border-blue-200 bg-gradient-to-br from-blue-600 via-blue-700 to-blue-900 p-4 text-white shadow-xl transition-transform duration-700 [backface-visibility:hidden] sm:p-6"
                   style={{
                     transform: revealed ? "rotateY(180deg)" : "rotateY(0deg)",
                   }}
                 >
                   <div className="absolute -right-12 -top-12 h-40 w-40 rounded-full bg-white/10 blur-2xl" />
-                  <div className="absolute -bottom-16 -left-12 h-48 w-48 rounded-full bg-fuchsia-400/20 blur-2xl" />
+                  <div className="absolute -bottom-16 -left-12 h-48 w-48 rounded-full bg-blue-400/20 blur-2xl" />
 
-                  <div className="relative flex h-24 w-24 items-center justify-center rounded-3xl border border-white/20 bg-white/10">
+                  <div className="relative flex h-24 w-24 items-center justify-center rounded-2xl border border-white/20 bg-white/10">
                     <Fingerprint size={58} />
                   </div>
 
-                  <p className="relative mt-7 text-xs font-bold tracking-[0.25em] text-violet-200">
+                  <p className="relative mt-7 text-xs font-bold tracking-[0.25em] text-blue-200">
                     PARTY PLAY
                   </p>
 
                   <h2 className="relative mt-3 text-3xl font-black">
-                    SECRET ROLE
+                    VAI TRÒ BÍ MẬT
                   </h2>
 
-                  <div className="relative mt-8 flex items-center gap-2 rounded-full bg-white/15 px-5 py-3 text-sm font-bold">
+                  <div className="relative mt-6 flex items-center gap-2 rounded-full bg-white/15 px-5 py-3 text-sm font-bold">
                     <Eye size={17} />
                     Chạm để mở thẻ
                   </div>
                 </div>
 
                 <div
-                  className={`absolute inset-0 flex flex-col items-center justify-center overflow-hidden rounded-3xl border p-6 shadow-xl transition-transform duration-700 [backface-visibility:hidden] ${
+                  className={`absolute inset-0 flex flex-col items-center justify-center overflow-hidden rounded-2xl border p-4 shadow-xl transition-transform duration-700 [backface-visibility:hidden] sm:p-6 ${
                     isSpy
                       ? "border-rose-200 bg-gradient-to-br from-rose-50 to-rose-100"
                       : "border-emerald-200 bg-gradient-to-br from-emerald-50 to-emerald-100"
@@ -181,7 +181,7 @@ export default function SpyRoleReveal({
                   }}
                 >
                   <div
-                    className={`flex h-20 w-20 items-center justify-center rounded-3xl ${
+                    className={`flex h-20 w-20 items-center justify-center rounded-2xl ${
                       isSpy
                         ? "bg-rose-200 text-rose-700"
                         : "bg-emerald-200 text-emerald-700"
@@ -231,7 +231,7 @@ export default function SpyRoleReveal({
               <button
                 type="button"
                 onClick={revealRole}
-                className="mt-7 flex h-14 w-full items-center justify-center gap-2 rounded-2xl bg-violet-600 font-bold text-white transition hover:bg-violet-700"
+                className="mt-7 flex h-14 w-full items-center justify-center gap-2 rounded-2xl bg-blue-600 font-bold text-white transition hover:bg-blue-700"
               >
                 <Eye size={19} />
                 Xem vai trò của tôi
