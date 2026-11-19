@@ -142,12 +142,12 @@ export default function ChessClock() {
   );
 
   const playTurnSound = useCallback(() => {
-    playTone(440, 0.08, 0.04, "triangle");
+    playTone(440, 0.08, 1, "triangle");
   }, [playTone]);
 
   const playTimeoutSound = useCallback(() => {
-    playTone(140, 0.18, 0.09, "sawtooth");
-    window.setTimeout(() => playTone(110, 0.35, 0.11, "square"), 180);
+    playTone(140, 0.18, 1, "sawtooth");
+    window.setTimeout(() => playTone(110, 0.35, 1, "square"), 180);
   }, [playTone]);
 
   const getDurationMs = () => {
@@ -324,9 +324,6 @@ export default function ChessClock() {
                 <p className="text-xs font-black uppercase tracking-[0.18em] text-blue-600">
                   Đồng hồ lượt chơi
                 </p>
-                <h1 className="mt-1 text-2xl font-black text-slate-900 sm:text-3xl">
-                  Chess Clock nhiều người
-                </h1>
               </div>
             </div>
 

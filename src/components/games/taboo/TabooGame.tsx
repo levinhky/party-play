@@ -80,6 +80,7 @@ export default function TabooGame({ startRoute = false }: TabooGameProps) {
   const turnIdRef = useRef(0);
   const turnEndedRef = useRef(false);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const turnDeadlineRef = useRef<number | null>(null);
 
   const syncGame = useCallback((nextGame: TabooGameState) => {
     gameRef.current = nextGame;
@@ -123,6 +124,7 @@ export default function TabooGame({ startRoute = false }: TabooGameProps) {
       turnIdRef.current += 1;
       turnEndedRef.current = false;
 
+      turnDeadlineRef.current = Date.now() + settings.turnDuration * 1000;
       syncTime(settings.turnDuration);
       syncGame(initialGame);
     },
@@ -209,6 +211,7 @@ export default function TabooGame({ startRoute = false }: TabooGameProps) {
     turnIdRef.current += 1;
     turnEndedRef.current = false;
 
+    turnDeadlineRef.current = Date.now() + current.turnDuration * 1000;
     syncTime(current.turnDuration);
     syncGame(nextGame);
 
@@ -228,12 +231,19 @@ export default function TabooGame({ startRoute = false }: TabooGameProps) {
 
     const activeTurnId = turnIdRef.current;
 
+    if (turnDeadlineRef.current === null) {
+      turnDeadlineRef.current = Date.now() + timeLeftRef.current * 1000;
+    }
+
     timerRef.current = setInterval(() => {
       if (turnEndedRef.current || turnIdRef.current !== activeTurnId) {
         return;
       }
 
-      const nextTime = Math.max(0, timeLeftRef.current - 1);
+      const deadline = turnDeadlineRef.current;
+      if (deadline === null) return;
+
+      const nextTime = Math.max(0, Math.ceil((deadline - Date.now()) / 1000));
       syncTime(nextTime);
 
       const current = gameRef.current;
@@ -247,9 +257,10 @@ export default function TabooGame({ startRoute = false }: TabooGameProps) {
       }
 
       if (nextTime === 0) {
+        turnDeadlineRef.current = null;
         endTurn();
       }
-    }, 1000);
+    }, 250);
 
     return stopTimer;
   }, [
@@ -486,8 +497,6 @@ export default function TabooGame({ startRoute = false }: TabooGameProps) {
             onCorrect={handleCorrect}
             onSkip={handleSkip}
             onForbidden={handleForbidden}
-            hostEnabled={game.settings.hostEnabled}
-            hostName={game.settings.hostName}
           />
         )}
 

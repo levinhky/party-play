@@ -17,6 +17,8 @@ import type {
   FlashcardsSettings,
   FlashcardSource,
 } from "@/types/flashcards";
+import { supabase } from "@/lib/supabase";
+import type { User } from "@supabase/supabase-js";
 
 const STORAGE_KEY = "party-play-flashcards-custom-cards";
 const fieldClass =
@@ -46,6 +48,10 @@ export default function FlashcardsSetup({ onStart }: Props) {
   const [imageUrl, setImageUrl] = useState("");
   const [editingCardId, setEditingCardId] = useState<string | null>(null);
   const [error, setError] = useState("");
+  const [permanentUser, setPermanentUser] = useState<User | null>(null);
+  const [jsonImport, setJsonImport] = useState("");
+  const [jsonStatus, setJsonStatus] = useState("");
+  const [savingCards, setSavingCards] = useState(false);
 
   useEffect(() => {
     const timer = window.setTimeout(() => {
@@ -110,18 +116,17 @@ export default function FlashcardsSetup({ onStart }: Props) {
       }
     }
     const cardData: Flashcard = {
-      id:
-        editingCardId ??
-        `custom-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+      id: editingCardId ?? `custom-${crypto.randomUUID()}`,
       word: cleanWord,
       ...(cleanMeaning ? { meaning: cleanMeaning } : {}),
       ...(cleanImageUrl ? { imageUrl: cleanImageUrl } : {}),
     };
-    setCustomCards((current) =>
-      editingCardId
-        ? current.map((card) => (card.id === editingCardId ? cardData : card))
-        : [...current, cardData],
-    );
+    const nextCards = editingCardId
+      ? customCards.map((card) => (card.id === editingCardId ? cardData : card))
+      : [...customCards, cardData];
+
+    setCustomCards(nextCards);
+    void syncAccountCards(nextCards);
     setEditingCardId(null);
     setWord("");
     setMeaning("");
@@ -147,7 +152,9 @@ export default function FlashcardsSetup({ onStart }: Props) {
   };
 
   const removeCard = (cardId: string) => {
-    setCustomCards((current) => current.filter((card) => card.id !== cardId));
+    const nextCards = customCards.filter((card) => card.id !== cardId);
+    setCustomCards(nextCards);
+    void syncAccountCards(nextCards);
     if (editingCardId === cardId) cancelEdit();
   };
 
@@ -158,6 +165,172 @@ export default function FlashcardsSetup({ onStart }: Props) {
     }
     setError("");
     onStart({ source, customCards });
+  };
+
+  useEffect(() => {
+    let active = true;
+
+    void supabase.auth.getSession().then(({ data }) => {
+      const user = data.session?.user ?? null;
+      if (!active) return;
+      setPermanentUser(user && !user.is_anonymous && user.email ? user : null);
+    });
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      const user = session?.user ?? null;
+      setPermanentUser(user && !user.is_anonymous && user.email ? user : null);
+    });
+
+    return () => {
+      active = false;
+      subscription.unsubscribe();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!permanentUser) return;
+
+    let active = true;
+    void supabase
+      .from("flashcard_custom_cards")
+      .select("card")
+      .order("updated_at", { ascending: false })
+      .then(({ data, error: loadError }) => {
+        if (!active) return;
+        if (loadError) {
+          setError(`Không tải được thẻ tài khoản: ${loadError.message}`);
+          return;
+        }
+
+        const accountCards = (data ?? [])
+          .map((row) => row.card)
+          .filter(isFlashcard);
+        if (accountCards.length > 0) setCustomCards(accountCards);
+      });
+
+    return () => {
+      active = false;
+    };
+  }, [permanentUser]);
+
+  const syncAccountCards = async (cards: Flashcard[]) => {
+    if (!permanentUser) return;
+
+    setSavingCards(true);
+    try {
+      await supabase
+        .from("flashcard_custom_cards")
+        .delete()
+        .eq("user_id", permanentUser.id);
+
+      if (cards.length > 0) {
+        const rows = cards.map((card) => ({
+          user_id: permanentUser.id,
+          card_id: card.id,
+          card,
+          updated_at: new Date().toISOString(),
+        }));
+
+        const { error: saveError } = await supabase
+          .from("flashcard_custom_cards")
+          .insert(rows);
+        if (saveError) throw saveError;
+      }
+
+      setJsonStatus(`Đã lưu ${cards.length} thẻ vào tài khoản.`);
+    } catch (caught) {
+      setJsonStatus(
+        caught instanceof Error
+          ? `Không lưu được thẻ tài khoản: ${caught.message}`
+          : "Không lưu được thẻ tài khoản.",
+      );
+    } finally {
+      setSavingCards(false);
+    }
+  };
+
+  const importJsonCards = () => {
+    try {
+      const parsed: unknown = JSON.parse(jsonImport);
+      const rawCards = Array.isArray(parsed)
+        ? parsed
+        : parsed && typeof parsed === "object" && "cards" in parsed
+          ? (parsed as { cards?: unknown }).cards
+          : null;
+
+      if (!Array.isArray(rawCards)) {
+        setError("JSON phải là một mảng thẻ hoặc object có trường cards.");
+        return;
+      }
+
+      const imported: Flashcard[] = [];
+
+      for (const [index, rawCard] of rawCards.entries()) {
+        if (!rawCard || typeof rawCard !== "object") {
+          throw new Error(`Thẻ thứ ${index + 1} không hợp lệ.`);
+        }
+
+        const value = rawCard as Record<string, unknown>;
+        const word = String(value.keywords ?? value.word ?? "").trim();
+        const meaning = String(value.meaning ?? "").trim();
+        const imageUrl = String(value.urlImage ?? value.imageUrl ?? "").trim();
+
+        if (!word) {
+          throw new Error(`Thẻ thứ ${index + 1} thiếu keywords.`);
+        }
+
+        if (imageUrl) {
+          try {
+            const parsedUrl = new URL(imageUrl);
+            if (
+              parsedUrl.protocol !== "https:" &&
+              parsedUrl.protocol !== "http:"
+            ) {
+              throw new Error("invalid protocol");
+            }
+          } catch {
+            throw new Error(`Thẻ thứ ${index + 1} có urlImage không hợp lệ.`);
+          }
+        }
+
+        imported.push({
+          id:
+            typeof value.id === "string" && value.id.trim()
+              ? value.id.trim()
+              : `custom-${crypto.randomUUID()}`,
+          word,
+          ...(meaning ? { meaning } : {}),
+          ...(imageUrl ? { imageUrl } : {}),
+        });
+      }
+
+      const merged = [...customCards];
+      for (const card of imported) {
+        if (
+          !merged.some(
+            (existing) =>
+              existing.id === card.id ||
+              existing.word.toLocaleLowerCase("vi") ===
+                card.word.toLocaleLowerCase("vi"),
+          )
+        ) {
+          merged.push(card);
+        }
+      }
+
+      setCustomCards(merged);
+      setSource((current) => (current === "default" ? "custom" : current));
+      setJsonStatus(`Đã nhập ${imported.length} thẻ JSON.`);
+      setJsonImport("");
+      setError("");
+      void syncAccountCards(merged);
+    } catch (caught) {
+      setError(
+        caught instanceof Error ? caught.message : "JSON thẻ không hợp lệ.",
+      );
+    }
   };
 
   return (
@@ -230,7 +403,8 @@ export default function FlashcardsSetup({ onStart }: Props) {
                   Tạo / quản lý thẻ riêng
                 </span>
                 <span className="mt-1 block text-xs text-slate-500">
-                  {customCards.length} thẻ đã lưu trên thiết bị này
+                  {customCards.length} thẻ đã lưu
+                  {permanentUser ? " trong tài khoản" : " trên thiết bị này"}
                 </span>
               </span>
               <ChevronDown
@@ -351,6 +525,40 @@ export default function FlashcardsSetup({ onStart }: Props) {
             </div>
           </details>
 
+          <label className="block text-sm font-semibold text-slate-700">
+            Nhập thẻ từ vựng (JSON: keywords, meaning, urlImage)
+            <textarea
+              value={jsonImport}
+              onChange={(event) => setJsonImport(event.target.value)}
+              rows={4}
+              className={`${fieldClass} mt-2 resize-none`}
+              placeholder='[{"keywords":"Lighthouse","meaning":"Ngọn hải đăng","urlImage":"https://example.com/image.jpg"}]'
+            />
+          </label>
+          <div className="flex flex-wrap gap-2">
+            <button
+              type="button"
+              onClick={importJsonCards}
+              disabled={savingCards || !jsonImport.trim()}
+              className="inline-flex items-center gap-2 rounded-xl bg-green-600 px-4 py-2.5 text-sm font-bold text-white transition hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              <Plus size={17} />
+              Nhập thẻ từ JSON
+            </button>
+            <button
+              type="button"
+              onClick={() => setJsonImport("")}
+              className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-bold text-slate-600 hover:bg-slate-100"
+            >
+              <X size={17} />
+              Xóa nội dung
+            </button>
+          </div>
+          {jsonStatus && (
+            <p className="rounded-xl bg-green-50 px-4 py-3 text-sm text-green-700">
+              {jsonStatus}
+            </p>
+          )}
           {error && (
             <p
               role="alert"

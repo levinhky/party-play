@@ -42,7 +42,11 @@ begin
     raise exception 'INVALID_ROUNDS';
   end if;
 
-  if coalesce(array_length(p_slot_names, 1), 0) not between 1 and 8 then
+  if coalesce(array_length(p_slot_names, 1), 0) not between 1 and 20 then
+    raise exception 'INVALID_SLOTS';
+  end if;
+
+  if p_mode = 'team' and array_length(p_slot_names, 1) > 10 then
     raise exception 'INVALID_SLOTS';
   end if;
 

@@ -1,15 +1,6 @@
 "use client";
 
-import { useState } from "react";
-import {
-  Check,
-  CircleAlert,
-  Eye,
-  EyeOff,
-  ShieldCheck,
-  SkipForward,
-  Timer,
-} from "lucide-react";
+import { Check, CircleAlert, SkipForward, Timer } from "lucide-react";
 
 import TabooCard from "@/components/games/taboo/TabooCard";
 import type { TabooCardData, TabooTeam } from "@/types/taboo";
@@ -24,8 +15,6 @@ interface TabooTurnProps {
   onCorrect: () => void;
   onSkip: () => void;
   onForbidden: () => void;
-  hostEnabled?: boolean;
-  hostName?: string;
 }
 
 export default function TabooTurn({
@@ -38,10 +27,7 @@ export default function TabooTurn({
   onCorrect,
   onSkip,
   onForbidden,
-  hostEnabled = false,
-  hostName = "Quản trò",
 }: TabooTurnProps) {
-  const [hostCardVisible, setHostCardVisible] = useState(false);
   const percentage = (timeLeft / turnDuration) * 100;
   const formattedTime = `${String(Math.floor(timeLeft / 60)).padStart(2, "0")}:${String(timeLeft % 60).padStart(2, "0")}`;
   const urgent = timeLeft <= 10;
@@ -122,64 +108,6 @@ export default function TabooTurn({
           </span>
         </button>
       </div>
-
-      {hostEnabled && (
-        <div className="mt-4 rounded-2xl border border-amber-200 bg-amber-50 p-4 sm:p-5">
-          <div className="flex items-center justify-between gap-3">
-            <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-500 text-white">
-                <ShieldCheck size={19} />
-              </div>
-              <div>
-                <p className="text-xs font-black uppercase tracking-[0.15em] text-amber-700">
-                  Khu vực quản trò
-                </p>
-                <p className="mt-0.5 text-sm font-bold text-slate-800">
-                  {hostName}
-                </p>
-              </div>
-            </div>
-
-            <button
-              type="button"
-              onClick={() => setHostCardVisible((current) => !current)}
-              className="inline-flex items-center gap-2 rounded-xl border border-amber-200 bg-white px-3 py-2 text-sm font-bold text-amber-700 transition hover:bg-amber-100"
-            >
-              {hostCardVisible ? <EyeOff size={16} /> : <Eye size={16} />}
-              {hostCardVisible ? "Ẩn thẻ" : "Xem thẻ"}
-            </button>
-          </div>
-
-          {hostCardVisible && (
-            <div className="mt-4 grid gap-3 rounded-2xl border border-amber-200 bg-white p-4 sm:grid-cols-2">
-              <div>
-                <p className="text-xs font-black uppercase tracking-wider text-slate-400">
-                  Từ đang được diễn tả
-                </p>
-                <p className="mt-2 text-2xl font-black text-slate-900">
-                  {card.word}
-                </p>
-              </div>
-
-              <div>
-                <p className="text-xs font-black uppercase tracking-wider text-rose-500">
-                  Từ cấm
-                </p>
-                <div className="mt-2 flex flex-wrap gap-2">
-                  {card.forbiddenWords.map((word) => (
-                    <span
-                      key={word}
-                      className="rounded-lg border border-rose-100 bg-rose-50 px-2.5 py-1.5 text-sm font-bold text-rose-700"
-                    >
-                      {word}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
-      )}
     </section>
   );
 }

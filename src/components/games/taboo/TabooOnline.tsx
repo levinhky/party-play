@@ -1,6 +1,7 @@
 "use client";
 
 import { navigateWithLoading } from "@/lib/navigation";
+import { supabase } from "@/lib/supabase";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -16,6 +17,7 @@ import {
 import { tabooCards } from "@/data/tabooCards";
 import {
   advanceTabooTurn,
+  cancelTabooRoom,
   createTabooRoom,
   getTabooLobby,
   getTabooTurnCard,
@@ -54,6 +56,12 @@ function readableError(error: unknown) {
     return "Chỉ quản trò mới điều khiển lượt chơi.";
   if (message.includes("NOT_ENOUGH_CARDS_PER_SLOT"))
     return "Cần ít nhất một thẻ cho mỗi người chơi hoặc đội.";
+  if (
+    message.includes("PGRST202") ||
+    message.includes("Could not find the function public.create_taboo_room")
+  ) {
+    return "Hệ thống Supabase chưa áp dụng migration phòng Taboo. Hãy áp dụng migration create_taboo_room trên project hiện tại rồi thử lại.";
+  }
   return message.replaceAll("_", " ");
 }
 
@@ -321,6 +329,26 @@ export default function TabooOnline() {
     }
   };
 
+  const handleCancelRoom = async () => {
+    if (!lobby) return;
+
+    const confirmed = window.confirm(
+      "Huỷ phòng này và quay lại phần thiết lập?",
+    );
+    if (!confirmed) return;
+
+    setBusy(true);
+    setError("");
+    try {
+      await cancelTabooRoom(lobby.id);
+      navigateWithLoading(() => router.replace("/games/taboo"));
+    } catch (caught) {
+      setError(readableError(caught));
+    } finally {
+      setBusy(false);
+    }
+  };
+
   const copyCode = async () => {
     const code = lobby?.room_code ?? roomCode;
     try {
@@ -366,6 +394,45 @@ export default function TabooOnline() {
     }, 0);
 
     return () => window.clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
+    let active = true;
+
+    void supabase.auth.getSession().then(({ data }) => {
+      const user = data.session?.user;
+      if (!active || !user || user.is_anonymous || !user.email) return;
+
+      void supabase
+        .from("taboo_custom_cards")
+        .select("card")
+        .order("updated_at", { ascending: false })
+        .then(({ data: rows, error: loadError }) => {
+          if (!active) return;
+          if (loadError) return;
+
+          const accountCards = (rows ?? [])
+            .map((row) => row.card)
+            .filter((card): card is TabooCardData => {
+              if (!card || typeof card !== "object") return false;
+              const value = card as Partial<TabooCardData>;
+              return (
+                typeof value.id === "string" &&
+                typeof value.word === "string" &&
+                typeof value.category === "string" &&
+                ["easy", "medium", "hard"].includes(value.difficulty ?? "") &&
+                Array.isArray(value.forbiddenWords) &&
+                value.forbiddenWords.every((word) => typeof word === "string")
+              );
+            });
+
+          if (accountCards.length > 0) setCustomCards(accountCards);
+        });
+    });
+
+    return () => {
+      active = false;
+    };
   }, []);
 
   return (
@@ -466,16 +533,27 @@ export default function TabooOnline() {
                 </div>
 
                 {lobby.is_host ? (
-                  <button
-                    type="button"
-                    disabled={
-                      busy || lobby.slots.some((slot) => slot.player_count < 1)
-                    }
-                    onClick={() => void handleStart()}
-                    className="w-full rounded-2xl bg-blue-600 px-5 py-4 font-bold text-white disabled:bg-slate-300"
-                  >
-                    {busy ? "Đang bắt đầu..." : "Bắt đầu ván chơi"}
-                  </button>
+                  <div className="space-y-3">
+                    <button
+                      type="button"
+                      disabled={
+                        busy ||
+                        lobby.slots.some((slot) => slot.player_count < 1)
+                      }
+                      onClick={() => void handleStart()}
+                      className="w-full rounded-2xl bg-blue-600 px-5 py-4 font-bold text-white disabled:bg-slate-300"
+                    >
+                      {busy ? "Đang bắt đầu..." : "Bắt đầu ván chơi"}
+                    </button>
+                    <button
+                      type="button"
+                      disabled={busy}
+                      onClick={() => void handleCancelRoom()}
+                      className="w-full rounded-2xl border border-rose-200 bg-rose-50 px-5 py-3 font-bold text-rose-700 transition hover:bg-rose-100 disabled:opacity-50"
+                    >
+                      Huỷ phòng
+                    </button>
+                  </div>
                 ) : (
                   <p className="rounded-xl bg-amber-50 px-4 py-3 text-sm text-amber-800">
                     Đợi quản trò bắt đầu ván chơi.
@@ -780,7 +858,7 @@ export default function TabooOnline() {
                     )}
                   </div>
                 ))}
-                {slotNames.length < (mode === "individual" ? 8 : 4) && (
+                {slotNames.length < (mode === "individual" ? 20 : 10) && (
                   <button
                     type="button"
                     onClick={() =>

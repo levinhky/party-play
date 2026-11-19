@@ -16,6 +16,8 @@ import BackToGamesButton from "@/components/games/BackToGamesButton";
 import { tabooCards } from "@/data/tabooCards";
 import type { TabooCardData, TabooSettings, TabooTeam } from "@/types/taboo";
 import Link from "next/link";
+import { supabase } from "@/lib/supabase";
+import type { User } from "@supabase/supabase-js";
 
 interface TabooSetupProps {
   onStart: (settings: TabooSettings) => void;
@@ -64,8 +66,6 @@ export default function TabooSetup({ onStart }: TabooSetupProps) {
   const [deckDistribution, setDeckDistribution] = useState<"shared" | "split">(
     "shared",
   );
-  const [hostEnabled, setHostEnabled] = useState(false);
-  const [hostName, setHostName] = useState("Quản trò");
   const [word, setWord] = useState("");
   const [forbiddenWords, setForbiddenWords] = useState("");
   const [category, setCategory] = useState("Tự tạo");
@@ -73,6 +73,11 @@ export default function TabooSetup({ onStart }: TabooSetupProps) {
     useState<TabooCardData["difficulty"]>("medium");
   const [editingCardId, setEditingCardId] = useState<string | null>(null);
   const [error, setError] = useState("");
+
+  const [jsonImport, setJsonImport] = useState("");
+  const [jsonImportStatus, setJsonImportStatus] = useState("");
+  const [savingCards, setSavingCards] = useState(false);
+  const [permanentUser, setPermanentUser] = useState<User | null>(null);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -101,6 +106,57 @@ export default function TabooSetup({ onStart }: TabooSetupProps) {
     }
   }, [cardsLoaded, customCards]);
 
+  useEffect(() => {
+    let active = true;
+
+    void supabase.auth.getSession().then(({ data }) => {
+      if (!active) return;
+      const user = data.session?.user ?? null;
+      setPermanentUser(user && !user.is_anonymous && user.email ? user : null);
+    });
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      const user = session?.user ?? null;
+      setPermanentUser(user && !user.is_anonymous && user.email ? user : null);
+    });
+
+    return () => {
+      active = false;
+      subscription.unsubscribe();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!permanentUser) return;
+
+    let active = true;
+    void supabase
+      .from("taboo_custom_cards")
+      .select("card")
+      .order("updated_at", { ascending: false })
+      .then(({ data, error: loadError }) => {
+        if (!active) return;
+
+        if (loadError) {
+          setError(`Không tải được thẻ tài khoản: ${loadError.message}`);
+          return;
+        }
+
+        const accountCards = (data ?? [])
+          .map((row) => row.card)
+          .filter(isTabooCard);
+        if (accountCards.length > 0) {
+          setCustomCards(accountCards);
+        }
+      });
+
+    return () => {
+      active = false;
+    };
+  }, [permanentUser]);
+
   function updateTeamName(index: number, value: string) {
     setTeamNames((current) =>
       current.map((name, i) => (i === index ? value : name)),
@@ -108,7 +164,7 @@ export default function TabooSetup({ onStart }: TabooSetupProps) {
   }
 
   function addTeam() {
-    if (teamNames.length >= (playMode === "individual" ? 8 : 4)) return;
+    if (teamNames.length >= (playMode === "individual" ? 20 : 10)) return;
 
     setTeamNames((current) => [
       ...current,
@@ -129,7 +185,7 @@ export default function TabooSetup({ onStart }: TabooSetupProps) {
     setPlayMode(mode);
 
     setTeamNames((current) =>
-      current.slice(0, mode === "individual" ? 8 : 4).map((name, index) => {
+      current.slice(0, mode === "individual" ? 20 : 10).map((name, index) => {
         const oldDefault =
           previousMode === "individual"
             ? `Người chơi ${index + 1}`
@@ -203,13 +259,14 @@ export default function TabooSetup({ onStart }: TabooSetupProps) {
       difficulty,
     };
 
-    setCustomCards((current) =>
-      editingCardId
-        ? current.map((card) =>
-            card.id === editingCardId ? updatedCard : card,
-          )
-        : [...current, updatedCard],
-    );
+    const nextCards = editingCardId
+      ? customCards.map((card) =>
+          card.id === editingCardId ? updatedCard : card,
+        )
+      : [...customCards, updatedCard];
+
+    setCustomCards(nextCards);
+    void syncAccountCards(nextCards);
 
     if (!editingCardId) {
       setDeckSource((current) => (current === "default" ? "custom" : current));
@@ -242,7 +299,9 @@ export default function TabooSetup({ onStart }: TabooSetupProps) {
   }
 
   function removeCustomCard(id: string) {
-    setCustomCards((current) => current.filter((card) => card.id !== id));
+    const nextCards = customCards.filter((card) => card.id !== id);
+    setCustomCards(nextCards);
+    void syncAccountCards(nextCards);
 
     if (editingCardId === id) {
       cancelEdit();
@@ -348,9 +407,136 @@ export default function TabooSetup({ onStart }: TabooSetupProps) {
       cards,
       deckDistribution,
       teamCards: deckDistribution === "split" ? teamCards : undefined,
-      hostEnabled,
-      hostName: hostEnabled ? hostName.trim() || "Quản trò" : undefined,
     });
+  }
+
+  async function syncAccountCards(cards: TabooCardData[]) {
+    if (!permanentUser) return;
+
+    setSavingCards(true);
+
+    try {
+      await supabase
+        .from("taboo_custom_cards")
+        .delete()
+        .eq("user_id", permanentUser.id);
+
+      if (cards.length > 0) {
+        const rows = cards.map((card) => ({
+          user_id: permanentUser.id,
+          card_id: card.id,
+          card,
+          updated_at: new Date().toISOString(),
+        }));
+
+        const { error: saveError } = await supabase
+          .from("taboo_custom_cards")
+          .insert(rows);
+
+        if (saveError) throw saveError;
+      }
+
+      setJsonImportStatus(`Đã lưu ${cards.length} thẻ vào tài khoản.`);
+    } catch (caught) {
+      setJsonImportStatus(
+        caught instanceof Error
+          ? `Không lưu được thẻ tài khoản: ${caught.message}`
+          : "Không lưu được thẻ tài khoản.",
+      );
+    } finally {
+      setSavingCards(false);
+    }
+  }
+
+  function importJsonCards() {
+    try {
+      const parsed: unknown = JSON.parse(jsonImport);
+      const rawCards = Array.isArray(parsed)
+        ? parsed
+        : parsed && typeof parsed === "object" && "cards" in parsed
+          ? (parsed as { cards?: unknown }).cards
+          : null;
+
+      if (!Array.isArray(rawCards)) {
+        setError("JSON phải là một mảng thẻ hoặc có trường cards là mảng.");
+        return;
+      }
+
+      const imported: TabooCardData[] = [];
+
+      for (const [index, rawCard] of rawCards.entries()) {
+        if (!rawCard || typeof rawCard !== "object") {
+          throw new Error(`Thẻ thứ ${index + 1} không hợp lệ.`);
+        }
+
+        const value = rawCard as Record<string, unknown>;
+        const word = String(value.word ?? value.keyword ?? "").trim();
+        const forbiddenWords = Array.isArray(value.forbiddenWords)
+          ? [
+              ...new Set(
+                value.forbiddenWords
+                  .map((item) => String(item).trim())
+                  .filter(Boolean),
+              ),
+            ]
+          : typeof value.forbiddenWords === "string"
+            ? [
+                ...new Set(
+                  value.forbiddenWords
+                    .split(",")
+                    .map((item) => item.trim())
+                    .filter(Boolean),
+                ),
+              ]
+            : [];
+        const difficulty = value.difficulty;
+
+        if (!word || forbiddenWords.length < 3 || forbiddenWords.length > 6) {
+          throw new Error(
+            `Thẻ thứ ${index + 1} cần keyword và 3–6 forbiddenWords.`,
+          );
+        }
+
+        if (!["easy", "medium", "hard"].includes(String(difficulty))) {
+          throw new Error(`Thẻ thứ ${index + 1} có difficulty không hợp lệ.`);
+        }
+
+        imported.push({
+          id:
+            typeof value.id === "string" && value.id.trim()
+              ? value.id.trim()
+              : `custom-${Date.now()}-${index}-${Math.random().toString(36).slice(2, 7)}`,
+          word,
+          forbiddenWords,
+          category: String(value.category ?? "Tự tạo").trim() || "Tự tạo",
+          difficulty: difficulty as TabooCardData["difficulty"],
+        });
+      }
+
+      const merged = [...customCards];
+      for (const card of imported) {
+        if (
+          !merged.some(
+            (existing) =>
+              existing.id === card.id ||
+              existing.word.toLowerCase() === card.word.toLowerCase(),
+          )
+        ) {
+          merged.push(card);
+        }
+      }
+
+      setCustomCards(merged);
+      setDeckSource((current) => (current === "default" ? "custom" : current));
+      setJsonImportStatus(`Đã nhập ${imported.length} thẻ JSON.`);
+      setJsonImport("");
+      setError("");
+      void syncAccountCards(merged);
+    } catch (caught) {
+      setError(
+        caught instanceof Error ? caught.message : "JSON thẻ không hợp lệ.",
+      );
+    }
   }
 
   return (
@@ -392,7 +578,7 @@ export default function TabooSetup({ onStart }: TabooSetupProps) {
               </div>
 
               <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-bold text-slate-600">
-                {teamNames.length}/{playMode === "individual" ? 8 : 4}{" "}
+                {teamNames.length}/{playMode === "individual" ? 20 : 10}{" "}
                 {playMode === "individual" ? "người" : "đội"}
               </span>
             </div>
@@ -477,7 +663,7 @@ export default function TabooSetup({ onStart }: TabooSetupProps) {
               ))}
             </div>
 
-            {teamNames.length < (playMode === "individual" ? 8 : 4) && (
+            {teamNames.length < (playMode === "individual" ? 20 : 10) && (
               <button
                 type="button"
                 onClick={addTeam}
@@ -905,49 +1091,6 @@ export default function TabooSetup({ onStart }: TabooSetupProps) {
             </div>
           </section>
 
-          {/* Host */}
-          <section className="border-t border-slate-100 pt-7">
-            <div className="flex items-center justify-between gap-4">
-              <div>
-                <h2 className="text-lg font-bold text-slate-900">
-                  Quản trò kiểm tra
-                </h2>
-                <p className="mt-1 text-sm text-slate-500">
-                  Cho phép một người xem thẻ hiện tại để bắt vi phạm từ cấm.
-                </p>
-              </div>
-
-              <button
-                type="button"
-                role="switch"
-                aria-checked={hostEnabled}
-                onClick={() => setHostEnabled((current) => !current)}
-                className={`relative h-7 w-12 shrink-0 rounded-full transition ${
-                  hostEnabled ? "bg-blue-600" : "bg-slate-300"
-                }`}
-              >
-                <span
-                  className={`absolute top-1 h-5 w-5 rounded-full bg-white shadow-sm transition ${
-                    hostEnabled ? "left-6" : "left-1"
-                  }`}
-                />
-              </button>
-            </div>
-
-            {hostEnabled && (
-              <label className="mt-4 block text-xs font-semibold text-slate-600">
-                Tên quản trò
-                <input
-                  value={hostName}
-                  onChange={(event) => setHostName(event.target.value)}
-                  maxLength={30}
-                  className="mt-1.5 h-11 w-full rounded-xl border border-slate-200 px-4 text-sm font-normal text-slate-900 outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
-                  placeholder="Quản trò"
-                />
-              </label>
-            )}
-          </section>
-
           {/* Error */}
           {error && (
             <p
@@ -987,6 +1130,49 @@ export default function TabooSetup({ onStart }: TabooSetupProps) {
               </span>
               <span className="text-xl font-black text-blue-700">→</span>
             </Link>
+          </div>
+
+          {/* JSON import section */}
+          <div className="mt-5 rounded-2xl border border-blue-100 bg-blue-50/60 p-4">
+            <div className="flex items-center justify-between gap-3">
+              <div>
+                <p className="font-bold text-blue-900">Nhập nhanh bằng JSON</p>
+                <p className="mt-1 text-xs text-blue-700">
+                  Nhận mảng thẻ hoặc object {'{ "cards": [...] }'}.
+                </p>
+              </div>
+              {savingCards && (
+                <span className="text-xs font-bold text-blue-700">
+                  Đang lưu...
+                </span>
+              )}
+            </div>
+
+            <textarea
+              value={jsonImport}
+              onChange={(event) => setJsonImport(event.target.value)}
+              rows={7}
+              spellCheck={false}
+              className="mt-3 w-full rounded-xl border border-blue-200 bg-white px-3 py-3 font-mono text-xs text-slate-900 outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
+              placeholder={
+                '[{"id":"coffee","keyword":"COFFEE","forbiddenWords":["drink","hot","bean","cup","morning"],"category":"Thức uống","difficulty":"easy"}]'
+              }
+            />
+
+            {jsonImportStatus && (
+              <p className="mt-2 text-xs font-semibold text-blue-700">
+                {jsonImportStatus}
+              </p>
+            )}
+
+            <button
+              type="button"
+              disabled={savingCards || !jsonImport.trim()}
+              onClick={importJsonCards}
+              className="mt-3 inline-flex h-11 items-center justify-center rounded-xl bg-blue-600 px-4 text-sm font-bold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              Nhập danh sách JSON
+            </button>
           </div>
         </div>
       </div>

@@ -20,9 +20,6 @@ type GamePhase = "setup" | "playing";
 
 type ChallengeType = "truth" | "dare";
 
-const DEFAULT_TRUTH_KEYWORDS: string[] = [];
-const DEFAULT_DARE_KEYWORDS: string[] = [];
-
 const TRUTH_OR_DARE_STORAGE_KEY = "party-play-truth-or-dare-settings";
 
 function isStringArray(value: unknown): value is string[] {
@@ -30,76 +27,6 @@ function isStringArray(value: unknown): value is string[] {
     Array.isArray(value) && value.every((item) => typeof item === "string")
   );
 }
-
-const TRUTH_TEMPLATES = [
-  (keyword: string) =>
-    `Tell us the most memorable story related to "${keyword}" in your life.`,
-  (keyword: string) =>
-    `What's something about "${keyword}" that you have never told this group?`,
-  (keyword: string) =>
-    `Have you ever had an awkward experience involving "${keyword}"? Tell us what happened.`,
-  (keyword: string) => `What is your honest opinion about "${keyword}"?`,
-  (keyword: string) =>
-    `If you could change one thing about your experience with "${keyword}", what would it be?`,
-  (keyword: string) =>
-    `What's the first thing that comes to your mind when you hear "${keyword}"?`,
-  (keyword: string) =>
-    `What's the funniest thing you've experienced involving "${keyword}"?`,
-  (keyword: string) =>
-    `Would you rather experience "${keyword}" again or never experience it again? Why?`,
-  (keyword: string) =>
-    `Rate your experience with "${keyword}" from 1 to 10 and explain your score.`,
-  (keyword: string) =>
-    `What's one thing you would do differently regarding "${keyword}"?`,
-];
-
-const DARE_TEMPLATES = [
-  (keyword: string) =>
-    `Do your best impression of "${keyword}" for 20 seconds.`,
-  (keyword: string) =>
-    `Act out "${keyword}" without speaking. Let everyone guess.`,
-  (keyword: string) =>
-    `Create a short scene involving "${keyword}" and perform it for the group.`,
-  (keyword: string) =>
-    `Explain "${keyword}" as dramatically as possible, like you're in a movie.`,
-  (keyword: string) =>
-    `Make up a funny story involving "${keyword}" in 30 seconds.`,
-  (keyword: string) =>
-    `Describe "${keyword}" using only three words, then explain your choices.`,
-  (keyword: string) =>
-    `Pretend you're an expert on "${keyword}" and give a 20-second speech.`,
-  (keyword: string) =>
-    `Make a funny pose inspired by "${keyword}" and hold it for 10 seconds.`,
-  (keyword: string) =>
-    `Use "${keyword}" to create a ridiculous advertisement in 20 seconds.`,
-  (keyword: string) => `Perform a mini talent show inspired by "${keyword}".`,
-];
-
-const EMPTY_TRUTH_TEMPLATES = [
-  "What's something you wish more people knew about you?",
-  "What's the most spontaneous thing you've ever done?",
-  "What's a moment you still laugh about today?",
-  "Who was the last person you thought about before sleeping?",
-  "What's one thing you are secretly proud of?",
-  "What is your biggest irrational fear?",
-  "What's a small thing that can instantly make your day better?",
-  "What's the weirdest thing you've ever done?",
-  "If you could relive one day of your life, which day would it be?",
-  "What's something you would like to try but haven't dared to?",
-];
-
-const EMPTY_DARE_TEMPLATES = [
-  "Speak in an accent of your choice for the next two rounds.",
-  "Do your best celebrity impression.",
-  "Dance without music for 15 seconds.",
-  "Sing the chorus of a song chosen by the group.",
-  "Act like a robot for the next 30 seconds.",
-  "Give everyone in the group a funny nickname.",
-  "Tell a joke and try to make everyone laugh.",
-  "Do a dramatic movie-style entrance.",
-  "Make up a short rap about the person on your left.",
-  "Pretend you're giving an award speech.",
-];
 
 function shuffle<T>(items: T[]): T[] {
   const result = [...items];
@@ -116,26 +43,12 @@ function pickRandom<T>(items: T[]): T {
   return items[Math.floor(Math.random() * items.length)];
 }
 
-function generatePrompt(type: ChallengeType, keywords: string[]): string {
-  if (type === "truth") {
-    if (keywords.length === 0) {
-      return pickRandom(EMPTY_TRUTH_TEMPLATES);
-    }
-
-    const keyword = pickRandom(keywords);
-    const template = pickRandom(TRUTH_TEMPLATES);
-
-    return template(keyword);
-  }
-
+function generatePrompt(keywords: string[]): string {
   if (keywords.length === 0) {
-    return pickRandom(EMPTY_DARE_TEMPLATES);
+    return "";
   }
 
-  const keyword = pickRandom(keywords);
-  const template = pickRandom(DARE_TEMPLATES);
-
-  return template(keyword);
+  return pickRandom(keywords);
 }
 
 function KeywordInput({
@@ -257,11 +170,21 @@ function KeywordInput({
         ))}
 
         {keywords.length === 0 && (
-          <p className="text-sm italic text-gray-400">
-            Chưa có keyword. Game sẽ sử dụng câu hỏi mặc định.
-          </p>
+          <p className="text-sm italic text-gray-400">Chưa có keyword.</p>
         )}
       </div>
+
+      {keywords.length > 0 && (
+        <div className="mt-3 flex justify-end">
+          <button
+            type="button"
+            onClick={() => onChange([])}
+            className={`rounded-lg px-3 py-1.5 text-xs font-bold transition ${colors.text} hover:opacity-70`}
+          >
+            Clear all
+          </button>
+        </div>
+      )}
     </div>
   );
 }
@@ -271,13 +194,9 @@ export default function TruthOrDarePage() {
 
   const [players, setPlayers] = useState<string[]>([""]);
 
-  const [truthKeywords, setTruthKeywords] = useState<string[]>(
-    DEFAULT_TRUTH_KEYWORDS,
-  );
+  const [truthKeywords, setTruthKeywords] = useState<string[]>([]);
 
-  const [dareKeywords, setDareKeywords] = useState<string[]>(
-    DEFAULT_DARE_KEYWORDS,
-  );
+  const [dareKeywords, setDareKeywords] = useState<string[]>([]);
   const [settingsLoaded, setSettingsLoaded] = useState(false);
   const [playerPool, setPlayerPool] = useState<string[]>([]);
   const [turnOrder, setTurnOrder] = useState<string[]>([]);
@@ -360,6 +279,15 @@ export default function TruthOrDarePage() {
   };
 
   const startGame = () => {
+    if (!setupReady) {
+      if (truthKeywords.length < 1 || dareKeywords.length < 1) {
+        alert(
+          "Hãy nhập ít nhất 1 keyword cho cả Truth và Dare trước khi bắt đầu!",
+        );
+      }
+      return;
+    }
+
     const names = validPlayers;
 
     if (names.length < 1) return;
@@ -390,11 +318,17 @@ export default function TruthOrDarePage() {
   };
 
   const chooseType = (type: ChallengeType) => {
-    setSelectedType(type);
-
     const keywords = type === "truth" ? truthKeywords : dareKeywords;
 
-    setPrompt(generatePrompt(type, keywords));
+    if (keywords.length < 1) {
+      alert(
+        `Hãy nhập ít nhất 1 keyword cho ${type.toUpperCase()} trước khi chọn!`,
+      );
+      return;
+    }
+
+    setSelectedType(type);
+    setPrompt(generatePrompt(keywords));
   };
 
   const nextPlayer = () => {
@@ -426,7 +360,7 @@ export default function TruthOrDarePage() {
 
     const keywords = selectedType === "truth" ? truthKeywords : dareKeywords;
 
-    setPrompt(generatePrompt(selectedType, keywords));
+    setPrompt(generatePrompt(keywords));
   };
 
   const resetGame = () => {
@@ -439,6 +373,11 @@ export default function TruthOrDarePage() {
     setSkippedCount(0);
     setRound(1);
   };
+
+  const setupReady =
+    validPlayers.length >= 1 &&
+    truthKeywords.length >= 1 &&
+    dareKeywords.length >= 1;
 
   return (
     <main className="min-h-screen bg-[#faf9fc] px-4 py-6 sm:px-6 sm:py-10">
@@ -544,7 +483,7 @@ export default function TruthOrDarePage() {
             <button
               type="button"
               onClick={startGame}
-              disabled={validPlayers.length < 1}
+              disabled={!setupReady}
               className="flex w-full items-center justify-center gap-2 rounded-2xl bg-linear-to-r from-pink-500 to-purple-500 py-4 font-bold text-white shadow-lg shadow-purple-100 transition hover:brightness-105 disabled:cursor-not-allowed disabled:opacity-40"
             >
               <Sparkles size={19} />
@@ -555,6 +494,13 @@ export default function TruthOrDarePage() {
             <p className="text-center text-xs text-gray-400">
               Keyword của bạn sẽ được dùng để tạo câu hỏi và thử thách.
             </p>
+
+            {!setupReady && (
+              <p className="text-center text-xs font-semibold text-amber-600">
+                Cần nhập tên người chơi và ít nhất 1 keyword cho cả Truth lẫn
+                Dare.
+              </p>
+            )}
           </div>
         ) : (
           <div className="space-y-5">
@@ -672,7 +618,7 @@ export default function TruthOrDarePage() {
                             : "text-purple-900"
                         }`}
                       >
-                        {prompt}
+                        {prompt || "Hãy nhập keyword trong phần thiết lập."}
                       </p>
                     </div>
 

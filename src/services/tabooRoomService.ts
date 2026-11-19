@@ -105,3 +105,10 @@ export async function hostFinishTabooRoom(roomId: string): Promise<void> {
   });
   if (error) throw error;
 }
+
+export async function cancelTabooRoom(roomId: string): Promise<void> {
+  const { error } = await supabase.rpc("cancel_taboo_room", {
+    p_room_id: roomId,
+  });
+  if (error) throw error;
+}
