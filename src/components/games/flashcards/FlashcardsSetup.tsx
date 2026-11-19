@@ -1,171 +1,762 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import Link from "next/link";
-import { ArrowLeft, BookOpen, ChevronDown, Pencil, Plus, Save, Trash2, X } from "lucide-react";
-import { defaultFlashcards } from "@/data/flashcards";
-import type { Flashcard, FlashcardsSettings, FlashcardSource } from "@/types/flashcards";
+import {
+  ArrowLeft,
+  ArrowRight,
+  Check,
+  Heart,
+  Plus,
+  RotateCcw,
+  Shuffle,
+  Sparkles,
+  Trash2,
+  Users,
+  X,
+  Zap,
+} from "lucide-react";
 
-const STORAGE_KEY = "party-play-flashcards-custom-cards";
-const fieldClass = "w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100";
+type GamePhase = "setup" | "playing";
+type ChallengeType = "truth" | "dare";
 
-function isFlashcard(value: unknown): value is Flashcard {
-  if (!value || typeof value !== "object") return false;
-  const card = value as Partial<Flashcard>;
-  return typeof card.id === "string" && typeof card.word === "string"
-    && (card.meaning === undefined || typeof card.meaning === "string")
-    && (card.imageUrl === undefined || typeof card.imageUrl === "string");
+const DEFAULT_TRUTH_KEYWORDS: string[] = [];
+const DEFAULT_DARE_KEYWORDS: string[] = [];
+
+const TRUTH_STORAGE_KEY = "party-play:truth-keywords";
+const DARE_STORAGE_KEY = "party-play:dare-keywords";
+
+const TRUTH_TEMPLATES = [
+  (keyword: string) =>
+    `Tell us the most memorable story related to "${keyword}" in your life.`,
+  (keyword: string) =>
+    `What's something about "${keyword}" that you have never told this group?`,
+  (keyword: string) =>
+    `Have you ever had an awkward experience involving "${keyword}"? Tell us what happened.`,
+  (keyword: string) => `What is your honest opinion about "${keyword}"?`,
+  (keyword: string) =>
+    `If you could change one thing about your experience with "${keyword}", what would it be?`,
+  (keyword: string) =>
+    `What's the first thing that comes to your mind when you hear "${keyword}"?`,
+  (keyword: string) =>
+    `What's the funniest thing you've experienced involving "${keyword}"?`,
+  (keyword: string) =>
+    `Would you rather experience "${keyword}" again or never experience it again? Why?`,
+  (keyword: string) =>
+    `Rate your experience with "${keyword}" from 1 to 10 and explain your score.`,
+  (keyword: string) =>
+    `What's one thing you would do differently regarding "${keyword}"?`,
+];
+
+const DARE_TEMPLATES = [
+  (keyword: string) =>
+    `Do your best impression of "${keyword}" for 20 seconds.`,
+  (keyword: string) =>
+    `Act out "${keyword}" without speaking. Let everyone guess.`,
+  (keyword: string) =>
+    `Create a short scene involving "${keyword}" and perform it for the group.`,
+  (keyword: string) =>
+    `Explain "${keyword}" as dramatically as possible, like you're in a movie.`,
+  (keyword: string) =>
+    `Make up a funny story involving "${keyword}" in 30 seconds.`,
+  (keyword: string) =>
+    `Describe "${keyword}" using only three words, then explain your choices.`,
+  (keyword: string) =>
+    `Pretend you're an expert on "${keyword}" and give a 20-second speech.`,
+  (keyword: string) =>
+    `Make a funny pose inspired by "${keyword}" and hold it for 10 seconds.`,
+  (keyword: string) =>
+    `Use "${keyword}" to create a ridiculous advertisement in 20 seconds.`,
+  (keyword: string) => `Perform a mini talent show inspired by "${keyword}".`,
+];
+
+const EMPTY_TRUTH_TEMPLATES = [
+  "What's something you wish more people knew about you?",
+  "What's the most spontaneous thing you've ever done?",
+  "What's a moment you still laugh about today?",
+  "Who was the last person you thought about before sleeping?",
+  "What's one thing you are secretly proud of?",
+  "What is your biggest irrational fear?",
+  "What's a small thing that can instantly make your day better?",
+  "What's the weirdest thing you've ever done?",
+  "If you could relive one day of your life, which day would it be?",
+  "What's something you would like to try but haven't dared to?",
+];
+
+const EMPTY_DARE_TEMPLATES = [
+  "Speak in an accent of your choice for the next two rounds.",
+  "Do your best celebrity impression.",
+  "Dance without music for 15 seconds.",
+  "Sing the chorus of a song chosen by the group.",
+  "Act like a robot for the next 30 seconds.",
+  "Give everyone in the group a funny nickname.",
+  "Tell a joke and try to make everyone laugh.",
+  "Do a dramatic movie-style entrance.",
+  "Make up a short rap about the person on your left.",
+  "Pretend you're giving an award speech.",
+];
+
+function shuffle<T>(items: T[]): T[] {
+  const result = [...items];
+
+  for (let i = result.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [result[i], result[j]] = [result[j], result[i]];
+  }
+
+  return result;
 }
 
-interface Props {
-  onStart: (settings: FlashcardsSettings) => void;
+function pickRandom<T>(items: T[]): T {
+  return items[Math.floor(Math.random() * items.length)];
 }
 
-export default function FlashcardsSetup({ onStart }: Props) {
-  const [customCards, setCustomCards] = useState<Flashcard[]>([]);
-  const [loaded, setLoaded] = useState(false);
-  const [source, setSource] = useState<FlashcardSource>("default");
-  const [word, setWord] = useState("");
-  const [meaning, setMeaning] = useState("");
-  const [imageUrl, setImageUrl] = useState("");
-  const [editingCardId, setEditingCardId] = useState<string | null>(null);
-  const [error, setError] = useState("");
-
-  useEffect(() => {
-    const timer = window.setTimeout(() => {
-      try {
-        const raw = localStorage.getItem(STORAGE_KEY);
-        const parsed: unknown = raw ? JSON.parse(raw) : [];
-        setCustomCards(Array.isArray(parsed) ? parsed.filter(isFlashcard) : []);
-      } catch {
-        setCustomCards([]);
-      } finally {
-        setLoaded(true);
-      }
-    }, 0);
-    return () => window.clearTimeout(timer);
-  }, []);
-
-  useEffect(() => {
-    if (!loaded) return;
-    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(customCards)); }
-    catch { /* Keep the current list available for this visit. */ }
-  }, [customCards, loaded]);
-
-  const selectedCount = useMemo(() => {
-    if (source === "custom") return customCards.length;
-    if (source === "combined") return defaultFlashcards.length + customCards.length;
-    return defaultFlashcards.length;
-  }, [customCards.length, source]);
-
-  const addCard = () => {
-    const cleanWord = word.trim();
-    const cleanMeaning = meaning.trim();
-    const cleanImageUrl = imageUrl.trim();
-    if (!cleanWord) {
-      setError("Hãy nhập từ vựng.");
-      return;
+function generatePrompt(type: ChallengeType, keywords: string[]): string {
+  if (type === "truth") {
+    if (keywords.length === 0) {
+      return pickRandom(EMPTY_TRUTH_TEMPLATES);
     }
-    if ([...defaultFlashcards, ...customCards].some((card) => card.id !== editingCardId && card.word.toLocaleLowerCase("vi") === cleanWord.toLocaleLowerCase("vi"))) {
-      setError("Từ này đã có trong bộ thẻ.");
-      return;
+
+    const keyword = pickRandom(keywords);
+    const template = pickRandom(TRUTH_TEMPLATES);
+
+    return template(keyword);
+  }
+
+  if (keywords.length === 0) {
+    return pickRandom(EMPTY_DARE_TEMPLATES);
+  }
+
+  const keyword = pickRandom(keywords);
+  const template = pickRandom(DARE_TEMPLATES);
+
+  return template(keyword);
+}
+
+function KeywordInput({
+  title,
+  description,
+  keywords,
+  onChange,
+  accent,
+  storageKey,
+}: {
+  title: string;
+  description: string;
+  keywords: string[];
+  onChange: (keywords: string[]) => void;
+  accent: "pink" | "purple";
+  storageKey: string;
+}) {
+  const [input, setInput] = useState("");
+
+  const colors =
+    accent === "pink"
+      ? {
+          border: "border-pink-200",
+          background: "bg-pink-50",
+          text: "text-pink-700",
+          button: "bg-pink-500 hover:bg-pink-600",
+          focus: "focus:border-pink-400 focus:ring-pink-100",
+        }
+      : {
+          border: "border-purple-200",
+          background: "bg-purple-50",
+          text: "text-purple-700",
+          button: "bg-purple-500 hover:bg-purple-600",
+          focus: "focus:border-purple-400 focus:ring-purple-100",
+        };
+
+  // Save the corresponding keyword list immediately.
+  const saveKeywords = (newKeywords: string[]) => {
+    onChange(newKeywords);
+
+    try {
+      localStorage.setItem(storageKey, JSON.stringify(newKeywords));
+    } catch (error) {
+      console.error("Failed to save keywords:", error);
     }
-    if (cleanImageUrl) {
-      try {
-        const parsedUrl = new URL(cleanImageUrl);
-        if (parsedUrl.protocol !== "https:" && parsedUrl.protocol !== "http:") throw new Error("invalid protocol");
-      } catch {
-        setError("Ảnh chỉ nhận đường dẫn URL bắt đầu bằng http:// hoặc https://.");
-        return;
-      }
-    }
-    const cardData: Flashcard = {
-      id: editingCardId ?? `custom-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
-      word: cleanWord,
-      ...(cleanMeaning ? { meaning: cleanMeaning } : {}),
-      ...(cleanImageUrl ? { imageUrl: cleanImageUrl } : {}),
-    };
-    setCustomCards((current) => editingCardId
-      ? current.map((card) => card.id === editingCardId ? cardData : card)
-      : [...current, cardData]);
-    setEditingCardId(null);
-    setWord(""); setMeaning(""); setImageUrl(""); setError("");
-    setSource((current) => current === "default" ? "custom" : current);
   };
 
-  const editCard = (card: Flashcard) => {
-    setEditingCardId(card.id);
-    setWord(card.word);
-    setMeaning(card.meaning ?? "");
-    setImageUrl(card.imageUrl ?? "");
-    setError("");
-  };
+  const addKeyword = () => {
+    const value = input.trim();
 
-  const cancelEdit = () => {
-    setEditingCardId(null);
-    setWord(""); setMeaning(""); setImageUrl(""); setError("");
-  };
+    if (!value) return;
 
-  const removeCard = (cardId: string) => {
-    setCustomCards((current) => current.filter((card) => card.id !== cardId));
-    if (editingCardId === cardId) cancelEdit();
-  };
+    const newKeywords = value
+      .split(",")
+      .map((item) => item.trim())
+      .filter(Boolean);
 
-  const handleStart = () => {
-    if (selectedCount < 1) {
-      setError("Hãy thêm ít nhất một thẻ hoặc chọn bộ thẻ có sẵn.");
-      return;
+    const unique = newKeywords.filter(
+      (item) =>
+        !keywords.some(
+          (existing) => existing.toLowerCase() === item.toLowerCase(),
+        ),
+    );
+
+    if (unique.length > 0) {
+      saveKeywords([...keywords, ...unique]);
     }
-    setError("");
-    onStart({ source, customCards });
+
+    setInput("");
+  };
+
+  const removeKeyword = (keyword: string) => {
+    const newKeywords = keywords.filter((item) => item !== keyword);
+
+    saveKeywords(newKeywords);
   };
 
   return (
-    <main className="min-h-screen bg-[#f3f8ff] px-4 py-5 sm:px-6 sm:py-8">
-      <div className="mx-auto max-w-3xl">
-        <Link href="/games" className="mb-5 inline-flex items-center gap-2 rounded-xl border border-blue-100 bg-white px-3.5 py-2 text-sm font-semibold text-slate-600 shadow-sm transition hover:border-blue-200 hover:text-blue-700"><ArrowLeft size={16} />Tất cả trò chơi</Link>
-        <header className="mb-5 flex items-center gap-3 rounded-2xl border border-blue-100 bg-white p-4 shadow-sm sm:p-5">
-          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-blue-600 text-white"><BookOpen size={24} /></div>
-          <div className="min-w-0"><p className="text-[11px] font-bold uppercase tracking-[.16em] text-blue-600">Tiếng Anh · Thẻ từ vựng</p><h1 className="mt-0.5 text-2xl font-black leading-tight text-slate-900 sm:text-3xl">Thẻ từ vựng</h1><p className="mt-1 text-sm text-slate-500">Ôn từ theo bộ có sẵn hoặc tự tạo.</p></div>
-        </header>
-
-        <div className="space-y-5 rounded-2xl border border-blue-100 bg-white p-4 shadow-sm sm:p-6">
-          <section>
-            <div className="flex items-center justify-between gap-2"><h2 className="text-sm font-bold text-slate-900">Bộ thẻ</h2><span className="rounded-full bg-blue-50 px-3 py-1 text-xs font-bold text-blue-700">{selectedCount} thẻ</span></div>
-            <div className="mt-3 grid gap-2 sm:grid-cols-3">
-              {([
-                ["default", "Có sẵn", `${defaultFlashcards.length} thẻ`],
-                ["custom", "Của tôi", `${customCards.length} thẻ`],
-                ["combined", "Kết hợp", `${defaultFlashcards.length + customCards.length} thẻ`],
-              ] as [FlashcardSource, string, string][]).map(([value, label, detail]) => (
-                <button key={value} type="button" onClick={() => setSource(value)} className={`rounded-xl border p-3.5 text-left transition ${source === value ? "border-blue-500 bg-blue-50 ring-1 ring-blue-500" : "border-slate-200 hover:border-blue-200"}`}>
-                  <span className="block font-bold text-slate-900">{label}</span><span className="mt-1 block text-xs text-slate-500">{detail}</span>
-                </button>
-              ))}
-            </div>
-          </section>
-
-          <details className="group rounded-2xl border border-blue-100 bg-[#f8fbff]">
-            <summary className="flex cursor-pointer list-none items-center justify-between gap-3 rounded-2xl p-3.5 transition hover:bg-blue-50/70 [&::-webkit-details-marker]:hidden">
-              <span><span className="block font-bold text-slate-900">Tạo / quản lý thẻ riêng</span><span className="mt-1 block text-xs text-slate-500">{customCards.length} thẻ đã lưu trên thiết bị này</span></span>
-              <ChevronDown size={18} className="text-slate-500 transition-transform group-open:rotate-180" />
-            </summary>
-            <div className="space-y-3 border-t border-blue-100 p-3.5">
-              <label className="block text-sm font-semibold text-slate-700">Từ vựng<input value={word} onChange={(event) => setWord(event.target.value)} maxLength={100} className={`${fieldClass} mt-2`} placeholder="Ví dụ: Lighthouse" /></label>
-              <label className="block text-sm font-semibold text-slate-700">Nghĩa / giải thích <span className="font-normal text-slate-400">(không bắt buộc)</span><input value={meaning} onChange={(event) => setMeaning(event.target.value)} maxLength={240} className={`${fieldClass} mt-2`} placeholder="Ví dụ: Ngọn hải đăng" /></label>
-              <label className="block text-sm font-semibold text-slate-700">URL hình ảnh <span className="font-normal text-slate-400">(không bắt buộc)</span><input value={imageUrl} onChange={(event) => setImageUrl(event.target.value)} maxLength={2000} inputMode="url" type="url" className={`${fieldClass} mt-2 font-normal`} placeholder="https://example.com/image.jpg" /></label>
-              <p className="text-xs leading-5 text-slate-500">Chỉ nhập liên kết ảnh http:// hoặc https://; không tải tệp ảnh lên.</p>
-              <div className="flex flex-wrap gap-2">
-                <button type="button" onClick={addCard} className="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-bold text-white transition hover:bg-blue-700">{editingCardId ? <><Save size={17} />Lưu thay đổi</> : <><Plus size={17} />Thêm thẻ</>}</button>
-                {editingCardId && <button type="button" onClick={cancelEdit} className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-bold text-slate-600 hover:bg-slate-100"><X size={17} />Hủy sửa</button>}
-              </div>
-              {customCards.length > 0 && <div className="space-y-2 pt-2">{customCards.map((card) => <div key={card.id} className="flex items-center justify-between gap-3 rounded-xl border border-slate-200 bg-white p-3"><div className="min-w-0"><p className="truncate font-semibold text-slate-900">{card.word}</p><p className="truncate text-sm text-slate-500">{card.meaning || "Chưa có nghĩa"}{card.imageUrl ? " · Có ảnh URL" : ""}</p></div><div className="flex shrink-0 gap-1"><button type="button" aria-label={`Sửa thẻ ${card.word}`} onClick={() => editCard(card)} className="flex h-9 w-9 items-center justify-center rounded-lg text-slate-500 transition hover:bg-blue-50 hover:text-blue-700"><Pencil size={16} /></button><button type="button" aria-label={`Xóa thẻ ${card.word}`} onClick={() => removeCard(card.id)} className="flex h-9 w-9 items-center justify-center rounded-lg text-slate-400 transition hover:bg-red-50 hover:text-red-600"><Trash2 size={16} /></button></div></div>)}</div>}
-            </div>
-          </details>
-
-          {error && <p role="alert" className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{error}</p>}
-          <button type="button" onClick={handleStart} className="w-full rounded-xl bg-blue-600 px-5 py-3.5 font-bold text-white shadow-sm shadow-blue-200 transition hover:bg-blue-700">Bắt đầu học {selectedCount} thẻ <span aria-hidden="true">→</span></button>
+    <div className={`rounded-2xl border ${colors.border} p-4 sm:p-5`}>
+      <div className="mb-4 flex items-start justify-between gap-3">
+        <div>
+          <h3 className={`font-bold ${colors.text}`}>{title}</h3>
+          <p className="mt-1 text-xs leading-5 text-gray-500">{description}</p>
         </div>
+
+        <div
+          className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${colors.background} ${colors.text}`}
+        >
+          <Sparkles size={19} />
+        </div>
+      </div>
+
+      <div className="flex gap-2">
+        <input
+          value={input}
+          onChange={(event) => setInput(event.target.value)}
+          onKeyDown={(event) => {
+            if (event.key === "Enter") {
+              event.preventDefault();
+              addKeyword();
+            }
+          }}
+          placeholder="Nhập keyword..."
+          className={`min-w-0 flex-1 rounded-xl border border-gray-200 bg-white px-3 py-2.5 text-sm outline-none ring-0 transition ${colors.focus}`}
+        />
+
+        <button
+          type="button"
+          onClick={addKeyword}
+          className={`flex shrink-0 items-center justify-center gap-1 rounded-xl px-3 text-white transition ${colors.button}`}
+        >
+          <Plus size={17} />
+          <span className="hidden sm:inline">Thêm</span>
+        </button>
+      </div>
+
+      <p className="mt-2 text-[11px] text-gray-400">
+        Bạn cũng có thể nhập nhiều keyword cùng lúc, cách nhau bằng dấu phẩy.
+      </p>
+
+      <div className="mt-4 flex flex-wrap gap-2">
+        {keywords.map((keyword) => (
+          <span
+            key={keyword}
+            className={`inline-flex items-center gap-1.5 rounded-full ${colors.background} px-3 py-1.5 text-sm ${colors.text}`}
+          >
+            {keyword}
+
+            <button
+              type="button"
+              onClick={() => removeKeyword(keyword)}
+              className="rounded-full opacity-60 transition hover:opacity-100"
+              aria-label={`Xóa ${keyword}`}
+            >
+              <X size={14} />
+            </button>
+          </span>
+        ))}
+
+        {keywords.length === 0 && (
+          <p className="text-sm italic text-gray-400">
+            Chưa có keyword. Game sẽ sử dụng câu hỏi mặc định.
+          </p>
+        )}
+      </div>
+    </div>
+  );
+}
+
+export default function TruthOrDarePage() {
+  const [phase, setPhase] = useState<GamePhase>("setup");
+
+  const [players, setPlayers] = useState<string[]>(["", ""]);
+
+  const [truthKeywords, setTruthKeywords] = useState<string[]>(
+    DEFAULT_TRUTH_KEYWORDS,
+  );
+
+  const [dareKeywords, setDareKeywords] = useState<string[]>(
+    DEFAULT_DARE_KEYWORDS,
+  );
+
+  const [playerPool, setPlayerPool] = useState<string[]>([]);
+  const [turnOrder, setTurnOrder] = useState<string[]>([]);
+  const [turnIndex, setTurnIndex] = useState(0);
+
+  const [selectedType, setSelectedType] = useState<ChallengeType | null>(null);
+
+  const [prompt, setPrompt] = useState("");
+  const [completedCount, setCompletedCount] = useState(0);
+  const [skippedCount, setSkippedCount] = useState(0);
+  const [round, setRound] = useState(1);
+
+  const [showPrompt, setShowPrompt] = useState(false);
+
+  // Load Truth and Dare keywords independently when the page opens.
+  useEffect(() => {
+    try {
+      const savedTruth = localStorage.getItem(TRUTH_STORAGE_KEY);
+      const savedDare = localStorage.getItem(DARE_STORAGE_KEY);
+
+      if (savedTruth !== null) {
+        const parsed: unknown = JSON.parse(savedTruth);
+
+        if (Array.isArray(parsed)) {
+          setTruthKeywords(
+            parsed.filter((item): item is string => typeof item === "string"),
+          );
+        }
+      }
+
+      if (savedDare !== null) {
+        const parsed: unknown = JSON.parse(savedDare);
+
+        if (Array.isArray(parsed)) {
+          setDareKeywords(
+            parsed.filter((item): item is string => typeof item === "string"),
+          );
+        }
+      }
+    } catch (error) {
+      console.error("Failed to load keywords:", error);
+    }
+  }, []);
+
+  const validPlayers = useMemo(
+    () => players.map((name) => name.trim()).filter(Boolean),
+    [players],
+  );
+
+  const currentPlayer = turnOrder[turnIndex] ?? "";
+
+  const addPlayer = () => {
+    setPlayers((prev) => [...prev, ""]);
+  };
+
+  const removePlayer = (index: number) => {
+    if (players.length <= 2) return;
+
+    setPlayers((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const updatePlayer = (index: number, value: string) => {
+    setPlayers((prev) => prev.map((name, i) => (i === index ? value : name)));
+  };
+
+  const startGame = () => {
+    const names = validPlayers;
+
+    if (names.length < 2) return;
+
+    const uniqueNames = names.filter(
+      (name, index) =>
+        names.findIndex(
+          (other) => other.toLowerCase() === name.toLowerCase(),
+        ) === index,
+    );
+
+    if (uniqueNames.length < 2) {
+      alert("Tên người chơi không được trùng nhau nhé!");
+      return;
+    }
+
+    const shuffledPlayers = shuffle(uniqueNames);
+
+    setPlayerPool(uniqueNames);
+    setTurnOrder(shuffledPlayers);
+    setTurnIndex(0);
+    setRound(1);
+    setCompletedCount(0);
+    setSkippedCount(0);
+    setSelectedType(null);
+    setPrompt("");
+    setShowPrompt(false);
+    setPhase("playing");
+  };
+
+  const chooseType = (type: ChallengeType) => {
+    setSelectedType(type);
+
+    const keywords = type === "truth" ? truthKeywords : dareKeywords;
+
+    setPrompt(generatePrompt(type, keywords));
+    setShowPrompt(true);
+  };
+
+  const nextPlayer = () => {
+    setSelectedType(null);
+    setPrompt("");
+    setShowPrompt(false);
+
+    if (turnIndex >= turnOrder.length - 1) {
+      const nextOrder = shuffle(playerPool);
+
+      setTurnOrder(nextOrder);
+      setTurnIndex(0);
+      setRound((prev) => prev + 1);
+    } else {
+      setTurnIndex((prev) => prev + 1);
+    }
+  };
+
+  const completeTurn = () => {
+    setCompletedCount((prev) => prev + 1);
+    nextPlayer();
+  };
+
+  const skipTurn = () => {
+    setSkippedCount((prev) => prev + 1);
+    nextPlayer();
+  };
+
+  const regeneratePrompt = () => {
+    if (!selectedType) return;
+
+    const keywords = selectedType === "truth" ? truthKeywords : dareKeywords;
+
+    setPrompt(generatePrompt(selectedType, keywords));
+  };
+
+  const resetGame = () => {
+    setPhase("setup");
+    setTurnOrder([]);
+    setTurnIndex(0);
+    setSelectedType(null);
+    setPrompt("");
+    setShowPrompt(false);
+    setCompletedCount(0);
+    setSkippedCount(0);
+    setRound(1);
+  };
+
+  return (
+    <main className="min-h-screen bg-[#faf9fc] px-4 py-6 sm:px-6 sm:py-10">
+      <div className="mx-auto max-w-3xl">
+        {/* Header */}
+        <div className="mb-8">
+          <button
+            type="button"
+            onClick={() => {
+              if (phase === "playing") {
+                resetGame();
+              } else {
+                window.history.back();
+              }
+            }}
+            className="mb-5 inline-flex items-center gap-2 text-sm text-gray-500 transition hover:text-gray-900"
+          >
+            <ArrowLeft size={17} />
+            {phase === "playing" ? "Cài đặt game" : "Quay lại"}
+          </button>
+
+          <div className="flex items-center gap-3">
+            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-pink-500 to-purple-500 text-white shadow-lg shadow-purple-100">
+              <Heart size={26} fill="white" />
+            </div>
+
+            <div>
+              <h1 className="text-2xl font-black tracking-tight text-gray-900 sm:text-3xl">
+                Truth or Dare
+              </h1>
+              <p className="mt-1 text-sm text-gray-500">
+                Thật lòng hay thử thách?
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {phase === "setup" ? (
+          <div className="space-y-5">
+            {/* Players */}
+            <section className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm sm:p-5">
+              <div className="mb-4 flex items-center justify-between">
+                <div>
+                  <h2 className="font-bold text-gray-900">Người chơi</h2>
+                  <p className="mt-1 text-xs text-gray-500">
+                    Tối thiểu 2 người
+                  </p>
+                </div>
+
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
+                  <Users size={19} />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                {players.map((player, index) => (
+                  <div key={index} className="flex items-center gap-2">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gray-100 text-sm font-bold text-gray-500">
+                      {index + 1}
+                    </div>
+
+                    <input
+                      value={player}
+                      onChange={(event) =>
+                        updatePlayer(index, event.target.value)
+                      }
+                      placeholder={`Tên người chơi ${index + 1}`}
+                      className="min-w-0 flex-1 rounded-xl border border-gray-200 px-3 py-2.5 text-sm outline-none transition focus:border-purple-400 focus:ring-2 focus:ring-purple-100"
+                    />
+
+                    <button
+                      type="button"
+                      onClick={() => removePlayer(index)}
+                      disabled={players.length <= 2}
+                      className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-gray-400 transition hover:bg-red-50 hover:text-red-500 disabled:cursor-not-allowed disabled:opacity-30"
+                      aria-label="Xóa người chơi"
+                    >
+                      <Trash2 size={17} />
+                    </button>
+                  </div>
+                ))}
+              </div>
+
+              <button
+                type="button"
+                onClick={addPlayer}
+                className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-gray-300 py-3 text-sm font-medium text-gray-600 transition hover:border-purple-300 hover:bg-purple-50 hover:text-purple-600"
+              >
+                <Plus size={17} />
+                Thêm người chơi
+              </button>
+            </section>
+
+            {/* Truth keywords */}
+            <KeywordInput
+              title="Truth keywords"
+              description="Chủ đề bạn muốn xuất hiện trong câu hỏi Truth."
+              keywords={truthKeywords}
+              onChange={setTruthKeywords}
+              accent="pink"
+              storageKey={TRUTH_STORAGE_KEY}
+            />
+
+            {/* Dare keywords */}
+            <KeywordInput
+              title="Dare keywords"
+              description="Chủ đề bạn muốn xuất hiện trong các thử thách."
+              keywords={dareKeywords}
+              onChange={setDareKeywords}
+              accent="purple"
+              storageKey={DARE_STORAGE_KEY}
+            />
+
+            {/* Start */}
+            <button
+              type="button"
+              onClick={startGame}
+              disabled={validPlayers.length < 2}
+              className="flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-pink-500 to-purple-500 py-4 font-bold text-white shadow-lg shadow-purple-100 transition hover:brightness-105 disabled:cursor-not-allowed disabled:opacity-40"
+            >
+              <Sparkles size={19} />
+              Bắt đầu chơi
+              <ArrowRight size={19} />
+            </button>
+
+            <p className="text-center text-xs text-gray-400">
+              Keyword của bạn sẽ được lưu tự động trên trình duyệt.
+            </p>
+          </div>
+        ) : (
+          <div className="space-y-5">
+            {/* Game stats */}
+            <div className="grid grid-cols-3 gap-3">
+              <div className="rounded-2xl border border-gray-200 bg-white p-3 text-center">
+                <p className="text-xs text-gray-400">Round</p>
+                <p className="mt-1 text-xl font-black text-gray-900">{round}</p>
+              </div>
+
+              <div className="rounded-2xl border border-gray-200 bg-white p-3 text-center">
+                <p className="text-xs text-gray-400">Completed</p>
+                <p className="mt-1 text-xl font-black text-green-600">
+                  {completedCount}
+                </p>
+              </div>
+
+              <div className="rounded-2xl border border-gray-200 bg-white p-3 text-center">
+                <p className="text-xs text-gray-400">Skipped</p>
+                <p className="mt-1 text-xl font-black text-gray-500">
+                  {skippedCount}
+                </p>
+              </div>
+            </div>
+
+            {/* Current player */}
+            <section className="overflow-hidden rounded-3xl border border-gray-200 bg-white shadow-sm">
+              <div className="bg-gradient-to-r from-pink-500 to-purple-500 px-5 py-8 text-center text-white sm:py-10">
+                <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-white/20 px-3 py-1 text-xs font-medium">
+                  <Shuffle size={13} />
+                  Your turn
+                </div>
+
+                <h2 className="text-3xl font-black sm:text-4xl">
+                  {currentPlayer}
+                </h2>
+
+                <p className="mt-2 text-sm text-white/80">
+                  Chọn Truth hoặc Dare
+                </p>
+              </div>
+
+              <div className="p-4 sm:p-6">
+                {!selectedType ? (
+                  <div className="grid grid-cols-2 gap-3">
+                    <button
+                      type="button"
+                      onClick={() => chooseType("truth")}
+                      className="group rounded-2xl border-2 border-pink-100 bg-pink-50 p-5 text-center transition hover:border-pink-300 hover:bg-pink-100 sm:p-7"
+                    >
+                      <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-pink-500 text-white shadow-md shadow-pink-100 transition group-hover:scale-105">
+                        <Heart size={25} />
+                      </div>
+
+                      <p className="text-xl font-black text-pink-600">TRUTH</p>
+
+                      <p className="mt-1 text-xs text-pink-500">
+                        Trả lời thật lòng
+                      </p>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => chooseType("dare")}
+                      className="group rounded-2xl border-2 border-purple-100 bg-purple-50 p-5 text-center transition hover:border-purple-300 hover:bg-purple-100 sm:p-7"
+                    >
+                      <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-purple-500 text-white shadow-md shadow-purple-100 transition group-hover:scale-105">
+                        <Zap size={25} fill="white" />
+                      </div>
+
+                      <p className="text-xl font-black text-purple-600">DARE</p>
+
+                      <p className="mt-1 text-xs text-purple-500">
+                        Thực hiện thử thách
+                      </p>
+                    </button>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    <div
+                      className={`rounded-2xl p-5 sm:p-7 ${
+                        selectedType === "truth" ? "bg-pink-50" : "bg-purple-50"
+                      }`}
+                    >
+                      <div className="mb-4 flex items-center justify-between">
+                        <div
+                          className={`inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-bold ${
+                            selectedType === "truth"
+                              ? "bg-pink-100 text-pink-600"
+                              : "bg-purple-100 text-purple-600"
+                          }`}
+                        >
+                          {selectedType === "truth" ? (
+                            <Heart size={14} />
+                          ) : (
+                            <Zap size={14} />
+                          )}
+
+                          {selectedType.toUpperCase()}
+                        </div>
+
+                        <button
+                          type="button"
+                          onClick={regeneratePrompt}
+                          className="flex items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-medium text-gray-500 transition hover:bg-white hover:text-gray-900"
+                        >
+                          <RotateCcw size={14} />
+                          Đổi câu
+                        </button>
+                      </div>
+
+                      <p
+                        className={`text-center text-lg font-bold leading-8 sm:text-xl ${
+                          selectedType === "truth"
+                            ? "text-pink-900"
+                            : "text-purple-900"
+                        }`}
+                      >
+                        {prompt}
+                      </p>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-3">
+                      <button
+                        type="button"
+                        onClick={skipTurn}
+                        className="flex items-center justify-center gap-2 rounded-xl border border-gray-200 bg-white py-3.5 text-sm font-semibold text-gray-600 transition hover:bg-gray-50"
+                      >
+                        <X size={17} />
+                        Skip
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={completeTurn}
+                        className="flex items-center justify-center gap-2 rounded-xl bg-green-500 py-3.5 text-sm font-bold text-white transition hover:bg-green-600"
+                      >
+                        <Check size={17} />
+                        Done
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </section>
+
+            {/* Player order */}
+            <section className="rounded-2xl border border-gray-200 bg-white p-4">
+              <div className="mb-3 flex items-center justify-between">
+                <h3 className="text-sm font-bold text-gray-800">
+                  Player order
+                </h3>
+
+                <span className="text-xs text-gray-400">
+                  {turnIndex + 1}/{turnOrder.length}
+                </span>
+              </div>
+
+              <div className="flex flex-wrap gap-2">
+                {turnOrder.map((player, index) => (
+                  <div
+                    key={`${player}-${index}`}
+                    className={`rounded-xl px-3 py-2 text-sm ${
+                      index === turnIndex
+                        ? "bg-purple-100 font-bold text-purple-700 ring-1 ring-purple-200"
+                        : "bg-gray-50 text-gray-500"
+                    }`}
+                  >
+                    {index === turnIndex && <span className="mr-1">▶</span>}
+                    {player}
+                  </div>
+                ))}
+              </div>
+            </section>
+
+            {/* Footer actions */}
+            <div className="flex gap-3">
+              <button
+                type="button"
+                onClick={resetGame}
+                className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-gray-200 bg-white py-3 text-sm font-semibold text-gray-600 transition hover:bg-gray-50"
+              >
+                <RotateCcw size={17} />
+                Chơi lại / Setup
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </main>
   );

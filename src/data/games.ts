@@ -30,6 +30,20 @@ export const games: Game[] = [
     href: "/games/spy",
   },
   {
+    id: "truth-or-dare",
+    title: "Truth or Dare",
+    description:
+      "Thật lòng hay thử thách? Trả lời những câu hỏi thú vị hoặc thực hiện các thử thách do nhóm tạo ra.",
+    category: "party",
+    icon: "💗",
+    color: "#DB2777",
+    background: "#FCE7F3",
+    players: "2–20 người chơi",
+    duration: "10–30 phút",
+    badge: "Mới",
+    href: "/games/truth-or-dare",
+  },
+  {
     id: "memory",
     title: "Lật thẻ ghi nhớ",
     description: "Lật thẻ, ghi nhớ vị trí và tìm những cặp thẻ giống nhau.",
