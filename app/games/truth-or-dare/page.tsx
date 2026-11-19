@@ -1,12 +1,9 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
-  ArrowLeft,
   ArrowRight,
   Check,
-  ChevronRight,
-  Flame,
   Heart,
   Plus,
   RotateCcw,
@@ -17,6 +14,7 @@ import {
   X,
   Zap,
 } from "lucide-react";
+import BackToGamesButton from "@/components/games/BackToGamesButton";
 
 type GamePhase = "setup" | "playing";
 
@@ -24,6 +22,14 @@ type ChallengeType = "truth" | "dare";
 
 const DEFAULT_TRUTH_KEYWORDS: string[] = [];
 const DEFAULT_DARE_KEYWORDS: string[] = [];
+
+const TRUTH_OR_DARE_STORAGE_KEY = "party-play-truth-or-dare-settings";
+
+function isStringArray(value: unknown): value is string[] {
+  return (
+    Array.isArray(value) && value.every((item) => typeof item === "string")
+  );
+}
 
 const TRUTH_TEMPLATES = [
   (keyword: string) =>
@@ -263,7 +269,7 @@ function KeywordInput({
 export default function TruthOrDarePage() {
   const [phase, setPhase] = useState<GamePhase>("setup");
 
-  const [players, setPlayers] = useState<string[]>(["", ""]);
+  const [players, setPlayers] = useState<string[]>([""]);
 
   const [truthKeywords, setTruthKeywords] = useState<string[]>(
     DEFAULT_TRUTH_KEYWORDS,
@@ -272,19 +278,65 @@ export default function TruthOrDarePage() {
   const [dareKeywords, setDareKeywords] = useState<string[]>(
     DEFAULT_DARE_KEYWORDS,
   );
-
+  const [settingsLoaded, setSettingsLoaded] = useState(false);
   const [playerPool, setPlayerPool] = useState<string[]>([]);
   const [turnOrder, setTurnOrder] = useState<string[]>([]);
   const [turnIndex, setTurnIndex] = useState(0);
-
   const [selectedType, setSelectedType] = useState<ChallengeType | null>(null);
-
   const [prompt, setPrompt] = useState("");
   const [completedCount, setCompletedCount] = useState(0);
   const [skippedCount, setSkippedCount] = useState(0);
   const [round, setRound] = useState(1);
 
-  const [showPrompt, setShowPrompt] = useState(false);
+  useEffect(() => {
+    const timer = window.setTimeout(() => {
+      try {
+        const saved = window.localStorage.getItem(TRUTH_OR_DARE_STORAGE_KEY);
+
+        if (saved) {
+          const parsed: unknown = JSON.parse(saved);
+
+          if (parsed && typeof parsed === "object") {
+            const settings = parsed as Record<string, unknown>;
+
+            if (
+              isStringArray(settings.players) &&
+              settings.players.length > 0
+            ) {
+              setPlayers(settings.players);
+            }
+
+            if (isStringArray(settings.truthKeywords)) {
+              setTruthKeywords(settings.truthKeywords);
+            }
+
+            if (isStringArray(settings.dareKeywords)) {
+              setDareKeywords(settings.dareKeywords);
+            }
+          }
+        }
+      } catch {
+        // Keep the default settings if storage is unavailable or invalid.
+      } finally {
+        setSettingsLoaded(true);
+      }
+    }, 0);
+
+    return () => window.clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
+    if (!settingsLoaded) return;
+
+    try {
+      window.localStorage.setItem(
+        TRUTH_OR_DARE_STORAGE_KEY,
+        JSON.stringify({ players, truthKeywords, dareKeywords }),
+      );
+    } catch {
+      // The game still works if storage is unavailable.
+    }
+  }, [settingsLoaded, players, truthKeywords, dareKeywords]);
 
   const validPlayers = useMemo(
     () => players.map((name) => name.trim()).filter(Boolean),
@@ -298,7 +350,7 @@ export default function TruthOrDarePage() {
   };
 
   const removePlayer = (index: number) => {
-    if (players.length <= 2) return;
+    if (players.length <= 1) return;
 
     setPlayers((prev) => prev.filter((_, i) => i !== index));
   };
@@ -310,7 +362,7 @@ export default function TruthOrDarePage() {
   const startGame = () => {
     const names = validPlayers;
 
-    if (names.length < 2) return;
+    if (names.length < 1) return;
 
     const uniqueNames = names.filter(
       (name, index) =>
@@ -319,7 +371,7 @@ export default function TruthOrDarePage() {
         ) === index,
     );
 
-    if (uniqueNames.length < 2) {
+    if (uniqueNames.length < 1) {
       alert("Tên người chơi không được trùng nhau nhé!");
       return;
     }
@@ -334,7 +386,6 @@ export default function TruthOrDarePage() {
     setSkippedCount(0);
     setSelectedType(null);
     setPrompt("");
-    setShowPrompt(false);
     setPhase("playing");
   };
 
@@ -344,13 +395,11 @@ export default function TruthOrDarePage() {
     const keywords = type === "truth" ? truthKeywords : dareKeywords;
 
     setPrompt(generatePrompt(type, keywords));
-    setShowPrompt(true);
   };
 
   const nextPlayer = () => {
     setSelectedType(null);
     setPrompt("");
-    setShowPrompt(false);
 
     if (turnIndex >= turnOrder.length - 1) {
       const nextOrder = shuffle(playerPool);
@@ -386,7 +435,6 @@ export default function TruthOrDarePage() {
     setTurnIndex(0);
     setSelectedType(null);
     setPrompt("");
-    setShowPrompt(false);
     setCompletedCount(0);
     setSkippedCount(0);
     setRound(1);
@@ -397,23 +445,13 @@ export default function TruthOrDarePage() {
       <div className="mx-auto max-w-3xl">
         {/* Header */}
         <div className="mb-8">
-          <button
-            type="button"
-            onClick={() => {
-              if (phase === "playing") {
-                resetGame();
-              } else {
-                window.history.back();
-              }
-            }}
-            className="mb-5 inline-flex items-center gap-2 text-sm text-gray-500 transition hover:text-gray-900"
-          >
-            <ArrowLeft size={17} />
-            {phase === "playing" ? "Cài đặt game" : "Quay lại"}
-          </button>
+          <BackToGamesButton
+            label={phase === "playing" ? "Cài đặt game" : "Quay lại"}
+            onClick={phase === "playing" ? resetGame : undefined}
+          />
 
           <div className="flex items-center gap-3">
-            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-pink-500 to-purple-500 text-white shadow-lg shadow-purple-100">
+            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-linear-to-br from-pink-500 to-purple-500 text-white shadow-lg shadow-purple-100">
               <Heart size={26} fill="white" />
             </div>
 
@@ -436,7 +474,7 @@ export default function TruthOrDarePage() {
                 <div>
                   <h2 className="font-bold text-gray-900">Người chơi</h2>
                   <p className="mt-1 text-xs text-gray-500">
-                    Tối thiểu 2 người
+                    Tối thiểu 1 người
                   </p>
                 </div>
 
@@ -464,7 +502,7 @@ export default function TruthOrDarePage() {
                     <button
                       type="button"
                       onClick={() => removePlayer(index)}
-                      disabled={players.length <= 2}
+                      disabled={players.length <= 1}
                       className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-gray-400 transition hover:bg-red-50 hover:text-red-500 disabled:cursor-not-allowed disabled:opacity-30"
                       aria-label="Xóa người chơi"
                     >
@@ -506,8 +544,8 @@ export default function TruthOrDarePage() {
             <button
               type="button"
               onClick={startGame}
-              disabled={validPlayers.length < 2}
-              className="flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-pink-500 to-purple-500 py-4 font-bold text-white shadow-lg shadow-purple-100 transition hover:brightness-105 disabled:cursor-not-allowed disabled:opacity-40"
+              disabled={validPlayers.length < 1}
+              className="flex w-full items-center justify-center gap-2 rounded-2xl bg-linear-to-r from-pink-500 to-purple-500 py-4 font-bold text-white shadow-lg shadow-purple-100 transition hover:brightness-105 disabled:cursor-not-allowed disabled:opacity-40"
             >
               <Sparkles size={19} />
               Bắt đầu chơi
@@ -544,7 +582,7 @@ export default function TruthOrDarePage() {
 
             {/* Current player */}
             <section className="overflow-hidden rounded-3xl border border-gray-200 bg-white shadow-sm">
-              <div className="bg-gradient-to-r from-pink-500 to-purple-500 px-5 py-8 text-center text-white sm:py-10">
+              <div className="bg-linear-to-r from-pink-500 to-purple-500 px-5 py-8 text-center text-white sm:py-10">
                 <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-white/20 px-3 py-1 text-xs font-medium">
                   <Shuffle size={13} />
                   Your turn

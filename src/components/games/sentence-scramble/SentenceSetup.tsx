@@ -27,6 +27,7 @@ import type {
   SentenceTeam,
 } from "@/types/sentence-scramble";
 import { useRouter } from "next/navigation";
+import BackToGamesButton from "@/components/games/BackToGamesButton";
 
 const CUSTOM_SENTENCES_KEY = "party-play-sentence-scramble-custom-sentences";
 
@@ -186,13 +187,7 @@ export default function SentenceSetup({ onStart }: SentenceSetupProps) {
 
   return (
     <main className="mx-auto w-full max-w-3xl px-4 py-10">
-      <button
-        type="button"
-        onClick={handleGoBack}
-        className="mb-6 text-sm font-medium text-gray-500 transition hover:text-gray-900"
-      >
-        ← Quay lại
-      </button>
+      <BackToGamesButton />
 
       <div className="mb-6 text-center">
         <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-100 text-blue-700">

@@ -18,7 +18,7 @@ export type TabooPhase = "setup" | "playing" | "results";
 export interface TabooSettings {
   mode: "individual" | "teams";
   teams: TabooTeam[];
-  turnDuration: 30 | 60 | 90;
+  turnDuration: number;
   rounds: number;
   cards: TabooCardData[];
 }

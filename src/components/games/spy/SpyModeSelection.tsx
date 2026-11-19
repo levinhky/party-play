@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { Users, ArrowRight, ArrowLeft, Smartphone, Globe2, Sparkles } from "lucide-react";
+import { Users, ArrowRight, Smartphone, Globe2, Sparkles } from "lucide-react";
+import BackToGamesButton from "@/components/games/BackToGamesButton";
 
 export default function SpyModeSelection() {
   return (
@@ -11,13 +12,10 @@ export default function SpyModeSelection() {
       <div className="pointer-events-none absolute -bottom-40 -right-40 h-96 w-96 rounded-full bg-blue-100/70 blur-[120px]" />
 
       <div className="relative mx-auto flex min-h-[80vh] w-full max-w-5xl flex-col items-center justify-center">
-        <Link
-          href="/games"
+        <BackToGamesButton
+          iconSize={18}
           className="mb-7 inline-flex self-start items-center gap-2 rounded-xl border border-blue-200 bg-white/85 px-4 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition hover:-translate-x-1 hover:border-blue-300 hover:text-blue-700 sm:absolute sm:left-0 sm:top-0"
-        >
-          <ArrowLeft size={18} />
-          Quay lại
-        </Link>
+        />
 
         {/* Header */}
         <div className="mb-8 text-center sm:mb-10">
@@ -27,7 +25,10 @@ export default function SpyModeSelection() {
           </div>
 
           <h1 className="text-3xl font-black leading-tight tracking-tight text-gray-900 sm:text-6xl">
-            Ai là <span className="bg-gradient-to-r from-blue-600 to-blue-500 bg-clip-text text-transparent">gián điệp?</span>
+            Ai là{" "}
+            <span className="bg-gradient-to-r from-blue-600 to-blue-500 bg-clip-text text-transparent">
+              gián điệp?
+            </span>
           </h1>
 
           <p className="mx-auto mt-4 max-w-xl text-sm leading-7 text-gray-500 sm:text-base">
@@ -56,7 +57,9 @@ export default function SpyModeSelection() {
                 </span>
               </div>
 
-              <h2 className="text-2xl font-bold text-gray-900">Chơi trực tiếp</h2>
+              <h2 className="text-2xl font-bold text-gray-900">
+                Chơi trực tiếp
+              </h2>
 
               <p className="mt-3 text-sm leading-7 text-gray-500 sm:min-h-[72px]">
                 Chơi cùng bạn bè trên một thiết bị. Chuyền điện thoại để từng
