@@ -22,9 +22,8 @@ type GamePhase = "setup" | "playing";
 
 type ChallengeType = "truth" | "dare";
 
-const DEFAULT_TRUTH_KEYWORDS = [];
-
-const DEFAULT_DARE_KEYWORDS = [];
+const DEFAULT_TRUTH_KEYWORDS: string[] = [];
+const DEFAULT_DARE_KEYWORDS: string[] = [];
 
 const TRUTH_TEMPLATES = [
   (keyword: string) =>
