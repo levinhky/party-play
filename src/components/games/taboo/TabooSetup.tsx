@@ -15,6 +15,7 @@ import {
 import BackToGamesButton from "@/components/games/BackToGamesButton";
 import { tabooCards } from "@/data/tabooCards";
 import type { TabooCardData, TabooSettings, TabooTeam } from "@/types/taboo";
+import Link from "next/link";
 
 interface TabooSetupProps {
   onStart: (settings: TabooSettings) => void;
@@ -60,6 +61,11 @@ export default function TabooSetup({ onStart }: TabooSetupProps) {
   const [customCards, setCustomCards] = useState<TabooCardData[]>([]);
   const [cardsLoaded, setCardsLoaded] = useState(false);
   const [deckSource, setDeckSource] = useState<DeckSource>("default");
+  const [deckDistribution, setDeckDistribution] = useState<"shared" | "split">(
+    "shared",
+  );
+  const [hostEnabled, setHostEnabled] = useState(false);
+  const [hostName, setHostName] = useState("Quản trò");
   const [word, setWord] = useState("");
   const [forbiddenWords, setForbiddenWords] = useState("");
   const [category, setCategory] = useState("Tự tạo");
@@ -310,6 +316,28 @@ export default function TabooSetup({ onStart }: TabooSetupProps) {
       return;
     }
 
+    const teamCards: Record<string, TabooCardData[]> = {};
+
+    for (const team of teams) {
+      teamCards[team.id] = [];
+    }
+
+    if (deckDistribution === "split") {
+      cards.forEach((card, index) => {
+        const team = teams[index % teams.length];
+        teamCards[team.id].push(card);
+      });
+
+      if (
+        Object.values(teamCards).some(
+          (assignedCards) => assignedCards.length === 0,
+        )
+      ) {
+        setError("Cần ít nhất một thẻ cho mỗi người chơi hoặc đội.");
+        return;
+      }
+    }
+
     setError("");
 
     onStart({
@@ -318,6 +346,10 @@ export default function TabooSetup({ onStart }: TabooSetupProps) {
       turnDuration: finalTurnDuration,
       rounds,
       cards,
+      deckDistribution,
+      teamCards: deckDistribution === "split" ? teamCards : undefined,
+      hostEnabled,
+      hostName: hostEnabled ? hostName.trim() || "Quản trò" : undefined,
     });
   }
 
@@ -500,6 +532,42 @@ export default function TabooSetup({ onStart }: TabooSetupProps) {
                   </span>
                 </button>
               ))}
+            </div>
+
+            <div className="mt-4 grid gap-3 sm:grid-cols-2">
+              <button
+                type="button"
+                onClick={() => setDeckDistribution("shared")}
+                className={`rounded-2xl border-2 p-4 text-left transition ${
+                  deckDistribution === "shared"
+                    ? "border-blue-400 bg-blue-50"
+                    : "border-slate-200 hover:border-blue-200"
+                }`}
+              >
+                <span className="block font-bold text-slate-900">
+                  Bộ dùng chung
+                </span>
+                <span className="mt-1 block text-xs text-slate-500">
+                  Tất cả người chơi cùng dùng chung bộ thẻ.
+                </span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setDeckDistribution("split")}
+                className={`rounded-2xl border-2 p-4 text-left transition ${
+                  deckDistribution === "split"
+                    ? "border-blue-400 bg-blue-50"
+                    : "border-slate-200 hover:border-blue-200"
+                }`}
+              >
+                <span className="block font-bold text-slate-900">
+                  Chia bộ câu hỏi
+                </span>
+                <span className="mt-1 block text-xs text-slate-500">
+                  Mỗi người hoặc đội nhận thẻ riêng, không trùng lặp.
+                </span>
+              </button>
             </div>
 
             <details className="group mt-5 rounded-2xl border border-slate-200 bg-slate-50/70">
@@ -837,6 +905,49 @@ export default function TabooSetup({ onStart }: TabooSetupProps) {
             </div>
           </section>
 
+          {/* Host */}
+          <section className="border-t border-slate-100 pt-7">
+            <div className="flex items-center justify-between gap-4">
+              <div>
+                <h2 className="text-lg font-bold text-slate-900">
+                  Quản trò kiểm tra
+                </h2>
+                <p className="mt-1 text-sm text-slate-500">
+                  Cho phép một người xem thẻ hiện tại để bắt vi phạm từ cấm.
+                </p>
+              </div>
+
+              <button
+                type="button"
+                role="switch"
+                aria-checked={hostEnabled}
+                onClick={() => setHostEnabled((current) => !current)}
+                className={`relative h-7 w-12 shrink-0 rounded-full transition ${
+                  hostEnabled ? "bg-blue-600" : "bg-slate-300"
+                }`}
+              >
+                <span
+                  className={`absolute top-1 h-5 w-5 rounded-full bg-white shadow-sm transition ${
+                    hostEnabled ? "left-6" : "left-1"
+                  }`}
+                />
+              </button>
+            </div>
+
+            {hostEnabled && (
+              <label className="mt-4 block text-xs font-semibold text-slate-600">
+                Tên quản trò
+                <input
+                  value={hostName}
+                  onChange={(event) => setHostName(event.target.value)}
+                  maxLength={30}
+                  className="mt-1.5 h-11 w-full rounded-xl border border-slate-200 px-4 text-sm font-normal text-slate-900 outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
+                  placeholder="Quản trò"
+                />
+              </label>
+            )}
+          </section>
+
           {/* Error */}
           {error && (
             <p
@@ -855,6 +966,28 @@ export default function TabooSetup({ onStart }: TabooSetupProps) {
           >
             Bắt đầu trò chơi →
           </button>
+
+          {/* Room entry link */}
+          <div className="mt-6 rounded-2xl bg-blue-50 p-4 text-center">
+            <p className="text-sm text-slate-500">
+              Hoặc tham gia phòng chơi trực tuyến:
+            </p>
+
+            <Link
+              href="/games/taboo/online"
+              className="mb-5 flex w-full items-center justify-between gap-3 rounded-2xl border border-blue-200 bg-blue-50 px-5 py-4 text-left transition hover:border-blue-300 hover:bg-blue-100"
+            >
+              <span>
+                <span className="block font-bold text-blue-900">
+                  Chơi trực tuyến
+                </span>
+                <span className="mt-1 block text-xs text-blue-700">
+                  Tạo phòng cho quản trò và người chơi trên máy riêng.
+                </span>
+              </span>
+              <span className="text-xl font-black text-blue-700">→</span>
+            </Link>
+          </div>
         </div>
       </div>
     </main>

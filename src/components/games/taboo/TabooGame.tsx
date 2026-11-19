@@ -26,14 +26,18 @@ interface TabooGameProps {
 function isTabooSettings(value: unknown): value is TabooSettings {
   if (!value || typeof value !== "object") return false;
   const settings = value as Partial<TabooSettings>;
-  return (settings.mode === "individual" || settings.mode === "teams")
-    && Array.isArray(settings.teams)
-    && settings.teams.length > 0
-    && Array.isArray(settings.cards)
-    && settings.cards.length > 0
-    && [30, 60, 90].includes(settings.turnDuration ?? 0)
-    && typeof settings.rounds === "number"
-    && settings.rounds > 0;
+  return (
+    (settings.mode === "individual" || settings.mode === "teams") &&
+    Array.isArray(settings.teams) &&
+    settings.teams.length > 0 &&
+    Array.isArray(settings.cards) &&
+    settings.cards.length > 0 &&
+    typeof settings.turnDuration === "number" &&
+    settings.turnDuration > 0 &&
+    settings.turnDuration <= 3600 &&
+    typeof settings.rounds === "number" &&
+    settings.rounds > 0
+  );
 }
 
 function shuffleCards(cards: TabooCardData[]) {
@@ -49,6 +53,20 @@ function shuffleCards(cards: TabooCardData[]) {
 
 function createGameCards(cards: TabooCardData[]): TabooCardData[] {
   return shuffleCards(cards);
+}
+
+function getTeamCards(
+  settings: TabooSettings,
+  teamId: string,
+): TabooCardData[] {
+  if (
+    settings.deckDistribution === "split" &&
+    settings.teamCards?.[teamId]?.length
+  ) {
+    return settings.teamCards[teamId];
+  }
+
+  return settings.cards;
 }
 
 export default function TabooGame({ startRoute = false }: TabooGameProps) {
@@ -90,7 +108,7 @@ export default function TabooGame({ startRoute = false }: TabooGameProps) {
           ...team,
           score: 0,
         })),
-        cards: createGameCards(settings.cards),
+        cards: createGameCards(getTeamCards(settings, settings.teams[0].id)),
         currentTeamIndex: 0,
         currentRound: 1,
         currentCardIndex: 0,
@@ -111,14 +129,17 @@ export default function TabooGame({ startRoute = false }: TabooGameProps) {
     [stopTimer, syncGame, syncTime],
   );
 
-  const handleSetupStart = useCallback((settings: TabooSettings) => {
-    try {
-      sessionStorage.setItem(ACTIVE_GAME_KEY, JSON.stringify(settings));
-      navigateWithLoading(() => router.push("/games/taboo/start"));
-    } catch {
-      toast.error("Không thể lưu thiết lập trò chơi trên thiết bị này.");
-    }
-  }, [router]);
+  const handleSetupStart = useCallback(
+    (settings: TabooSettings) => {
+      try {
+        sessionStorage.setItem(ACTIVE_GAME_KEY, JSON.stringify(settings));
+        navigateWithLoading(() => router.push("/games/taboo/start"));
+      } catch {
+        toast.error("Không thể lưu thiết lập trò chơi trên thiết bị này.");
+      }
+    },
+    [router],
+  );
 
   useEffect(() => {
     if (!startRoute) return;
@@ -148,8 +169,7 @@ export default function TabooGame({ startRoute = false }: TabooGameProps) {
     turnEndedRef.current = true;
     stopTimer();
 
-    const isLastTeam =
-      current.currentTeamIndex === current.teams.length - 1;
+    const isLastTeam = current.currentTeamIndex === current.teams.length - 1;
     const isLastRound = current.currentRound >= current.settings.rounds;
 
     if (isLastTeam && isLastRound) {
@@ -172,8 +192,15 @@ export default function TabooGame({ startRoute = false }: TabooGameProps) {
       ? current.currentRound + 1
       : current.currentRound;
 
+    const nextTeam = current.teams[nextTeamIndex];
+    const nextCards = createGameCards(
+      getTeamCards(current.settings, nextTeam.id),
+    );
+
     const nextGame: TabooGameState = {
       ...current,
+      cards: nextCards,
+      currentCardIndex: 0,
       currentTeamIndex: nextTeamIndex,
       currentRound: nextRound,
       timeLeft: current.turnDuration,
@@ -202,10 +229,7 @@ export default function TabooGame({ startRoute = false }: TabooGameProps) {
     const activeTurnId = turnIdRef.current;
 
     timerRef.current = setInterval(() => {
-      if (
-        turnEndedRef.current ||
-        turnIdRef.current !== activeTurnId
-      ) {
+      if (turnEndedRef.current || turnIdRef.current !== activeTurnId) {
         return;
       }
 
@@ -228,7 +252,14 @@ export default function TabooGame({ startRoute = false }: TabooGameProps) {
     }, 1000);
 
     return stopTimer;
-  }, [game?.phase, game?.currentTeamIndex, game?.currentRound, endTurn, stopTimer, syncTime]);
+  }, [
+    game?.phase,
+    game?.currentTeamIndex,
+    game?.currentRound,
+    endTurn,
+    stopTimer,
+    syncTime,
+  ]);
 
   const moveToNextCard = useCallback(() => {
     const current = gameRef.current;
@@ -242,7 +273,8 @@ export default function TabooGame({ startRoute = false }: TabooGameProps) {
 
     // Khi hết bộ thẻ, xáo lại để có thể tiếp tục chơi.
     if (nextIndex >= nextCards.length) {
-      nextCards = createGameCards(current.settings.cards);
+      const team = current.teams[current.currentTeamIndex];
+      nextCards = createGameCards(getTeamCards(current.settings, team.id));
       nextIndex = 0;
     }
 
@@ -366,7 +398,8 @@ export default function TabooGame({ startRoute = false }: TabooGameProps) {
       return (
         <main className="flex min-h-screen items-center justify-center bg-[#f3f8ff] text-slate-600">
           <span className="inline-flex items-center gap-3 rounded-2xl bg-white px-5 py-4 font-semibold shadow-sm">
-            <Loader2 className="animate-spin text-blue-600" /> Đang mở ván chơi...
+            <Loader2 className="animate-spin text-blue-600" /> Đang mở ván
+            chơi...
           </span>
         </main>
       );
@@ -375,9 +408,16 @@ export default function TabooGame({ startRoute = false }: TabooGameProps) {
     return (
       <main className="flex min-h-screen items-center justify-center bg-[#f3f8ff] px-4 text-center">
         <div className="rounded-2xl border border-white bg-white p-6 shadow-xl shadow-blue-100">
-          <h1 className="text-2xl font-black text-slate-900">Chưa có ván Taboo để mở</h1>
-          <p className="mt-2 text-sm text-slate-500">Hãy quay lại thiết lập để bắt đầu một ván mới.</p>
-          <Link href="/games/taboo" className="mt-5 inline-flex items-center gap-2 rounded-xl bg-blue-600 px-5 py-3 font-bold text-white transition hover:bg-blue-700">
+          <h1 className="text-2xl font-black text-slate-900">
+            Chưa có ván Taboo để mở
+          </h1>
+          <p className="mt-2 text-sm text-slate-500">
+            Hãy quay lại thiết lập để bắt đầu một ván mới.
+          </p>
+          <Link
+            href="/games/taboo"
+            className="mt-5 inline-flex items-center gap-2 rounded-xl bg-blue-600 px-5 py-3 font-bold text-white transition hover:bg-blue-700"
+          >
             <ArrowLeft size={17} /> Về thiết lập
           </Link>
         </div>
@@ -405,50 +445,61 @@ export default function TabooGame({ startRoute = false }: TabooGameProps) {
       <div className="pointer-events-none absolute -left-24 -top-28 h-80 w-80 rounded-full bg-blue-200/50 blur-[100px]" />
       <div className="pointer-events-none absolute -bottom-24 -right-20 h-80 w-80 rounded-full bg-blue-200/40 blur-[100px]" />
       <div className="relative mx-auto w-full max-w-6xl space-y-6">
-      <header className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-white bg-white/80 px-5 py-4 shadow-sm backdrop-blur sm:px-6">
-        <div>
-          <Link href="/games" className="mb-2 inline-flex items-center gap-1.5 text-xs font-semibold text-slate-500 transition hover:text-blue-700">
-            <ArrowLeft size={15} /> Quay lại trò chơi
-          </Link>
-          <p className="text-xs font-bold uppercase tracking-[0.22em] text-blue-500">Party Play · Taboo</p>
-          <h1 className="mt-1 text-xl font-black text-slate-900 sm:text-2xl">Vòng chơi của bạn</h1>
-        </div>
-        <div className="flex items-center gap-2 rounded-2xl bg-blue-50 px-4 py-2.5 text-sm font-bold text-blue-700">
-          Vòng {game.currentRound}<span className="text-blue-300">/</span>{game.settings.rounds}
-        </div>
-      </header>
-      <TabooScoreboard
-        mode={game.settings.mode}
-        teams={game.teams}
-        currentTeamIndex={game.currentTeamIndex}
-        currentRound={game.currentRound}
-        totalRounds={game.settings.rounds}
-      />
-
-      {currentCard && (
-        <TabooTurn
-          key={`${game.currentRound}-${game.currentTeamIndex}-${game.currentCardIndex}`}
-          card={currentCard}
-          team={currentTeam}
-          cardNumber={game.currentCardIndex + 1}
-          totalCards={game.cards.length}
-          turnDuration={game.turnDuration}
-          timeLeft={timeLeft}
-          onCorrect={handleCorrect}
-          onSkip={handleSkip}
-          onForbidden={handleForbidden}
+        <header className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-white bg-white/80 px-5 py-4 shadow-sm backdrop-blur sm:px-6">
+          <div>
+            <Link
+              href="/games"
+              className="mb-2 inline-flex items-center gap-1.5 text-xs font-semibold text-slate-500 transition hover:text-blue-700"
+            >
+              <ArrowLeft size={15} /> Quay lại trò chơi
+            </Link>
+            <p className="text-xs font-bold uppercase tracking-[0.22em] text-blue-500">
+              Party Play · Taboo
+            </p>
+            <h1 className="mt-1 text-xl font-black text-slate-900 sm:text-2xl">
+              Vòng chơi của bạn
+            </h1>
+          </div>
+          <div className="flex items-center gap-2 rounded-2xl bg-blue-50 px-4 py-2.5 text-sm font-bold text-blue-700">
+            Vòng {game.currentRound}
+            <span className="text-blue-300">/</span>
+            {game.settings.rounds}
+          </div>
+        </header>
+        <TabooScoreboard
+          mode={game.settings.mode}
+          teams={game.teams}
+          currentTeamIndex={game.currentTeamIndex}
+          currentRound={game.currentRound}
+          totalRounds={game.settings.rounds}
         />
-      )}
 
-      <div className="flex justify-center">
-        <button
-          type="button"
-          onClick={handleBackToSetup}
-          className="rounded-xl border border-slate-200 bg-white/80 px-5 py-3 text-sm font-semibold text-slate-500 transition hover:border-rose-200 hover:bg-rose-50 hover:text-rose-600"
-        >
-          Thoát trò chơi
-        </button>
-      </div>
+        {currentCard && (
+          <TabooTurn
+            key={`${game.currentRound}-${game.currentTeamIndex}-${game.currentCardIndex}`}
+            card={currentCard}
+            team={currentTeam}
+            cardNumber={game.currentCardIndex + 1}
+            totalCards={game.cards.length}
+            turnDuration={game.turnDuration}
+            timeLeft={timeLeft}
+            onCorrect={handleCorrect}
+            onSkip={handleSkip}
+            onForbidden={handleForbidden}
+            hostEnabled={game.settings.hostEnabled}
+            hostName={game.settings.hostName}
+          />
+        )}
+
+        <div className="flex justify-center">
+          <button
+            type="button"
+            onClick={handleBackToSetup}
+            className="rounded-xl border border-slate-200 bg-white/80 px-5 py-3 text-sm font-semibold text-slate-500 transition hover:border-rose-200 hover:bg-rose-50 hover:text-rose-600"
+          >
+            Thoát trò chơi
+          </button>
+        </div>
       </div>
     </main>
   );

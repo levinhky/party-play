@@ -56,6 +56,20 @@ export const games: Game[] = [
     href: "/games/memory",
   },
   {
+    id: "chess-clock",
+    title: "Đồng hồ lượt chơi",
+    description:
+      "Đồng hồ đếm ngược nhiều người với số người, giờ, phút và giây tùy chỉnh.",
+    category: "party",
+    icon: "⏱️",
+    color: "#2563EB",
+    background: "#DBEAFE",
+    players: "Không giới hạn",
+    duration: "Tùy chỉnh",
+    badge: "Mới",
+    href: "/games/chess-clock",
+  },
+  {
     id: "taboo",
     title: "Thử thách Taboo",
     description: "Diễn tả từ khóa bí mật mà không sử dụng những từ bị cấm.",

@@ -21,6 +21,10 @@ export interface TabooSettings {
   turnDuration: number;
   rounds: number;
   cards: TabooCardData[];
+  deckDistribution?: "shared" | "split";
+  teamCards?: Record<string, TabooCardData[]>;
+  hostEnabled?: boolean;
+  hostName?: string;
 }
 
 export interface TabooGameState {
