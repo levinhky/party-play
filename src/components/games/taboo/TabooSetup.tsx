@@ -49,6 +49,35 @@ function isTabooCard(value: unknown): value is TabooCardData {
   );
 }
 
+function CardListCollapse({
+  title,
+  count,
+  children,
+}: {
+  title: string;
+  count: number;
+  children: React.ReactNode;
+}) {
+  return (
+    <details className="mt-4 overflow-hidden rounded-xl border border-slate-200 bg-white">
+      <summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-4 py-3 text-sm font-bold text-slate-800 hover:bg-slate-50 [&::-webkit-details-marker]:hidden [&_svg]:transition-transform [&[open]]:bg-slate-50 details[open]>&:bg-slate-50">
+        <span>
+          {title} · {count} thẻ
+        </span>
+        <ChevronDown
+          size={17}
+          aria-hidden="true"
+          className="shrink-0 text-slate-500 [[open]>summary>&]:rotate-180"
+        />
+      </summary>
+
+      <div className="max-h-72 space-y-2 overflow-y-auto border-t border-slate-100 p-3">
+        {children}
+      </div>
+    </details>
+  );
+}
+
 export default function TabooSetup({ onStart }: TabooSetupProps) {
   const [playMode, setPlayMode] = useState<TabooSettings["mode"]>("individual");
   const [teamNames, setTeamNames] = useState(["Người chơi 1", "Người chơi 2"]);
@@ -612,7 +641,7 @@ export default function TabooSetup({ onStart }: TabooSetupProps) {
               >
                 <span className="block font-bold text-slate-900">Theo đội</span>
                 <span className="mt-1 block text-xs text-slate-500">
-                  Có thể chơi với 1 đến 4 đội
+                  Có thể chơi với 1 đến 10 đội
                 </span>
               </button>
             </div>
@@ -756,171 +785,243 @@ export default function TabooSetup({ onStart }: TabooSetupProps) {
               </button>
             </div>
 
-            <details className="group mt-5 rounded-2xl border border-slate-200 bg-slate-50/70">
-              <summary className="flex cursor-pointer list-none items-center justify-between gap-3 rounded-2xl p-4 marker:hidden transition hover:bg-slate-100/70 sm:px-5 [&::-webkit-details-marker]:hidden">
-                <span>
-                  <span className="block font-bold text-slate-800">
-                    Tạo / quản lý thẻ riêng
-                  </span>
-                  <span className="mt-1 block text-xs text-slate-500">
-                    {customCards.length} thẻ đã lưu · nội dung được ẩn khi đang
-                    gập
-                  </span>
-                </span>
+            {deckSource === "default" && tabooCards.length > 0 && (
+              <CardListCollapse title="Bộ mặc định" count={tabooCards.length}>
+                {tabooCards.map((card) => (
+                  <div
+                    key={card.id}
+                    className="rounded-xl border border-slate-200 px-3 py-2.5"
+                  >
+                    <p className="text-sm font-bold text-slate-800">
+                      {card.word}
+                    </p>
+                    <p className="text-xs text-slate-500">
+                      {card.forbiddenWords.join(" · ")}
+                    </p>
+                  </div>
+                ))}
+              </CardListCollapse>
+            )}
 
-                <ChevronDown
-                  size={19}
-                  className="shrink-0 text-slate-500 transition-transform group-open:rotate-180"
-                />
-              </summary>
-
-              <div className="border-t border-slate-200 p-4 sm:p-5">
-                <h3 className="font-bold text-slate-800">
-                  {editingCardId ? "Chỉnh sửa thẻ" : "Tạo thẻ mới"}
-                </h3>
-
-                <div className="mt-3 grid gap-3 sm:grid-cols-2">
-                  <label className="text-xs font-semibold text-slate-600">
-                    Từ khóa cần diễn tả
-                    <input
-                      value={word}
-                      onChange={(event) => setWord(event.target.value)}
-                      maxLength={50}
-                      className="mt-1.5 h-11 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm font-normal text-slate-900 outline-none focus:border-blue-400 focus:ring-4 focus:ring-blue-100"
-                      placeholder="Ví dụ: COFFEE"
-                    />
-                  </label>
-
-                  <label className="text-xs font-semibold text-slate-600">
-                    Chủ đề
-                    <input
-                      value={category}
-                      onChange={(event) => setCategory(event.target.value)}
-                      maxLength={24}
-                      className="mt-1.5 h-11 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm font-normal text-slate-900 outline-none focus:border-blue-400 focus:ring-4 focus:ring-blue-100"
-                      placeholder="Ví dụ: Food"
-                    />
-                  </label>
-
-                  <label className="text-xs font-semibold text-slate-600 sm:col-span-2">
-                    Từ cấm (3–6 từ, cách nhau bằng dấu phẩy)
-                    <input
-                      value={forbiddenWords}
-                      onChange={(event) =>
-                        setForbiddenWords(event.target.value)
-                      }
-                      maxLength={180}
-                      className="mt-1.5 h-11 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm font-normal text-slate-900 outline-none focus:border-blue-400 focus:ring-4 focus:ring-blue-100"
-                      placeholder="Ví dụ: drink, hot, bean, cup, morning"
-                    />
-                  </label>
-
-                  <label className="text-xs font-semibold text-slate-600">
-                    Độ khó
-                    <span className="relative mt-1.5 block">
-                      <select
-                        value={difficulty}
-                        onChange={(event) =>
-                          setDifficulty(
-                            event.target.value as TabooCardData["difficulty"],
-                          )
-                        }
-                        className="h-11 w-full appearance-none rounded-xl border border-slate-200 bg-white px-3 pr-12 text-sm font-normal text-slate-900 outline-none focus:border-blue-400 focus:ring-4 focus:ring-blue-100"
-                      >
-                        <option value="easy">Dễ</option>
-                        <option value="medium">Trung bình</option>
-                        <option value="hard">Khó</option>
-                      </select>
-
-                      <SelectChevronDown
-                        aria-hidden="true"
-                        size={16}
-                        className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-slate-500"
-                      />
+            {deckSource === "custom" && (
+              <details className="group mt-5 rounded-2xl border border-slate-200 bg-slate-50/70">
+                <summary className="flex cursor-pointer list-none items-center justify-between gap-3 rounded-2xl p-4 marker:hidden transition hover:bg-slate-100/70 sm:px-5 [&::-webkit-details-marker]:hidden">
+                  <span>
+                    <span className="block font-bold text-slate-800">
+                      Tạo / quản lý thẻ riêng
                     </span>
-                  </label>
+                    <span className="mt-1 block text-xs text-slate-500">
+                      {customCards.length} thẻ đã lưu · nội dung được ẩn khi
+                      đang gập
+                    </span>
+                  </span>
 
-                  <div className="mt-4 flex items-center gap-2 self-end">
-                    {editingCardId && (
+                  <ChevronDown
+                    size={19}
+                    className="shrink-0 text-slate-500 transition-transform group-open:rotate-180"
+                  />
+                </summary>
+
+                <div className="border-t border-slate-200 p-4 sm:p-5">
+                  <h3 className="font-bold text-slate-800">
+                    {editingCardId ? "Chỉnh sửa thẻ" : "Tạo thẻ mới"}
+                  </h3>
+
+                  <div className="mt-3 grid gap-3 sm:grid-cols-2">
+                    <label className="text-xs font-semibold text-slate-600">
+                      Từ khóa cần diễn tả
+                      <input
+                        value={word}
+                        onChange={(event) => setWord(event.target.value)}
+                        maxLength={50}
+                        className="mt-1.5 h-11 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm font-normal text-slate-900 outline-none focus:border-blue-400 focus:ring-4 focus:ring-blue-100"
+                        placeholder="Ví dụ: COFFEE"
+                      />
+                    </label>
+
+                    <label className="text-xs font-semibold text-slate-600">
+                      Chủ đề
+                      <input
+                        value={category}
+                        onChange={(event) => setCategory(event.target.value)}
+                        maxLength={24}
+                        className="mt-1.5 h-11 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm font-normal text-slate-900 outline-none focus:border-blue-400 focus:ring-4 focus:ring-blue-100"
+                        placeholder="Ví dụ: Food"
+                      />
+                    </label>
+
+                    <label className="text-xs font-semibold text-slate-600 sm:col-span-2">
+                      Từ cấm (3–6 từ, cách nhau bằng dấu phẩy)
+                      <input
+                        value={forbiddenWords}
+                        onChange={(event) =>
+                          setForbiddenWords(event.target.value)
+                        }
+                        maxLength={180}
+                        className="mt-1.5 h-11 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm font-normal text-slate-900 outline-none focus:border-blue-400 focus:ring-4 focus:ring-blue-100"
+                        placeholder="Ví dụ: drink, hot, bean, cup, morning"
+                      />
+                    </label>
+
+                    <label className="text-xs font-semibold text-slate-600">
+                      Độ khó
+                      <span className="relative mt-1.5 block">
+                        <select
+                          value={difficulty}
+                          onChange={(event) =>
+                            setDifficulty(
+                              event.target.value as TabooCardData["difficulty"],
+                            )
+                          }
+                          className="h-11 w-full appearance-none rounded-xl border border-slate-200 bg-white px-3 pr-12 text-sm font-normal text-slate-900 outline-none focus:border-blue-400 focus:ring-4 focus:ring-blue-100"
+                        >
+                          <option value="easy">Dễ</option>
+                          <option value="medium">Trung bình</option>
+                          <option value="hard">Khó</option>
+                        </select>
+
+                        <SelectChevronDown
+                          aria-hidden="true"
+                          size={16}
+                          className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-slate-500"
+                        />
+                      </span>
+                    </label>
+
+                    <div className="mt-4 flex items-center gap-2 self-end">
+                      {editingCardId && (
+                        <button
+                          type="button"
+                          onClick={cancelEdit}
+                          className="inline-flex h-11 items-center justify-center gap-2 rounded-xl border border-slate-200 px-3 text-sm font-bold text-slate-600 transition hover:bg-slate-50"
+                        >
+                          <X size={16} /> Hủy
+                        </button>
+                      )}
+
                       <button
                         type="button"
-                        onClick={cancelEdit}
-                        className="inline-flex h-11 items-center justify-center gap-2 rounded-xl border border-slate-200 px-3 text-sm font-bold text-slate-600 transition hover:bg-slate-50"
+                        onClick={addCustomCard}
+                        className="inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-blue-600 px-4 text-sm font-bold text-white transition hover:bg-blue-700"
                       >
-                        <X size={16} /> Hủy
+                        {editingCardId ? (
+                          <>
+                            <Pencil size={16} /> Lưu thay đổi
+                          </>
+                        ) : (
+                          <>
+                            <Plus size={17} /> Thêm thẻ
+                          </>
+                        )}
                       </button>
-                    )}
-
-                    <button
-                      type="button"
-                      onClick={addCustomCard}
-                      className="inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-blue-600 px-4 text-sm font-bold text-white transition hover:bg-blue-700"
-                    >
-                      {editingCardId ? (
-                        <>
-                          <Pencil size={16} /> Lưu thay đổi
-                        </>
-                      ) : (
-                        <>
-                          <Plus size={17} /> Thêm thẻ
-                        </>
-                      )}
-                    </button>
+                    </div>
                   </div>
+
+                  {customCards.length > 0 && (
+                    <div className="mt-4 space-y-2">
+                      <p className="text-xs font-bold uppercase tracking-wider text-slate-400">
+                        Bộ tự tạo · {customCards.length} thẻ
+                      </p>
+
+                      <CardListCollapse
+                        title="Bộ tự tạo"
+                        count={customCards.length}
+                      >
+                        {customCards.map((card) => (
+                          <div
+                            key={card.id}
+                            className="flex items-center justify-between gap-3 rounded-xl border border-slate-200 bg-white px-3 py-2.5"
+                          >
+                            <div className="min-w-0">
+                              <p className="truncate text-sm font-bold text-slate-800">
+                                {card.word}
+                              </p>
+                              <p className="truncate text-xs text-slate-500">
+                                {card.forbiddenWords.join(" · ")}
+                              </p>
+                            </div>
+
+                            <div className="flex shrink-0 items-center gap-1">
+                              <button
+                                type="button"
+                                onClick={() => editCustomCard(card)}
+                                aria-label={`Sửa thẻ ${card.word}`}
+                                className="flex h-9 w-9 items-center justify-center rounded-lg text-slate-400 transition hover:bg-blue-50 hover:text-blue-600"
+                              >
+                                <Pencil size={16} />
+                              </button>
+
+                              <button
+                                type="button"
+                                onClick={() => removeCustomCard(card.id)}
+                                aria-label={`Xóa thẻ ${card.word}`}
+                                className="flex h-9 w-9 items-center justify-center rounded-lg text-slate-400 transition hover:bg-red-50 hover:text-red-600"
+                              >
+                                <Trash2 size={16} />
+                              </button>
+                            </div>
+                          </div>
+                        ))}
+                      </CardListCollapse>
+                    </div>
+                  )}
+
+                  {cardsLoaded && customCards.length === 0 && (
+                    <p className="mt-3 flex items-center gap-2 text-xs text-slate-500">
+                      <Sparkles size={14} className="text-blue-500" />
+                      Thẻ tự tạo được lưu trên thiết bị này cho lần chơi sau.
+                    </p>
+                  )}
+                </div>
+              </details>
+            )}
+
+            {/* JSON import section */}
+            {deckSource === "custom" && (
+              <div className="mt-5 rounded-2xl border border-blue-100 bg-blue-50/60 p-4">
+                <div className="flex items-center justify-between gap-3">
+                  <div>
+                    <p className="font-bold text-blue-900">
+                      Nhập nhanh bằng JSON
+                    </p>
+                    <p className="mt-1 text-xs text-blue-700">
+                      Nhận mảng thẻ hoặc object {'{ "cards": [...] }'}.
+                    </p>
+                  </div>
+                  {savingCards && (
+                    <span className="text-xs font-bold text-blue-700">
+                      Đang lưu...
+                    </span>
+                  )}
                 </div>
 
-                {customCards.length > 0 && (
-                  <div className="mt-4 space-y-2">
-                    <p className="text-xs font-bold uppercase tracking-wider text-slate-400">
-                      Bộ tự tạo · {customCards.length} thẻ
-                    </p>
+                <textarea
+                  value={jsonImport}
+                  onChange={(event) => setJsonImport(event.target.value)}
+                  rows={7}
+                  spellCheck={false}
+                  className="mt-3 w-full rounded-xl border border-blue-200 bg-white px-3 py-3 font-mono text-xs text-slate-900 outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
+                  placeholder={
+                    '[{"id":"coffee","keyword":"COFFEE","forbiddenWords":["drink","hot","bean","cup","morning"],"category":"Thức uống","difficulty":"easy"}]'
+                  }
+                />
 
-                    {customCards.map((card) => (
-                      <div
-                        key={card.id}
-                        className="flex items-center justify-between gap-3 rounded-xl border border-slate-200 bg-white px-3 py-2.5"
-                      >
-                        <div className="min-w-0">
-                          <p className="truncate text-sm font-bold text-slate-800">
-                            {card.word}
-                          </p>
-                          <p className="truncate text-xs text-slate-500">
-                            {card.forbiddenWords.join(" · ")}
-                          </p>
-                        </div>
-
-                        <div className="flex shrink-0 items-center gap-1">
-                          <button
-                            type="button"
-                            onClick={() => editCustomCard(card)}
-                            aria-label={`Sửa thẻ ${card.word}`}
-                            className="flex h-9 w-9 items-center justify-center rounded-lg text-slate-400 transition hover:bg-blue-50 hover:text-blue-600"
-                          >
-                            <Pencil size={16} />
-                          </button>
-
-                          <button
-                            type="button"
-                            onClick={() => removeCustomCard(card.id)}
-                            aria-label={`Xóa thẻ ${card.word}`}
-                            className="flex h-9 w-9 items-center justify-center rounded-lg text-slate-400 transition hover:bg-red-50 hover:text-red-600"
-                          >
-                            <Trash2 size={16} />
-                          </button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-
-                {cardsLoaded && customCards.length === 0 && (
-                  <p className="mt-3 flex items-center gap-2 text-xs text-slate-500">
-                    <Sparkles size={14} className="text-blue-500" />
-                    Thẻ tự tạo được lưu trên thiết bị này cho lần chơi sau.
+                {jsonImportStatus && (
+                  <p className="mt-2 text-xs font-semibold text-blue-700">
+                    {jsonImportStatus}
                   </p>
                 )}
+
+                <button
+                  type="button"
+                  disabled={savingCards || !jsonImport.trim()}
+                  onClick={importJsonCards}
+                  className="mt-3 inline-flex h-11 items-center justify-center rounded-xl bg-blue-600 px-4 text-sm font-bold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  Nhập danh sách JSON
+                </button>
               </div>
-            </details>
+            )}
           </section>
 
           {/* 3. Turn duration */}
@@ -1112,7 +1213,7 @@ export default function TabooSetup({ onStart }: TabooSetupProps) {
 
           {/* Room entry link */}
           <div className="mt-6 rounded-2xl bg-blue-50 p-4 text-center">
-            <p className="text-sm text-slate-500">
+            <p className="text-sm mb-2 font-bold text-slate-500">
               Hoặc tham gia phòng chơi trực tuyến:
             </p>
 
@@ -1130,49 +1231,6 @@ export default function TabooSetup({ onStart }: TabooSetupProps) {
               </span>
               <span className="text-xl font-black text-blue-700">→</span>
             </Link>
-          </div>
-
-          {/* JSON import section */}
-          <div className="mt-5 rounded-2xl border border-blue-100 bg-blue-50/60 p-4">
-            <div className="flex items-center justify-between gap-3">
-              <div>
-                <p className="font-bold text-blue-900">Nhập nhanh bằng JSON</p>
-                <p className="mt-1 text-xs text-blue-700">
-                  Nhận mảng thẻ hoặc object {'{ "cards": [...] }'}.
-                </p>
-              </div>
-              {savingCards && (
-                <span className="text-xs font-bold text-blue-700">
-                  Đang lưu...
-                </span>
-              )}
-            </div>
-
-            <textarea
-              value={jsonImport}
-              onChange={(event) => setJsonImport(event.target.value)}
-              rows={7}
-              spellCheck={false}
-              className="mt-3 w-full rounded-xl border border-blue-200 bg-white px-3 py-3 font-mono text-xs text-slate-900 outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
-              placeholder={
-                '[{"id":"coffee","keyword":"COFFEE","forbiddenWords":["drink","hot","bean","cup","morning"],"category":"Thức uống","difficulty":"easy"}]'
-              }
-            />
-
-            {jsonImportStatus && (
-              <p className="mt-2 text-xs font-semibold text-blue-700">
-                {jsonImportStatus}
-              </p>
-            )}
-
-            <button
-              type="button"
-              disabled={savingCards || !jsonImport.trim()}
-              onClick={importJsonCards}
-              className="mt-3 inline-flex h-11 items-center justify-center rounded-xl bg-blue-600 px-4 text-sm font-bold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              Nhập danh sách JSON
-            </button>
           </div>
         </div>
       </div>
